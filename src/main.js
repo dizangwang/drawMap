@@ -4,6 +4,9 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 
+//引入默认样式
+import '../src/assets/css/index.css';
+
 // 使用UI组件 iview
 import 'view-design/dist/styles/iview.css';
 
@@ -20,7 +23,7 @@ import apis from './apis/index';
 import uploadapis from './apis/uploadApis';
 
 Vue.use(ViewUI);
-Vue.prototype.$ajax = ajax;
+Vue.prototype.ajax = ajax;
 Vue.prototype.utils = utils;
 Vue.prototype.apis = apis;
 Vue.prototype.uploadApis = uploadapis;
@@ -30,5 +33,8 @@ Vue.config.productionTip = false;
 new Vue({
   router,
   store,
+  mounted () {
+    
+  },
   render: (h) => h(App),
 }).$mount('#app');
