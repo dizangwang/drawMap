@@ -4,7 +4,7 @@ module.exports = {
   lintOnSave: false,
   assetsDir: "",
   devServer: {
-    port: "10000",
+    port: "30000",
     proxy: {
       '/api': {
         pathRewrite: {
