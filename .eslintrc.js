@@ -60,6 +60,5 @@ module.exports = {
     "no-var": 0,
     quotes: ["error", "double"],
     "no-unused-vars": 0
-
   }
 };

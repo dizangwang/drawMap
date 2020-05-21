@@ -3,6 +3,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
+
 export default {
   name: "Title",
   computed: {
@@ -15,7 +16,7 @@ export default {
   methods: {
     goChartShowControl() {
       var that = this;
-      that.$router.push({ path: `/chartShowControl` });
+      that.$router.push({ path: "/chartShowControl" });
     }
   }
 };

@@ -7,34 +7,29 @@
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
+
 export default {
   name: "Login",
   computed: {
     ...mapGetters(["userInfo"])
   },
   data() {
-    return {
-    
-    };
+    return {};
   },
   mounted() {
-      window.setTimeout(()=>{
-        this.setUserInfo({name:"绘制"});
-      },2000)
+    window.setTimeout(() => {
+      this.setUserInfo({ name: "绘制" });
+    }, 2000);
   },
   methods: {
-    ...mapActions([
-      "setUserInfo"
-      ]),
-    goMyproject(){
-      var that=this;
-      that.$router.push({ path: `/myProject` });
+    ...mapActions(["setUserInfo"]),
+    goMyproject() {
+      var that = this;
+      that.$router.push({ path: "/myProject" });
     }
-    
   }
 };
 </script>
 <style scoped>
-
 </style>
 
