@@ -58,7 +58,7 @@ module.exports = {
     "no-array-constructor": 2,
     "linebreak-style": ["off", "windows"],
     "no-var": 0,
-    quotes: ["error", "double"],
+    quotes: ["error", "double", { allowTemplateLiterals: true }],
     "no-unused-vars": 0
   }
 };

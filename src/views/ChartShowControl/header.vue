@@ -24,7 +24,7 @@ export default {
   methods: {
     goChartShowControl() {
       const that = this;
-      that.$router.push({ path: "/chartShowControl" });
+      that.$router.push({ path: `/chartShowControl` });
     }
   }
 };
