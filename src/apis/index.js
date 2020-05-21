@@ -1,4 +1,2 @@
-const apis = {
-
-};
+const apis = {};
 export default apis;

@@ -1,3 +1,5 @@
+var autoprefixer = require("autoprefixer");
+
 module.exports = {
   publicPath: "./",
   outputDir: "dist/project",
@@ -6,12 +8,30 @@ module.exports = {
   devServer: {
     port: "30000",
     proxy: {
-      '/api': {
+      "/api": {
         pathRewrite: {
-          '^/api': '/',
+          "^/api": "/"
         },
-        target: "http://36.155.125.90:10000"
-      },
+        target: "http://"
+      }
     }
   },
+
+  css: {
+    loaderOptions: {
+      css: {
+      },
+      less: {
+        javascriptEnabled: true
+      },
+      postcss: {
+        plugins: [
+          autoprefixer({
+            overrideBrowserslist: [
+              "last 20 versions"]
+          })
+        ]
+      }
+    }
+  }
 };

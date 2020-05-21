@@ -354,3 +354,11 @@ template {
 [hidden] {
   display: none;
 }
+
+.buttonIcon{
+  vertical-align: -.22em;
+  margin-right:5px;
+  display: inline-block;
+  width:15px;
+  height:15px;
+}

@@ -18,6 +18,7 @@
 import { mapActions, mapGetters } from "vuex";
 import Header from "./header.vue";
 import Title from "./title.vue";
+
 export default {
   name: "Login",
   computed: {
@@ -40,7 +41,7 @@ export default {
   methods: {
     goChartShowControl() {
       var that = this;
-      that.$router.push({ path: `/chartShowControl` });
+      that.$router.push({ path: "/chartShowControl" });
     }
   }
 };
