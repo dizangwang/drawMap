@@ -12,12 +12,23 @@
       </Select>
       <Button type="primary">创建工程</Button>
     </div>
+    <div class="center">
+      <Button type="primary" @click="mapOutLineClick">地图轮廓</Button>
+    </div>
+
+    <div>地图数据 ：{{lineData}}</div>
+
+    <!-- 全屏对话框 -->
+    <Modal v-model="fullScreenModal" footer-hide fullscreen title="地图轮廓">
+      <DrawProfile ref="drawProfile" @save="lineSave" @quit="lineQuit"></DrawProfile>
+    </Modal>
   </div>
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
 import Header from "./header.vue";
 import Title from "./title.vue";
+import DrawProfile from "../../components/DrawProfile.vue";
 
 export default {
   name: "Login",
@@ -26,11 +37,14 @@ export default {
   },
   components: {
     Header,
-    Title
+    Title,
+    DrawProfile
   },
   data() {
     return {
       projectType: "",
+      fullScreenModal: false,
+      lineData: "",
       projectTypeList: [
         { label: "类型1", value: 1 },
         { label: "类型2", value: 2 }
@@ -39,6 +53,24 @@ export default {
   },
   mounted() {},
   methods: {
+    // 地图轮廓退出
+    lineQuit() {
+      var that = this;
+      that.fullScreenModal = false;
+    },
+
+    // 地图轮廓保存
+    lineSave(data) {
+      var that = this;
+      that.lineData = data;
+    },
+
+    // 点击创建轮廓
+    mapOutLineClick() {
+      var that = this;
+      that.fullScreenModal = true;
+      that.$refs.drawProfile.initData();
+    },
     goChartShowControl() {
       var that = this;
       that.$router.push({ path: "/chartShowControl" });
@@ -54,5 +86,10 @@ export default {
   width: 800px;
   height: 70px;
   margin: 0 auto;
+}
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

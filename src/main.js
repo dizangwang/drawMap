@@ -1,6 +1,6 @@
 import Vue from "vue";
 import ViewUI from "view-design";
-import "./assets/css/index.less";
+import "./assets/css/iviewTheme.less";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";

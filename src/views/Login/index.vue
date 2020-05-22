@@ -1,8 +1,9 @@
 <template>
   <div class="about">
-    <h1>登录页面</h1>
+    <!-- <h1>登录页面</h1>
     <h3>{{userInfo.name}}</h3>
-    <Button @click="goMyproject">登录</Button>
+    <Button @click="goMyproject">登录</Button> -->
+
   </div>
 </template>
 <script>
