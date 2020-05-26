@@ -2,7 +2,7 @@
   <div class="myProject">
     <div class="handler">
       <div class="left">
-        <el-select size="mini" class="leftSelect lf20" v-model="task">
+        <el-select size="mini" class="leftSelect lf20" v-model="task" @change="taskChange">
           <el-option value="1" label="任务"></el-option>
           <el-option value="2" label="楼宇"></el-option>
         </el-select>
@@ -20,7 +20,7 @@
         <el-button size="mini" class="lf10" type="primary" @click="underCarriageBatchClick">
           <i class="iconCommon iconUndercarriage"></i>下架
         </el-button>
-        <el-button size="mini" class="lf10" type="primary">
+        <el-button size="mini" class="lf10" type="primary" @click="downBatchloadClick">
           <i class="iconCommon iconDownload"></i>下载
         </el-button>
         <el-button size="mini" class="lf10" type="primary" @click="deleteBatchClick">
@@ -72,28 +72,46 @@
     <el-dialog :visible.sync="editTaskModal" title="修改任务">
       <EditTask />
     </el-dialog>
+
+    <el-dialog title="请选择数据类型" :visible.sync="dataTypeBatchModal" width="30%">
+      <el-radio v-model="radioBatchPublish" label="1">geoJson</el-radio>
+      <el-radio v-model="radioBatchPublish" label="2">shp</el-radio>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini">取 消</el-button>
+        <el-button size="mini" type="primary" @click="publishBatchOkClick">确 定</el-button>
+      </span>
+    </el-dialog>
     <el-dialog title="请选择数据类型" :visible.sync="dataTypeModal" width="30%">
-      <el-radio v-model="radio" label="1">geoJson</el-radio>
-      <el-radio v-model="radio" label="2">shp</el-radio>
+      <el-radio v-model="radioPublish" label="1">geoJson</el-radio>
+      <el-radio v-model="radioPublish" label="2">shp</el-radio>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini">取 消</el-button>
         <el-button size="mini" type="primary" @click="publishOkClick">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="请选择下载格式" :visible.sync="formatModal" width="30%">
-      <el-radio v-model="radio" label="1">geoJson</el-radio>
-      <el-radio v-model="radio" label="2">shp</el-radio>
+      <el-radio v-model="radioDown" label="1">geoJson</el-radio>
+      <el-radio v-model="radioDown" label="2">shp</el-radio>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini">取 消</el-button>
         <el-button size="mini" type="primary" @click="downOkClick">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="请选择下载格式" :visible.sync="formatBatchModal" width="30%">
+      <el-radio v-model="radioBatchDown" label="1">geoJson</el-radio>
+      <el-radio v-model="radioBatchDown" label="2">shp</el-radio>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini">取 消</el-button>
+        <el-button size="mini" type="primary" @click="downBatchOkClick">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
-
+// 创建任务组件
 import CreateTask from "./createTask.vue";
+// 编辑任务组件
 import EditTask from "./editTask.vue";
 
 export default {
@@ -107,17 +125,33 @@ export default {
   },
   data() {
     return {
-      radio: "",
-      projectType: "",
-      fullScreenModal: false,
+      // 创建任务弹窗展示
       createTaskModal: false,
+      // 编辑任务弹窗展示
       editTaskModal: false,
+      // 表格-发布-数据类型弹窗-展示
       dataTypeModal: false,
+      // 表格-下载-数据类型弹窗-展示
       formatModal: false,
-      lineData: "",
-      task: "",
+      // 顶部-发布-数据类型弹窗-展示
+      dataTypeBatchModal: false,
+      // 顶部-下载-数据类型弹窗-展示
+      formatBatchModal: false,
+      // 顶部-发布-数据类型
+      radioBatchPublish: "",
+      // 表格-发布-数据类型
+      radioPublish: "",
+      // 表格-下载-数据类型
+      radioDown: "",
+      // 顶部-下载-数据类型
+      radioBatchDown: "",
+      // 顶部任务/楼宇选择
+      task: "1",
+      // 任务类型
       type: "",
+      // 选中的表格数据
       tableSelectionArr: [],
+      // 表格的列数据
       Taskcolumns: [
         {
           type: "selection",
@@ -152,6 +186,7 @@ export default {
           width: 440
         }
       ],
+      // 表格的数据
       Taskdata: [
         {
           id: "John Brown",
@@ -162,12 +197,24 @@ export default {
   },
   mounted() {},
   methods: {
+    taskChange(e) {
+      var that = this;
+      if (typeof e === "string") {
+        if (e === "2") {
+          that.$router.push({ path: "/chartShowControl" });
+        }
+      } else if (e === 2) {
+        that.$router.push({ path: "/chartShowControl" });
+      }
+    },
+    // 勾选表格下拉框事件
     tableSelectionChange(e) {
       var that = this;
       that.tableSelectionArr = e;
     },
     // 根据条件查询
     searchClick() {},
+    // 顶部操作栏-按钮-下架--点击事件
     underCarriageBatchClick() {
       var that = this;
       that
@@ -189,6 +236,7 @@ export default {
           });
         });
     },
+    // 表格操作栏-按钮-下架--点击事件
     underCarriageClick() {
       var that = this;
       that
@@ -210,27 +258,21 @@ export default {
           });
         });
     },
+    // 顶部操作栏-按钮-发布--点击事件
     publishBatchClick() {
       var that = this;
-      that
-        .$confirm("是否批量发布?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        })
-        .then(() => {
-          that.$message({
-            type: "success",
-            message: "发布成功!"
-          });
-        })
-        .catch(() => {
-          that.$message({
-            type: "info",
-            message: "已取消发布"
-          });
-        });
+      that.dataTypeBatchModal = true;
     },
+    // 表格操作栏-按钮-发布--点击事件
+    publishBatchOkClick() {
+      var that = this;
+      that.dataTypeBatchModal = false;
+      that.$message({
+        type: "success",
+        message: "发布成功!"
+      });
+    },
+    // 表格操作栏-按钮-下载-弹窗-确定--点击事件
     downOkClick() {
       var that = this;
       that.formatModal = false;
@@ -239,14 +281,31 @@ export default {
         message: "下载成功!"
       });
     },
+    // 表格操作栏-按钮-下载--点击事件
     downloadClick() {
       var that = this;
       that.formatModal = true;
     },
+    // 顶部操作栏-按钮-下载-弹窗-确定--点击事件
+    downBatchOkClick() {
+      var that = this;
+      that.formatBatchModal = false;
+      that.$message({
+        type: "success",
+        message: "下载成功!"
+      });
+    },
+    // 顶部操作栏-按钮-下载--点击事件
+    downBatchloadClick() {
+      var that = this;
+      that.formatBatchModal = true;
+    },
+    // 表格操作栏-按钮-发布--点击事件
     publishClick() {
       var that = this;
       that.dataTypeModal = true;
     },
+    // 表格操作栏-按钮-发布-弹窗-确定-点击事件
     publishOkClick() {
       var that = this;
       that.dataTypeModal = false;
@@ -255,6 +314,7 @@ export default {
         message: "发布成功!"
       });
     },
+    // 顶部操作栏-按钮-删除--点击事件
     deleteBatchClick() {
       var that = this;
       that
@@ -276,6 +336,7 @@ export default {
           });
         });
     },
+    // 表格操作栏-按钮-删除--点击事件
     deleteClick() {
       var that = this;
       that
@@ -297,35 +358,15 @@ export default {
           });
         });
     },
+    // 表格操作栏-按钮-编辑--点击事件
     editTaskClick() {
       var that = this;
       that.editTaskModal = true;
     },
+    // 顶部操作栏-按钮-创建任务--点击事件
     createTaskClick() {
       var that = this;
       that.createTaskModal = true;
-    },
-    // 地图轮廓退出
-    lineQuit() {
-      var that = this;
-      that.fullScreenModal = false;
-    },
-
-    // 地图轮廓保存
-    lineSave(data) {
-      var that = this;
-      that.lineData = data;
-    },
-
-    // 点击创建轮廓
-    mapOutLineClick() {
-      var that = this;
-      that.fullScreenModal = true;
-      that.$refs.drawProfile.initData();
-    },
-    goChartShowControl() {
-      var that = this;
-      that.$router.push({ path: "/chartShowControl" });
     }
   }
 };
