@@ -3,17 +3,17 @@
     <Header></Header>
     <Title></Title>
     <div class="handler">
-      <Select v-model="projectType" placeholder="选择项目" style="width:200px">
-        <Option
+      <el-select v-model="projectType" placeholder="选择项目" style="width:200px">
+        <el-option
           v-for="item in projectTypeList"
           :value="item.value"
           :key="item.value"
-        >{{ item.label }}</Option>
-      </Select>
-      <Button type="primary">创建工程</Button>
+        >{{ item.label }}</el-option>
+      </el-select>
+      <el-button type="primary">创建工程</el-button>
     </div>
     <div class="center">
-      <Button type="primary" @click="mapOutLineClick">地图轮廓</Button>
+      <el-button type="primary" @click="mapOutLineClick">地图轮廓</el-button>
     </div>
 
     <div>地图数据 ：{{lineData}}</div>

@@ -1,16 +1,12 @@
 import Vue from "vue";
 import ViewUI from "view-design";
-import "./assets/css/iviewTheme.less";
+import "view-design/dist/styles/iview.css";
+import ElementUI from "element-ui";
+import "element-ui/lib/theme-chalk/index.css";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-
-// 引入默认样式
 import "./assets/css/index.css";
-// 引入默认样式
-
-// 使用UI组件 iview
-// import 'view-design/dist/styles/iview.css';
 
 // 挂载请求方法
 import ajax from "./httpRequest/index";
@@ -24,7 +20,9 @@ import apis from "./apis/index";
 // 挂载上传下载接口
 import uploadapis from "./apis/uploadApis";
 
+Vue.use(ElementUI);
 Vue.use(ViewUI);
+
 Vue.prototype.ajax = ajax;
 Vue.prototype.utils = utils;
 Vue.prototype.apis = apis;

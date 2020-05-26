@@ -2,7 +2,7 @@
   <div class="about">
     <!-- <h1>登录页面</h1>
     <h3>{{userInfo.name}}</h3>
-    <Button @click="goMyproject">登录</Button> -->
+    <el-button @click="goMyproject">登录</el-button> -->
 
   </div>
 </template>

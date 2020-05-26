@@ -362,3 +362,72 @@ template {
   width:15px;
   height:15px;
 }
+.lf20{
+  margin-left: 20px!important;
+}
+.lf10{
+  margin-left: 10px;
+}
+.line10{
+  height:10px;
+}
+.line20{
+  height:20px;
+}
+.required{
+  text-align: right;
+  position: relative;
+}
+.required::before{
+  content: '*';
+  display: inline-block;
+  color:red;
+
+}
+.rightLebal{
+  line-height: 3.4em;
+  display: block;
+  text-align: right;
+}
+.wd100{width:100%;}
+.tableHeaderBg{background-color: red;}
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.olme .el-form-item{
+  margin-bottom: 5px!important;
+}
+/* 图标 */
+.iconCommon{
+  display: inline-block;
+  width:10px;
+  height:10px;
+  vertical-align: -0.1em;
+  margin-right:4px;
+}
+.iconDelete{
+  background: url('../images/icons/delete.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconEdit{
+  background: url('../images/icons/edit.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconDownload{
+  background: url('../images/icons/download.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconPublish{
+  background: url('../images/icons/pulish.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconUndercarriage{
+  background: url('../images/icons/undercarriage.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconAdd{
+  background: url('../images/icons/add.png') no-repeat center;
+  background-size: 100% 100%;
+}

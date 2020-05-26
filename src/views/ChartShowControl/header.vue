@@ -1,9 +1,9 @@
 <template>
   <div class="header">
-    <Button class="button" type="primary" > 预览</Button>
-    <Button class="button" type="primary" >保存</Button>
-    <Button class="button" type="primary" >发布</Button>
-    <Button class="button" type="primary" >设置楼层信息</Button>
+    <el-button class="el-button" type="primary" > 预览</el-button>
+    <el-button class="el-button" type="primary" >保存</el-button>
+    <el-button class="el-button" type="primary" >发布</el-button>
+    <el-button class="el-button" type="primary" >设置楼层信息</el-button>
     <Input suffix="ios-search" class="search" placeholder="Enter text"  />
     <img class="userIcon" src="../../assets/images/common/icon_userCenter2.png" alt />
     <span class="userCenterWord">个人中心</span>
@@ -50,7 +50,7 @@ export default {
   color: black;
   margin-left: 20px;
 }
-.button{
+.el-button{
   margin-right:15px;
 }
 .search{

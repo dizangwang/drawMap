@@ -3,13 +3,13 @@
     <div id="map" :style="mapStyle"></div>
     <div class="rightTopButtonCon">
       <Poptip title trigger="hover" content="单击开始，双击结束" placement="bottom">
-        <Button class="button" @click="drawClick" type="primary">绘制</Button>
+        <el-button class="button" @click="drawClick" type="primary">绘制</el-button>
       </Poptip>
-      <Button class="button" @click="saveClick" type="primary">保存</Button>
-      <Button class="button" @click="quitClick" type="primary">退出</Button>
+      <el-button class="button" @click="saveClick" type="primary">保存</el-button>
+      <el-button class="button" @click="quitClick" type="primary">退出</el-button>
     </div>
     <div id="r-result">
-      <Input
+      <el-input
         v-model="searchValue"
         search
         enter-button
@@ -74,6 +74,7 @@ export default {
     this.init();
   },
   methods: {
+    // 被其他页面调用时，清空数据
     initData() {
       var that = this;
       that.searchValue = "";
@@ -124,12 +125,21 @@ export default {
 
           // 指定当前楼层
           that.currentFloor = e.currentFloor;
+
+          // 获取地图右侧楼层展示
           var lis = document.querySelectorAll(".floor-select-container li");
+
+          // 拿到已经绘制好轮廓的楼层
           var keys = Object.keys(that.cacheOverlays);
+
+          // 循环楼层
           keys.forEach((key) => {
+            // 循环地图右侧楼层
             lis.forEach((item) => {
               const button = item.querySelector("button");
               const floor = button.getAttribute("data-floor");
+
+              // 楼层比对
               if (floor === key) {
                 button.style.color = "red";
               }
@@ -141,20 +151,12 @@ export default {
           }
         }
       });
-      setTimeout(() => {
-        // 启用室内地图
-        that.indoorManager.enableIndoor();
-
-        // 显示室内地图楼层控制器
-        that.indoorManager.showIndoorControl();
-      }, 1500);
     },
 
     // 监听输入框值的变化
     searchValueChange(val) {
       var that = this;
       that.searchValue = val.target.value;
-
       // 如果选中的值和搜索框中的值是一样的，就不进行搜索
       if (that.clickedTitle === that.searchValue) {
         return;
@@ -262,8 +264,10 @@ export default {
       var that = this;
       var kes = Object.keys(that.floorData);
       if (kes.length === 0) {
-        that.$Modal.warning({
-          title: "请先绘制轮廓"
+        that.$message({
+          showClose: true,
+          message: "请先绘制轮廓",
+          type: "warning"
         });
         return;
       }

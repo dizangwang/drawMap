@@ -6,7 +6,7 @@ const routes = [
   {
     path: "/",
     name: "/",
-    redirect: "myProject"
+    redirect: "taskManage"
   },
   {
     path: "/login",
@@ -22,6 +22,11 @@ const routes = [
     path: "/chartShowControl",
     name: "chartShowControl",
     component: () => import("../views/ChartShowControl")
+  },
+  {
+    path: "/taskManage",
+    name: "taskManage",
+    component: () => import("../views/TaskManage")
   }
 ];
 
