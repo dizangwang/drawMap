@@ -10,10 +10,15 @@ const ajax = (param) => {
     obj.method = "post";
   }
   if (obj.method === "post") {
+    // 处理参数
+    var str = "?";
+    Object.keys(obj.data).forEach((key) => {
+      str += `${key}=${obj.data[key]}&`;
+    });
     return axios({
       method: obj.method,
-      url: obj.url,
-      data: obj.data,
+      url: obj.url + str,
+      data: {},
       responseType: "json",
       headers: {
         "Content-Type": "application/json"

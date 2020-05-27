@@ -3,18 +3,17 @@
     <div id="map" :style="mapStyle"></div>
     <div class="rightTopButtonCon">
       <Poptip title trigger="hover" content="单击开始，双击结束" placement="bottom">
-        <el-button class="button" @click="drawClick" type="primary">绘制</el-button>
+        <el-button size="mini" class="button" @click="drawClick" type="primary">绘制</el-button>
       </Poptip>
-      <el-button class="button" @click="saveClick" type="primary">保存</el-button>
-      <el-button class="button" @click="quitClick" type="primary">退出</el-button>
+      <Poptip title trigger="hover" content="绘制完统一保存" placement="bottom">
+        <el-button size="mini" class="button" @click="saveClick" type="primary">保存</el-button>
+      </Poptip>
+      <el-button size="mini" class="button" @click="quitClick" type="primary">退出</el-button>
     </div>
     <div id="r-result">
-      <el-input
+      <Input
         v-model="searchValue"
-        search
-        enter-button
-        placeholder
-        @on-search="search"
+        placeholder="请输入..."
         @on-change="searchValueChange"
         style="width:250px"
       />
@@ -66,7 +65,8 @@ export default {
       floorData: {},
 
       // 当前的楼层
-      currentFloor: ""
+      currentFloor: "",
+      drawingManager: ""
     };
   },
   mounted() {
@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     // 被其他页面调用时，清空数据
-    initData() {
+    initData(area) {
       var that = this;
       that.searchValue = "";
       that.searchResult = [];
@@ -85,14 +85,14 @@ export default {
       that.indoorManager = "";
       that.floorData = {};
       that.currentFloor = "";
-      that.init();
+      that.init(area);
     },
     // 初始化地图
-    init() {
+    init(area) {
       var that = this;
       // 初始化地图宽高
-      var width = window.innerWidth;
-      var height = window.innerHeight;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
       that.mapStyle.width = `${width - 35}px`;
       that.mapStyle.height = `${height - 85}px`;
 
@@ -109,9 +109,13 @@ export default {
       });
       map.addControl(topLeftLontrol);
       map.addControl(topLeftNavigation);
-
-      // 初始化地图,设置中心点坐标和地图级别
-      map.centerAndZoom(new BMap.Point(116.340739, 40.03592), 19);
+      // 如果有这个参数，就进行定位
+      if (area) {
+        map.centerAndZoom(area, 15);
+      } else {
+        // 初始化地图,设置中心点坐标和地图级别
+        map.centerAndZoom(new BMap.Point(116.340739, 40.03592), 19);
+      }
 
       // 开启鼠标滚轮缩放
       map.enableScrollWheelZoom(true);
@@ -185,10 +189,8 @@ export default {
       function myFun() {
         var result = local.getResults();
         if (result) {
-          if (Object.prototype.hasOwnProperty.call(result, "Pq")) {
-            that.searchResult = result.Pq;
-            // var pp = local.getResults().getPoi(0).point;
-            // map.centerAndZoom(pp, 18);
+          if (Object.prototype.hasOwnProperty.call(result, "Qq")) {
+            that.searchResult = result.Qq;
           } else {
             that.searchResult = [];
           }
@@ -225,40 +227,40 @@ export default {
       var that = this;
       that.clearAll();
       that.currentFloor = that.indoorManager.getFloor();
-
       var overlaycomplete = (e) => {
-        that.activeLonLatData = e.overlay.Sn;
+        that.activeLonLatData = e.overlay.Tn;
         var currentFloor = that.indoorManager.getFloor();
         if (!currentFloor) {
           currentFloor = that.currentFloor;
         }
         that.cacheOverlays[currentFloor] = e.overlay;
-        that.floorData[currentFloor] = e.overlay.Sn;
+        that.floorData[currentFloor] = e.overlay.Tn;
       };
 
       // 线的样式
       var styleOptions = {
         strokeColor: "red",
         fillColor: "red",
-        strokeWeight: 2,
+        strokeWeight: 1,
         strokeOpacity: 0.9,
-        fillOpacity: 0.9,
+        fillOpacity: 0.1,
         strokeStyle: "solid"
       };
 
       // 实例化鼠标绘制工具
-      var drawingManager = new BMapLib.DrawingManager(this.map, {
-        isOpen: true,
+      that.drawingManager = new BMapLib.DrawingManager(this.map, {
         enableDrawingTool: false,
-        polylineOptions: styleOptions
+        polygonOptions: styleOptions
       });
+      that.drawingManager.open();
 
-      // 指定画的类型--折线
-      drawingManager.setDrawingMode(BMAP_DRAWING_POLYLINE);
+      // 指定画的类型--多边形
+      that.drawingManager.setDrawingMode(BMAP_DRAWING_POLYGON);
 
       // 添加鼠标绘制工具监听事件，用于获取绘制结果
-      drawingManager.addEventListener("overlaycomplete", overlaycomplete);
+      that.drawingManager.addEventListener("overlaycomplete", overlaycomplete);
     },
+
     // 保存事件
     saveClick() {
       var that = this;
@@ -278,6 +280,7 @@ export default {
       });
       that.$emit("save", that.floorData);
     },
+    // 退出操作
     quitClick() {
       var that = this;
       that.$emit("quit");

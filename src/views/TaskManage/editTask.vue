@@ -5,21 +5,28 @@
         <tr>
           <td class="required rightLebal">任务名称：</td>
           <td>
-            <el-form-item size="mini" label-width="0" prop="name">
-              <el-input size="small" v-model="formValidate.name" maxlength="20" show-word-limit/>
+            <el-form-item size="mini" label-width="0" prop="taskName">
+              <el-input
+                size="small"
+                v-model="formValidate.taskName"
+                maxlength="20"
+                show-word-limit
+              />
             </el-form-item>
           </td>
         </tr>
         <tr>
-          <td class="required rightLebal">任务类型：</td>
+          <td class="rightLebal">任务类型：</td>
           <td>
-
-            <el-form-item size="mini" label-width="0" prop="taskType">
-              <el-select size="small" v-model="formValidate.taskType" style="width:100%">
-                <el-option value>请选择</el-option>
-                <el-option value="1" label="学校"></el-option>
-                <el-option value="2" label="商场"></el-option>
-                <el-option value="3" label="公园"></el-option>
+            <el-form-item size="mini" label-width="0" prop="taskTypeId">
+              <el-select size="small" v-model="formValidate.taskTypeId" style="width:100%">
+                <el-option value>任务类型</el-option>
+                <el-option
+                  v-for="item in taskTypes"
+                  :value="item.id"
+                  :label="item.typeName"
+                  :key="item.id"
+                ></el-option>
               </el-select>
             </el-form-item>
           </td>
@@ -28,37 +35,51 @@
           <td class="required rightLebal">所属区域：</td>
           <td>
             <div class="area">
-              <el-form-item size="mini" label-width="0" prop="province">
+              <el-form-item size="mini" label-width="0" prop="provinceId">
                 <el-select
                   size="small"
-                  v-model="formValidate.province"
+                  v-model="formValidate.provinceId"
                   placeholder="省"
                   class="areaSelect"
+                  @change="provinceChange"
                 >
-                  <el-option value>请选择</el-option>
-                  <el-option value="1" label="授江西"></el-option>
+                  <el-option
+                    v-for="item in provinceList"
+                    :value="item.id"
+                    :label="item.fullName"
+                    :key="item.id"
+                  ></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item size="mini" label-width="0" prop="city">
+              <el-form-item size="mini" label-width="0" prop="cityId">
                 <el-select
                   size="small"
-                  v-model="formValidate.city"
+                  v-model="formValidate.cityId"
                   placeholder="市"
                   class="areaSelect"
+                  @change="cityChange"
                 >
-                  <el-option value>请选择</el-option>
-                  <el-option value="1" label="授江西"></el-option>
+                  <el-option
+                    v-for="item in cityList"
+                    :value="item.id"
+                    :label="item.shortName"
+                    :key="item.id"
+                  ></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item size="mini" label-width="0" prop="area">
+              <el-form-item size="mini" label-width="0" prop="districtId">
                 <el-select
                   size="small"
-                  v-model="formValidate.area"
+                  v-model="formValidate.districtId"
                   placeholder="区"
                   class="areaSelect"
                 >
-                  <el-option value>请选择</el-option>
-                  <el-option value="1" label="授江西"></el-option>
+                  <el-option
+                    v-for="item in districtList"
+                    :value="item.id"
+                    :label="item.shortName"
+                    :key="item.id"
+                  ></el-option>
                 </el-select>
               </el-form-item>
             </div>
@@ -66,16 +87,22 @@
         </tr>
         <tr>
           <td class="rightLebal">任务描述：</td>
-          <td >
+          <td>
             <div class="line10"></div>
-            <el-input size="small" maxlength="300" type="textarea" show-word-limit v-model="formValidate.description" />
+            <el-input
+              size="small"
+              maxlength="300"
+              type="textarea"
+              show-word-limit
+              v-model="formValidate.comment"
+            />
           </td>
         </tr>
       </table>
     </el-form>
     <div class="line20"></div>
     <div class="center">
-      <el-button size="mini">取消</el-button>
+      <el-button size="mini" @click="cancelClick">取消</el-button>
       <el-button size="mini" type="primary" @click="handleSubmit">确定</el-button>
     </div>
   </div>
@@ -86,49 +113,179 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   name: "Header",
   computed: {
-    ...mapGetters(["userInfo"])
+    ...mapGetters(["userInfo", "taskTypes"])
   },
+
   data() {
     return {
       formValidate: {
-        name: "",
-        name2: "",
-        name3: "",
-        province: "",
-        city: "",
-        area: ""
+        taskName: "",
+        provinceId: "",
+        cityId: "",
+        districtId: "",
+        comment: "",
+        taskTypeId: ""
       },
+      provinceList: [],
+      cityList: [],
+      districtList: [],
+      taskTypeList: [],
       ruleValidate: {
-        name: [{ required: true, message: "请填写任务名称", trigger: "blur" }],
-        taskType: [
-          { required: true, message: "请选择任务类型", trigger: "change" }
+        taskName: [
+          { required: true, message: "请填写任务名称", trigger: "blur" }
         ],
-        name3: [
-          { required: false, message: "请填写任务描述", trigger: "change" }
-        ],
-        province: [
+        provinceId: [
           { required: true, message: "请选择省份", trigger: "change" }
         ],
-        city: [{ required: true, message: "请选择城市", trigger: "change" }],
-        area: [{ required: true, message: "请选择所属区域", trigger: "change" }]
-      }
+        cityId: [{ required: true, message: "请选择城市", trigger: "change" }],
+        districtId: [
+          { required: true, message: "请选择所属区域", trigger: "change" }
+        ]
+      },
+      id: "",
+      detailData: {}
     };
   },
   mounted() {},
   methods: {
-    handleSubmit() {
-      this.$refs.formValidate.validate((valid) => {
-        if (valid) {
-          this.$Message.success("Success!");
-        } else {
-          this.$Message.error("Fail!");
-        }
+    init(id) {
+      var that = this;
+      that.id = id;
+      that.$refs.formValidate.resetFields();
+      Object.keys(that.formValidate).forEach((key) => {
+        that.formValidate[key] = "";
+      });
+      that.getAreasWithPid("", (data) => {
+        that.provinceList = data;
+        that.$nextTick(() => {
+          that.getTaskById(id);
+        });
       });
     },
-    createTaskClick() {
+    // 根据任务id获取详情
+    getTaskById(id) {
       var that = this;
-      that.createTaskModal = true;
-      that.$refs.formValidate.resetFields();
+      var param = {};
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.getTaskById + id,
+          data: param
+        })
+        .then((res) => {
+          const { data } = res;
+          if (data.code === 200) {
+            const detailData = data.data;
+            that.detailData = detailData;
+            that.formValidate.taskName = detailData.taskName;
+            that.formValidate.comment = detailData.comment;
+            that.formValidate.taskTypeId = detailData.taskTypeId;
+            that.formValidate.provinceId = detailData.provinceId;
+
+            // 渲染省市区三级联动
+            // 根据省ID获取城市列表
+            that.getAreasWithPid(detailData.provinceId, (citys) => {
+              that.cityList = citys;
+              that.$nextTick(() => {
+                // 给城市下拉框赋值
+                that.formValidate.cityId = detailData.cityId;
+
+                // 根据城市ID获取区域列表
+                that.getAreasWithPid(detailData.cityId, (districts) => {
+                  that.districtList = districts;
+                  that.$nextTick(() => {
+                    // 给区域下拉框赋值
+                    that.formValidate.districtId = detailData.districtId;
+                  });
+                });
+              });
+            });
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+    cancelClick() {
+      this.$emit("cancel");
+    },
+
+    // 监听城市变动
+    cityChange(id) {
+      var that = this;
+      if (id) {
+        that.getAreasWithPid(id, (data) => {
+          that.districtList = data;
+        });
+        that.formValidate.district = "";
+      }
+    },
+
+    // 监听省份变动
+    provinceChange(id) {
+      var that = this;
+      if (id) {
+        that.formValidate.city = "";
+        that.formValidate.district = "";
+        that.getAreasWithPid(id, (data) => {
+          that.cityList = data;
+          that.city = that.detailData.cityId;
+        });
+      }
+    },
+
+    // 根据上级区域id获取下级区域列表
+    getAreasWithPid(pid, fn) {
+      var that = this;
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.getAreasWithPid,
+          data: { pid }
+        })
+        .then((res) => {
+          const { data } = res;
+          if (data.code === 200) {
+            fn(data.data);
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+
+    // 提交
+    handleSubmit() {
+      var that = this;
+      this.$refs.formValidate.validate((valid) => {
+        if (valid) {
+          that
+            .ajax({
+              method: "post",
+              url: that.apis.updateTaskById + that.id,
+              data: that.formValidate
+            })
+            .then((res) => {
+              const { data } = res;
+              if (data.code === 200) {
+                that.$message({
+                  message: "更新成功",
+                  type: "success"
+                });
+                that.$emit("success");
+              } else {
+                that.$message({
+                  message: data.msg,
+                  type: "warning"
+                });
+              }
+            });
+        }
+      });
     }
   }
 };
@@ -139,6 +296,6 @@ export default {
   justify-content: space-between;
 }
 .areaSelect {
-  width: 120px;
+  width: 180px;
 }
 </style>

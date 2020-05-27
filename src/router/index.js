@@ -6,7 +6,12 @@ const routes = [
   {
     path: "/",
     name: "/",
-    redirect: "taskManage"
+    redirect: "lun"
+  },
+  {
+    path: "/lun",
+    name: "lun",
+    component: () => import("../components/DrawProfile.vue")
   },
   {
     path: "/login",
@@ -27,7 +32,13 @@ const routes = [
     path: "/taskManage",
     name: "taskManage",
     component: () => import("../views/TaskManage")
+  },
+  {
+    path: "/BuildingManage",
+    name: "BuildingManage",
+    component: () => import("../views/BuildingManage")
   }
+
 ];
 
 const router = new VueRouter({

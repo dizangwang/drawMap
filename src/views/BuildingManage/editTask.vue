@@ -35,10 +35,10 @@
           <td class="required rightLebal">所属区域：</td>
           <td>
             <div class="area">
-              <el-form-item size="mini" label-width="0" prop="provinceId">
+              <el-form-item size="mini" label-width="0" prop="province">
                 <el-select
                   size="small"
-                  v-model="formValidate.provinceId"
+                  v-model="formValidate.province"
                   placeholder="省"
                   class="areaSelect"
                   @change="provinceChange"
@@ -51,10 +51,10 @@
                   ></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item size="mini" label-width="0" prop="cityId">
+              <el-form-item size="mini" label-width="0" prop="city">
                 <el-select
                   size="small"
-                  v-model="formValidate.cityId"
+                  v-model="formValidate.city"
                   placeholder="市"
                   class="areaSelect"
                   @change="cityChange"
@@ -67,10 +67,10 @@
                   ></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item size="mini" label-width="0" prop="districtId">
+              <el-form-item size="mini" label-width="0" prop="district">
                 <el-select
                   size="small"
-                  v-model="formValidate.districtId"
+                  v-model="formValidate.district"
                   placeholder="区"
                   class="areaSelect"
                 >
@@ -118,65 +118,98 @@ export default {
 
   data() {
     return {
-
-      // 表单字段对象
       formValidate: {
         taskName: "",
-        provinceId: "",
-        cityId: "",
-        districtId: "",
+        province: "",
+        city: "",
+        district: "",
+        // 任务描述
         comment: "",
         taskTypeId: ""
       },
-
-      // 省份列表
       provinceList: [],
-
-      // 城市列表
       cityList: [],
-
-      // 区域列表
       districtList: [],
-
-      // 任务类型列表
       taskTypeList: [],
-
-      // 校验规则
       ruleValidate: {
         taskName: [
           { required: true, message: "请填写任务名称", trigger: "blur" }
         ],
-        provinceId: [
+        province: [
           { required: true, message: "请选择省份", trigger: "change" }
         ],
-        cityId: [{ required: true, message: "请选择城市", trigger: "change" }],
-        districtId: [
+        city: [{ required: true, message: "请选择城市", trigger: "change" }],
+        district: [
           { required: true, message: "请选择所属区域", trigger: "change" }
         ]
-      }
+      },
+      id: "",
+      detailData: {}
     };
   },
   mounted() {},
   methods: {
-
-    // 初始化方法
-    init() {
+    init(id) {
       var that = this;
+      that.id = id;
       that.$refs.formValidate.resetFields();
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
       });
-
       that.getAreasWithPid("", (data) => {
         that.provinceList = data;
+        that.$nextTick(() => {
+          that.getTaskById(id);
+        });
       });
     },
-
-    // 取消事件
+    // 根据任务id获取详情
+    getTaskById(id) {
+      var that = this;
+      var param = {};
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.getTaskById + id,
+          data: param
+        })
+        .then((res) => {
+          const { data } = res;
+          if (data.code === 200) {
+            const detailData = data.data;
+            that.detailData = detailData;
+            that.formValidate.taskName = detailData.taskName;
+            that.formValidate.comment = detailData.comment;
+            that.formValidate.taskTypeId = detailData.taskTypeId;
+            that.formValidate.province = detailData.provinceId;
+            // 渲染省市区三级联动
+            // 根据省ID获取城市列表
+            that.getAreasWithPid(detailData.provinceId, (citys) => {
+              that.cityList = citys;
+              that.$nextTick(() => {
+                // 给城市下拉框赋值
+                that.formValidate.city = detailData.cityId;
+                // 根据城市ID获取区域列表
+                that.getAreasWithPid(detailData.cityId, (districts) => {
+                  that.districtList = districts;
+                  that.$nextTick(() => {
+                    // 给区域下拉框赋值
+                    that.formValidate.district = detailData.districtId;
+                  });
+                });
+              });
+            });
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
     cancelClick() {
       this.$emit("cancel");
     },
-
     // 监听城市变动
     cityChange(id) {
       var that = this;
@@ -187,20 +220,19 @@ export default {
         that.formValidate.district = "";
       }
     },
-
     // 监听省份变动
     provinceChange(id) {
       var that = this;
       if (id) {
-        that.getAreasWithPid(id, (data) => {
-          that.cityList = data;
-        });
         that.formValidate.city = "";
         that.formValidate.district = "";
+        that.getAreasWithPid(id, (data) => {
+          that.cityList = data;
+          that.city = that.detailData.cityId;
+        });
       }
     },
-
-    // 根据上级id获取下级列表
+    // 根据上级区域id获取下级区域列表
     getAreasWithPid(pid, fn) {
       var that = this;
       that
@@ -221,25 +253,22 @@ export default {
           }
         });
     },
-
-    // 保存事件
+    // 提交
     handleSubmit() {
       var that = this;
-
-      // 校验规则
-      that.$refs.formValidate.validate((valid) => {
+      this.$refs.formValidate.validate((valid) => {
         if (valid) {
           that
             .ajax({
               method: "post",
-              url: that.apis.taskSave,
+              url: that.apis.updateTaskById + that.id,
               data: that.formValidate
             })
             .then((res) => {
               const { data } = res;
               if (data.code === 200) {
                 that.$message({
-                  message: "提交成功",
+                  message: "更新成功",
                   type: "success"
                 });
                 that.$emit("success");
@@ -252,6 +281,11 @@ export default {
             });
         }
       });
+    },
+    createTaskClick() {
+      var that = this;
+      that.createTaskModal = true;
+      that.$refs.formValidate.resetFields();
     }
   }
 };

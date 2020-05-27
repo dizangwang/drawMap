@@ -35,10 +35,10 @@
           <td class="required rightLebal">所属区域：</td>
           <td>
             <div class="area">
-              <el-form-item size="mini" label-width="0" prop="provinceId">
+              <el-form-item size="mini" label-width="0" prop="province">
                 <el-select
                   size="small"
-                  v-model="formValidate.provinceId"
+                  v-model="formValidate.province"
                   placeholder="省"
                   class="areaSelect"
                   @change="provinceChange"
@@ -51,10 +51,10 @@
                   ></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item size="mini" label-width="0" prop="cityId">
+              <el-form-item size="mini" label-width="0" prop="city">
                 <el-select
                   size="small"
-                  v-model="formValidate.cityId"
+                  v-model="formValidate.city"
                   placeholder="市"
                   class="areaSelect"
                   @change="cityChange"
@@ -67,10 +67,10 @@
                   ></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item size="mini" label-width="0" prop="districtId">
+              <el-form-item size="mini" label-width="0" prop="district">
                 <el-select
                   size="small"
-                  v-model="formValidate.districtId"
+                  v-model="formValidate.district"
                   placeholder="区"
                   class="areaSelect"
                 >
@@ -118,39 +118,28 @@ export default {
 
   data() {
     return {
-
-      // 表单字段对象
       formValidate: {
         taskName: "",
-        provinceId: "",
-        cityId: "",
-        districtId: "",
+        province: "",
+        city: "",
+        district: "",
+        // 任务描述
         comment: "",
         taskTypeId: ""
       },
-
-      // 省份列表
       provinceList: [],
-
-      // 城市列表
       cityList: [],
-
-      // 区域列表
       districtList: [],
-
-      // 任务类型列表
       taskTypeList: [],
-
-      // 校验规则
       ruleValidate: {
         taskName: [
           { required: true, message: "请填写任务名称", trigger: "blur" }
         ],
-        provinceId: [
+        province: [
           { required: true, message: "请选择省份", trigger: "change" }
         ],
-        cityId: [{ required: true, message: "请选择城市", trigger: "change" }],
-        districtId: [
+        city: [{ required: true, message: "请选择城市", trigger: "change" }],
+        district: [
           { required: true, message: "请选择所属区域", trigger: "change" }
         ]
       }
@@ -158,8 +147,6 @@ export default {
   },
   mounted() {},
   methods: {
-
-    // 初始化方法
     init() {
       var that = this;
       that.$refs.formValidate.resetFields();
@@ -171,13 +158,9 @@ export default {
         that.provinceList = data;
       });
     },
-
-    // 取消事件
     cancelClick() {
       this.$emit("cancel");
     },
-
-    // 监听城市变动
     cityChange(id) {
       var that = this;
       if (id) {
@@ -187,8 +170,6 @@ export default {
         that.formValidate.district = "";
       }
     },
-
-    // 监听省份变动
     provinceChange(id) {
       var that = this;
       if (id) {
@@ -199,8 +180,6 @@ export default {
         that.formValidate.district = "";
       }
     },
-
-    // 根据上级id获取下级列表
     getAreasWithPid(pid, fn) {
       var that = this;
       that
@@ -222,12 +201,9 @@ export default {
         });
     },
 
-    // 保存事件
     handleSubmit() {
       var that = this;
-
-      // 校验规则
-      that.$refs.formValidate.validate((valid) => {
+      this.$refs.formValidate.validate((valid) => {
         if (valid) {
           that
             .ajax({
@@ -252,6 +228,11 @@ export default {
             });
         }
       });
+    },
+    createTaskClick() {
+      var that = this;
+      that.createTaskModal = true;
+      that.$refs.formValidate.resetFields();
     }
   }
 };

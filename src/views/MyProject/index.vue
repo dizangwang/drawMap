@@ -69,7 +69,7 @@ export default {
     mapOutLineClick() {
       var that = this;
       that.fullScreenModal = true;
-      that.$refs.drawProfile.initData();
+      that.$refs.drawProfile.initData("北京市丰台区");
     },
     goChartShowControl() {
       var that = this;

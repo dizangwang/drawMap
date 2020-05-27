@@ -12,7 +12,7 @@ module.exports = {
         pathRewrite: {
           "^/api": "/"
         },
-        target: "http://"
+        target: "http://101.132.113.86:31801"
       }
     }
   },
