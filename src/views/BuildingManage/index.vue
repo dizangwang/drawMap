@@ -34,7 +34,7 @@
         </el-select>
         <el-select
           size="mini"
-          v-model="searchForm.provinceId"
+          v-model="searchForm.province"
           placeholder="省"
           class="areaSelect lf10"
           @change="provinceChange"
@@ -42,13 +42,13 @@
           <el-option
             v-for="item in provinceList"
             :value="item.id"
-            :label="item.fullName"
+            :label="item.name"
             :key="item.id"
           ></el-option>
         </el-select>
         <el-select
           size="mini"
-          v-model="searchForm.cityId"
+          v-model="searchForm.city"
           placeholder="市"
           class="areaSelect lf10"
           @change="cityChange"
@@ -56,20 +56,20 @@
           <el-option
             v-for="item in cityList"
             :value="item.id"
-            :label="item.shortName"
+            :label="item.name"
             :key="item.id"
           ></el-option>
         </el-select>
         <el-select
           size="mini"
-          v-model="searchForm.districtId"
+          v-model="searchForm.district"
           placeholder="区"
           class="areaSelect lf10"
         >
           <el-option
             v-for="item in districtList"
             :value="item.id"
-            :label="item.shortName"
+            :label="item.name"
             :key="item.id"
           ></el-option>
         </el-select>
@@ -95,8 +95,8 @@
         <el-button size="mini" class="lf10" type="primary" @click="deleteBatchClick">
           <i class="iconCommon iconDelete"></i>删除
         </el-button>
-        <el-button class="lf10" size="mini" type="primary" @click="createTaskClick">
-          <i class="iconCommon iconAdd"></i>创建任务
+        <el-button class="lf10" size="mini" type="primary" @click="createBuildingClick">
+          <i class="iconCommon iconAdd"></i>创建楼宇
         </el-button>
       </div>
     </div>
@@ -113,7 +113,7 @@
         <template slot="progress" slot-scope="{row}">
           <el-progress :percentage="row.progress"></el-progress>
         </template>
-        <template slot="floor" slot-scope="{row}">{{row.underGroundFloor+row.overGroundFloor}}</template>
+        <template slot="floor" slot-scope="{row}">{{+row.overGroundFloor-row.underGroundFloor}}</template>
 
         <template slot="action" slot-scope="{row}">
           <el-button size="mini" type="primary" @click="publishClick">
@@ -138,16 +138,17 @@
         :total="total"
         :page-size="searchForm.size"
         show-elevator
+        show-total
         @on-change="pageChange"
         @on-page-size-change="pageSizeChange"
       />
     </div>
 
-    <el-dialog :visible.sync="createTaskModal" title="创建任务">
-      <CreateTask ref="createTask" @success="createTaskSuccess" @cancel="createTaskModal=false" />
+    <el-dialog :visible.sync="createBuildingModal" width="30%" title="创建楼宇">
+      <CreateBuilding ref="createTask" @success="createBuildingSuccess" @cancel="createBuildingModal=false" />
     </el-dialog>
-    <el-dialog :visible.sync="editTaskModal" title="修改任务">
-      <EditTask ref="editTask" @success="updateTaskSuccess" @cancel="editTaskModal=false" />
+    <el-dialog :visible.sync="editBuildingModal" title="修改任务">
+      <EditBuilding ref="editTask" @success="updateTaskSuccess" @cancel="editBuildingModal=false" />
     </el-dialog>
 
     <el-dialog title="请选择数据类型" :visible.sync="dataTypeBatchModal" width="30%">
@@ -187,9 +188,9 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 // 创建任务组件
-import CreateTask from "./createTask.vue";
+import CreateBuilding from "./createBuilding.vue";
 // 编辑任务组件
-import EditTask from "./editTask.vue";
+import EditBuilding from "./editBuilding.vue";
 
 export default {
   name: "Login",
@@ -197,15 +198,15 @@ export default {
     ...mapGetters(["userInfo", "taskTypes"])
   },
   components: {
-    CreateTask,
-    EditTask
+    CreateBuilding,
+    EditBuilding
   },
   data() {
     return {
-      // 创建任务弹窗展示
-      createTaskModal: false,
+      // 创建楼宇弹窗展示
+      createBuildingModal: false,
       // 编辑任务弹窗展示
-      editTaskModal: false,
+      editBuildingModal: false,
       // 表格-发布-数据类型弹窗-展示
       dataTypeModal: false,
       // 表格-下载-数据类型弹窗-展示
@@ -262,11 +263,12 @@ export default {
       ],
       // 表格的数据
       Taskdata: [],
+      // 搜索表单
       searchForm: {
-        cityId: "",
+        city: "",
         current: 1,
-        districtId: "",
-        provinceId: "",
+        district: "",
+        province: "",
         size: 10,
         buildingName: "",
         finishStatus: "",
@@ -299,6 +301,7 @@ export default {
   },
   methods: {
     ...mapActions(["setTaskTypes"]),
+    // 监听城市变动
     cityChange(id) {
       var that = this;
       if (id) {
@@ -308,6 +311,7 @@ export default {
         that.formValidate.district = "";
       }
     },
+    // 监听省份变动
     provinceChange(id) {
       var that = this;
       if (id) {
@@ -318,6 +322,7 @@ export default {
         that.formValidate.district = "";
       }
     },
+    // 根据上级id查询下级区域列表
     getAreasWithPid(pid, fn) {
       var that = this;
       that
@@ -360,14 +365,16 @@ export default {
           }
         });
     },
-    createTaskSuccess() {
+    // 创建楼宇成功回调
+    createBuildingSuccess() {
       var that = this;
-      that.createTaskModal = false;
+      that.createBuildingModal = false;
       that.search();
     },
+    // 创建楼宇成功回调
     updateTaskSuccess() {
       var that = this;
-      that.editTaskModal = false;
+      that.editBuildingModal = false;
       that.search();
     },
     // 左上角 任务/楼宇 切换界面
@@ -560,6 +567,7 @@ export default {
           });
         });
     },
+    // 删除方法
     deleteTask(id) {
       var that = this;
       var param = {
@@ -568,7 +576,7 @@ export default {
       that
         .ajax({
           method: "post",
-          url: that.apis.taskMgrDelete,
+          url: that.apis.deleteBuildingById,
           data: param
         })
         .then((res) => {
@@ -609,18 +617,18 @@ export default {
     // 表格操作栏-按钮-编辑--点击事件
     editTaskClick(row) {
       var that = this;
-      that.editTaskModal = true;
+      that.editBuildingModal = true;
       that.$nextTick(() => {
-        that.$refs.editTask.init(row.id);
+        that.$refs.editTask.init(row);
       });
     },
 
     // 顶部操作栏-按钮-创建任务--点击事件
-    createTaskClick() {
+    createBuildingClick() {
       var that = this;
-      that.createTaskModal = true;
+      that.createBuildingModal = true;
       that.$nextTick(() => {
-        that.$refs.createTask.init();
+        that.$refs.createTask.init({ id: 16, taskName: "1d" });
       });
     }
   }

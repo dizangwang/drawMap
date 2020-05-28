@@ -16,9 +16,46 @@
             :key="item.id"
           ></el-option>
         </el-select>
+        <el-select
+          size="mini"
+          v-model="searchForm.province"
+          placeholder="省"
+          class="areaSelect lf10"
+          @change="provinceChange"
+        >
+          <el-option
+            v-for="item in provinceList"
+            :value="item.id"
+            :label="item.name"
+            :key="item.id"
+          ></el-option>
+        </el-select>
+        <el-select
+          size="mini"
+          v-model="searchForm.city"
+          placeholder="市"
+          class="areaSelect lf10"
+          @change="cityChange"
+        >
+          <el-option v-for="item in cityList" :value="item.id" :label="item.name" :key="item.id"></el-option>
+        </el-select>
+        <el-select
+          size="mini"
+          v-model="searchForm.district"
+          placeholder="区"
+          class="areaSelect lf10"
+        >
+          <el-option
+            v-for="item in districtList"
+            :value="item.id"
+            :label="item.name"
+            :key="item.id"
+          ></el-option>
+        </el-select>
         <el-input
           v-model="searchForm.taskName"
           size="mini"
+          maxlength="20"
           class="leftInput lf20"
           placeholder="按任务名称搜索"
         />
@@ -85,6 +122,7 @@
         :total="total"
         :page-size="searchForm.size"
         show-elevator
+        show-total
         @on-change="pageChange"
         @on-page-size-change="pageSizeChange"
       />
@@ -242,16 +280,61 @@ export default {
       },
 
       // 返回的记录总条数
-      total: 1
+      total: 1,
+      provinceList: [],
+      cityList: [],
+      districtList: []
     };
   },
   mounted() {
-    this.getAllTypes();
-    this.searchClick();
+    var that = this;
+    that.getAllTypes();
+    that.searchClick();
+    that.getAreasWithPid("", (data) => {
+      that.provinceList = data;
+    });
   },
   methods: {
     ...mapActions(["setTaskTypes"]),
-
+    cityChange(id) {
+      var that = this;
+      if (id) {
+        that.getAreasWithPid(id, (data) => {
+          that.districtList = data;
+        });
+        that.formValidate.district = "";
+      }
+    },
+    provinceChange(id) {
+      var that = this;
+      if (id) {
+        that.getAreasWithPid(id, (data) => {
+          that.cityList = data;
+        });
+        that.formValidate.city = "";
+        that.formValidate.district = "";
+      }
+    },
+    getAreasWithPid(pid, fn) {
+      var that = this;
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.getAreasWithPid,
+          data: { pid }
+        })
+        .then((res) => {
+          const { data } = res;
+          if (data.code === 200) {
+            fn(data.data);
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
     // 获取任务类型放到vuex中
     getAllTypes() {
       var that = this;
@@ -294,10 +377,10 @@ export default {
       var that = this;
       if (typeof e === "string") {
         if (e === "2") {
-          that.$router.push({ path: "/BuildingManage" });
+          that.$router.push({ path: "/buildingManage" });
         }
       } else if (e === 2) {
-        that.$router.push({ path: "/BuildingManage" });
+        that.$router.push({ path: "/buildingManage" });
       }
     },
 
@@ -354,6 +437,13 @@ export default {
     // 顶部操作栏-按钮-下架--点击事件
     underCarriageBatchClick() {
       var that = this;
+      if (that.tableSelectionArr.length === 0) {
+        that.$message({
+          type: "error",
+          message: "请先选择需要下架的任务"
+        });
+        return;
+      }
       that
         .$confirm("是否批量下架该?", "提示", {
           confirmButtonText: "确定",
@@ -400,6 +490,13 @@ export default {
     // 顶部操作栏-按钮-发布--点击事件
     publishBatchClick() {
       var that = this;
+      if (that.tableSelectionArr.length === 0) {
+        that.$message({
+          type: "error",
+          message: "请先选择需要发布的任务"
+        });
+        return;
+      }
       that.dataTypeBatchModal = true;
     },
 
@@ -442,6 +539,13 @@ export default {
     // 顶部操作栏-按钮-下载--点击事件
     downBatchloadClick() {
       var that = this;
+      if (that.tableSelectionArr.length === 0) {
+        that.$message({
+          type: "error",
+          message: "请先选择需要下载的任务"
+        });
+        return;
+      }
       that.formatBatchModal = true;
     },
 
@@ -469,7 +573,7 @@ export default {
       if (that.tableSelectionArr.length === 0) {
         that.$message({
           type: "error",
-          message: "请勾选需要删除的数据"
+          message: "请先选择需要删除的任务"
         });
         return;
       }

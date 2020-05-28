@@ -431,3 +431,6 @@ template {
   background: url('../images/icons/add.png') no-repeat center;
   background-size: 100% 100%;
 }
+.el-message{
+  z-index: 3030!important;
+}

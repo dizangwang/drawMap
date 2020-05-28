@@ -46,7 +46,7 @@
                   <el-option
                     v-for="item in provinceList"
                     :value="item.id"
-                    :label="item.fullName"
+                    :label="item.name"
                     :key="item.id"
                   ></el-option>
                 </el-select>
@@ -62,7 +62,7 @@
                   <el-option
                     v-for="item in cityList"
                     :value="item.id"
-                    :label="item.shortName"
+                    :label="item.name"
                     :key="item.id"
                   ></el-option>
                 </el-select>
@@ -77,7 +77,7 @@
                   <el-option
                     v-for="item in districtList"
                     :value="item.id"
-                    :label="item.shortName"
+                    :label="item.name"
                     :key="item.id"
                   ></el-option>
                 </el-select>

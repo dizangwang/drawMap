@@ -66,7 +66,8 @@ export default {
 
       // 当前的楼层
       currentFloor: "",
-      drawingManager: ""
+      drawingManager: "",
+      isSave: false
     };
   },
   mounted() {
@@ -225,6 +226,25 @@ export default {
     // 画折现的方法
     drawClick() {
       var that = this;
+
+      // 判断右侧楼层控件有没有出现
+      var floorShow = document.querySelector(".floor-select-container");
+      if (floorShow) {
+        if (floorShow.style.right !== "20px") {
+          this.$message({
+            message: "请点击需要绘制的室内图",
+            type: "warning"
+          });
+          return;
+        }
+      } else {
+        that.$message({
+          message: "请点击需要绘制的室内图",
+          type: "warning"
+        });
+        return;
+      }
+
       that.clearAll();
       that.currentFloor = that.indoorManager.getFloor();
       var overlaycomplete = (e) => {
@@ -267,23 +287,41 @@ export default {
       var kes = Object.keys(that.floorData);
       if (kes.length === 0) {
         that.$message({
-          showClose: true,
           message: "请先绘制轮廓",
           type: "warning"
         });
         return;
       }
-      that.$Modal.info({
-        title: "保存数据",
-        width: 500,
-        content: JSON.stringify(that.floorData)
+      that.$message({
+        message: "数据保存成功",
+        type: "success"
       });
+      that.isSave = true;
       that.$emit("save", that.floorData);
     },
     // 退出操作
     quitClick() {
       var that = this;
-      that.$emit("quit");
+      var floors = Object.keys(that.floorData);
+      if (!that.isSave && floors.length > 0) {
+        that
+          .$confirm("您绘制的数据还没有保存，确认退出?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          })
+          .then(() => {
+            that.$emit("quit");
+          })
+          .catch(() => {
+            that.$message({
+              type: "info",
+              message: "已取消"
+            });
+          });
+      } else {
+        that.$emit("quit");
+      }
     }
   }
 };

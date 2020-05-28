@@ -34,9 +34,14 @@ const routes = [
     component: () => import("../views/TaskManage")
   },
   {
-    path: "/BuildingManage",
-    name: "BuildingManage",
+    path: "/buildingManage",
+    name: "buildingManage",
     component: () => import("../views/BuildingManage")
+  },
+  {
+    path: "/buildingInTaskManage",
+    name: "buildingInTaskManage",
+    component: () => import("../views/BuildingInTaskManage")
   }
 
 ];

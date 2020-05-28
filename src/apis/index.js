@@ -3,7 +3,7 @@ const apis = {
   // 获取所有任务类型
   getAllTypes: `${root}/taskTypeMgr/getAllTypes`,
   // 根据上级区域id查找下级区域
-  getAreasWithPid: `${root}/areaMgr/getAreasWithPid`,
+  getAreasWithPid: `${root}/regionMgr/getChildRegions`,
   // 保存任务
   taskSave: `${root}/taskMgr/save`,
   // 任务列表
@@ -15,6 +15,13 @@ const apis = {
   // 根据id更新任务
   updateTaskById: `${root}/taskMgr/`,
   // 获取楼宇列表
-  buildingMgrList: `${root}/buildingMgr`
+  buildingMgrList: `${root}/buildingMgr`,
+  // 保存楼宇
+  buildingMgrSave: `${root}/buildingMgr/save`,
+  // 根据楼宇id获取楼宇信息
+  getBuildingById: `${root}/buildingMgr/`,
+  // 根据楼宇id删除楼宇信息
+  deleteBuildingById: `${root}/buildingMgr/delete`
+
 };
 export default apis;
