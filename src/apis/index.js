@@ -18,6 +18,8 @@ const apis = {
   buildingMgrList: `${root}/buildingMgr`,
   // 保存楼宇
   buildingMgrSave: `${root}/buildingMgr/save`,
+  // 根据楼宇id更新楼宇信息
+  buildingMgrUpdate: `${root}/buildingMgr/`,
   // 根据楼宇id获取楼宇信息
   getBuildingById: `${root}/buildingMgr/`,
   // 根据楼宇id删除楼宇信息

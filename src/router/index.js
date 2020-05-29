@@ -38,6 +38,7 @@ const routes = [
     name: "buildingManage",
     component: () => import("../views/BuildingManage")
   }
+
 ];
 
 const router = new VueRouter({

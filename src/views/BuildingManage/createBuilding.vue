@@ -164,9 +164,13 @@ export default {
   },
   mounted() {},
   methods: {
+
     // 清除轮廓信息
     clearOutLineData() {
       var that = this;
+      if (that.formValidate.lineData === "") {
+        return;
+      }
       that
         .$confirm("是否确认清空轮廓数据?", "提示", {
           confirmButtonText: "确定",
@@ -187,6 +191,7 @@ export default {
           });
         });
     },
+
     // 地图轮廓退出
     lineQuit() {
       var that = this;
@@ -215,12 +220,15 @@ export default {
       });
       that.formValidate.lineData = str;
     },
+
     // 点击创建轮廓
     mapOutLineClick() {
       var that = this;
       that.fullScreenModal = true;
-      that.$refs.drawProfile.initData("北京市丰台区");
+      const address = that.taskObj.provinceName + that.taskObj.cityName + that.taskObj.districtName;
+      that.$refs.drawProfile.initData(address);
     },
+
     // 被外部调用时初始化方法
     init(taskObj) {
       var that = this;
@@ -232,14 +240,17 @@ export default {
       that.taskObj = taskObj;
       that.formValidate.taskId = taskObj.id;
     },
+
     // 上传文件成功回调
     uploadSuccess() {
       // todo
     },
+
     // 点击取消事件
     cancelClick() {
       this.$emit("cancel");
     },
+
     // 提交表单事件
     handleSubmit() {
       var that = this;

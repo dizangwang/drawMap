@@ -75,6 +75,26 @@ export default {
     this.init();
   },
   methods: {
+    // 根据经纬度绘制多边形
+    createPolygon(data) {
+      var that = this;
+      that.map.clearOverlays();
+      var arr = [];
+      data.forEach((item) => {
+        arr.push(new BMap.Point(item.lng, item.lat));
+      });
+      var styleOptions = {
+        strokeColor: "red",
+        fillColor: "red",
+        strokeWeight: 1,
+        strokeOpacity: 0.9,
+        fillOpacity: 0.1,
+        strokeStyle: "solid"
+      };
+      var polygon = new BMap.Polygon(arr, styleOptions);
+      that.map.addOverlay(polygon);
+    },
+
     // 被其他页面调用时，清空数据
     initData(area) {
       var that = this;
@@ -88,9 +108,11 @@ export default {
       that.currentFloor = "";
       that.init(area);
     },
+
     // 初始化地图
     init(area) {
       var that = this;
+
       // 初始化地图宽高
       const width = window.innerWidth;
       const height = window.innerHeight;
@@ -110,6 +132,7 @@ export default {
       });
       map.addControl(topLeftLontrol);
       map.addControl(topLeftNavigation);
+
       // 如果有这个参数，就进行定位
       if (area) {
         map.centerAndZoom(area, 15);

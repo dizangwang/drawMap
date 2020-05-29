@@ -169,6 +169,9 @@ export default {
     // 清除轮廓信息
     clearOutLineData() {
       var that = this;
+      if (that.formValidate.lineData === "") {
+        return;
+      }
       that
         .$confirm("是否确认清空轮廓数据?", "提示", {
           confirmButtonText: "确定",
@@ -189,6 +192,7 @@ export default {
           });
         });
     },
+
     // 地图轮廓退出
     lineQuit() {
       var that = this;
@@ -200,19 +204,31 @@ export default {
       var that = this;
       var str = "";
       Object.keys(lineData).forEach((item, index) => {
-        str += `floorOutline[${index}].floor="${item}"&`;
-        str += `floorOutline[${index}].outline="${JSON.stringify(
+        var floorNum = "";
+        if (item.indexOf("F") > -1) {
+          floorNum = +item.replace("F", "");
+        }
+        if (item.indexOf("B") > -1) {
+          floorNum = -+item.replace("B", "");
+        }
+        if (item.indexOf("M") > -1) {
+          floorNum = -+item.replace("M", "");
+        }
+        str += `floorOutline[${index}].floor=${floorNum}&`;
+        str += `floorOutline[${index}].outline=${JSON.stringify(
           lineData[item]
-        )}"&`;
+        )}&`;
       });
       that.formValidate.lineData = str;
     },
+
     // 点击创建轮廓
     mapOutLineClick() {
       var that = this;
       that.fullScreenModal = true;
       that.$refs.drawProfile.initData("北京市丰台区");
     },
+
     // 被外部调用时初始化方法
     init(row) {
       var that = this;
@@ -224,6 +240,7 @@ export default {
       that.$refs.formValidate.resetFields();
       that.getTaskById(row.id);
     },
+
     // 根据任务id获取详情
     getTaskById(id) {
       var that = this;
@@ -251,14 +268,17 @@ export default {
           }
         });
     },
+
     // 上传文件成功回调
     uploadSuccess() {
       // todo
     },
+
     // 点击取消事件
     cancelClick() {
       this.$emit("cancel");
     },
+
     // 提交表单事件
     handleSubmit() {
       var that = this;
@@ -278,8 +298,8 @@ export default {
           that
             .ajax({
               method: "post",
-              url: that.apis.buildingMgrSave + str,
-              data: {}
+              url: that.apis.buildingMgrUpdate + that.formValidate.id,
+              data: str
             })
             .then((res) => {
               const { data } = res;

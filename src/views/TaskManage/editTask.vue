@@ -148,6 +148,7 @@ export default {
   },
   mounted() {},
   methods: {
+    // 初始化编辑任务
     init(id) {
       var that = this;
       that.id = id;
@@ -208,6 +209,8 @@ export default {
           }
         });
     },
+
+    // 点击取消事件
     cancelClick() {
       this.$emit("cancel");
     },

@@ -90,6 +90,10 @@
         :data="Taskdata"
       >
         <!-- 列表进度条 -->
+        <template slot="taskName" slot-scope="{row}">
+          <el-link @click="goTaskBuilding(row)" type="primary">{{row.taskName}}</el-link>
+        </template>
+        <!-- 列表进度条 -->
         <template slot="progress" slot-scope="{row}">
           <el-progress :percentage="row.progress"></el-progress>
         </template>
@@ -238,7 +242,7 @@ export default {
         },
         {
           title: "任务名称",
-          key: "taskName"
+          slot: "taskName"
         },
         {
           title: "任务类型",
@@ -293,9 +297,21 @@ export default {
     that.getAreasWithPid("", (data) => {
       that.provinceList = data;
     });
+
+    // 每次进入到任务列表，先清空缓存任务对象，防止跳转到楼宇管理的时候，数据混乱
+    that.utils.localstorageSet("taskObj", "");
   },
   methods: {
     ...mapActions(["setTaskTypes"]),
+
+    // 跳转到任务下的楼宇，任务信息通过缓存传递
+    goTaskBuilding(row) {
+      var that = this;
+      that.utils.localstorageSet("taskObj", row);
+      that.$router.push({ path: `/buildingManage` });
+    },
+
+    // 监听城市变动
     cityChange(id) {
       var that = this;
       if (id) {
@@ -305,6 +321,8 @@ export default {
         that.formValidate.district = "";
       }
     },
+
+    // 监听省份变动
     provinceChange(id) {
       var that = this;
       if (id) {
@@ -315,6 +333,8 @@ export default {
         that.formValidate.district = "";
       }
     },
+
+    // 根据区域id获取区域列表
     getAreasWithPid(pid, fn) {
       var that = this;
       that
@@ -335,6 +355,7 @@ export default {
           }
         });
     },
+
     // 获取任务类型放到vuex中
     getAllTypes() {
       var that = this;
@@ -375,6 +396,7 @@ export default {
     // 左上角 任务/楼宇 切换界面
     taskChange(e) {
       var that = this;
+      that.utils.localstorageSet("taskObj", "");
       if (typeof e === "string") {
         if (e === "2") {
           that.$router.push({ path: "/buildingManage" });
