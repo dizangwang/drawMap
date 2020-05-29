@@ -57,7 +57,7 @@
           size="mini"
           maxlength="20"
           class="leftInput lf20"
-          placeholder="按任务名称搜索"
+          placeholder="请输入任务名称"
         />
         <el-button @click="searchClick" size="mini" class="lf20" type="primary">确定</el-button>
       </div>
@@ -88,7 +88,20 @@
         border
         :columns="Taskcolumns"
         :data="Taskdata"
+        tooltip-theme="light"
       >
+        <template slot="comment" slot-scope="{row}">
+          <span v-if="!commentOverFilter(row.comment)">{{row.comment}}</span>
+          <Poptip
+            title="任务描述"
+            v-if="commentOverFilter(row.comment)"
+            word-wrap
+            width="130"
+            theme="light"
+            :content="row.comment"
+            placement="right-start"
+          >{{row.comment | commentFilter}}</Poptip>
+        </template>
         <!-- 列表进度条 -->
         <template slot="taskName" slot-scope="{row}">
           <el-link @click="goTaskBuilding(row)" type="primary">{{row.taskName}}</el-link>
@@ -127,6 +140,7 @@
         :page-size="searchForm.size"
         show-elevator
         show-total
+        show-sizer
         @on-change="pageChange"
         @on-page-size-change="pageSizeChange"
       />
@@ -255,7 +269,8 @@ export default {
         },
         {
           title: "任务描述",
-          key: "comment",
+          slot: "comment",
+
           tooltip: true
         },
         {
@@ -301,9 +316,28 @@ export default {
     // 每次进入到任务列表，先清空缓存任务对象，防止跳转到楼宇管理的时候，数据混乱
     that.utils.localstorageSet("taskObj", "");
   },
+  filters: {
+
+    // 针对任务描述超过20个字进行处理
+    commentFilter(value) {
+      var val = `${value}`;
+      if (val.length > 20) {
+        val = `${val.substring(0, 20)}...`;
+      }
+      return val;
+    }
+  },
   methods: {
     ...mapActions(["setTaskTypes"]),
 
+    // 判断任务描述是否超出20个字
+    commentOverFilter(value) {
+      var val = `${value}`;
+      if (val.length > 20) {
+        return true;
+      }
+      return false;
+    },
     // 跳转到任务下的楼宇，任务信息通过缓存传递
     goTaskBuilding(row) {
       var that = this;

@@ -81,7 +81,7 @@
       footer-hide
       fullscreen
       :closable="false"
-      :z-index="2022"
+      :z-index="3022"
       title="地图轮廓"
     >
       <DrawProfile ref="drawProfile" @save="lineSave" @quit="lineQuit"></DrawProfile>

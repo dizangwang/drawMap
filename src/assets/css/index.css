@@ -405,8 +405,8 @@ template {
 /* 图标 */
 .iconCommon{
   display: inline-block;
-  width:12px;
-  height:12px;
+  width:10px;
+  height:10px;
   vertical-align: -0.1em;
   margin-right:4px;
 }
@@ -458,9 +458,7 @@ template {
   background: url('../images/icons/draw.png') no-repeat center;
   background-size: 100% 100%;
 }
-.el-message{
-  z-index: 3030!important;
-}
+
 .iconSelectElement{
   background: url('../images/icons/selectElement.png') no-repeat center;
   background-size: 100% 100%;
@@ -484,4 +482,13 @@ template {
 .iconDrawPolygon{
   background: url('../images/icons/drawPolygon.png') no-repeat center;
   background-size: 100% 100%;
+}
+
+
+
+.el-message{
+  z-index: 5030!important;
+}
+.tableCon .ivu-table-wrapper{
+  overflow:unset!important;
 }

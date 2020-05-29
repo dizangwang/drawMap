@@ -12,7 +12,10 @@
           <el-option value="1" label="任务"></el-option>
           <el-option value="2" label="楼宇"></el-option>
         </el-select>
-        <el-select
+        <span v-if="taskObj" class="lf20">
+          {{taskObj.taskName}}
+        </span>
+        <!-- <el-select
           v-model="searchForm.publishStatus"
           placeholder="发布状态"
           size="mini"
@@ -37,8 +40,9 @@
             :label="item.name"
             :key="item.id"
           ></el-option>
-        </el-select>
+        </el-select> -->
         <el-select
+        v-if="!taskObj"
           size="mini"
           v-model="searchForm.province"
           placeholder="省"
@@ -53,6 +57,7 @@
           ></el-option>
         </el-select>
         <el-select
+        v-if="!taskObj"
           size="mini"
           v-model="searchForm.city"
           placeholder="市"
@@ -62,6 +67,7 @@
           <el-option v-for="item in cityList" :value="item.id" :label="item.name" :key="item.id"></el-option>
         </el-select>
         <el-select
+        v-if="!taskObj"
           size="mini"
           v-model="searchForm.district"
           placeholder="区"
@@ -79,7 +85,7 @@
           v-model="searchForm.buildingName"
           size="mini"
           class="leftInput lf20"
-          placeholder="按任务名称搜索"
+          placeholder="请输入楼宇名称"
         />
         <el-button @click="searchClick" size="mini" class="lf20" type="primary">确定</el-button>
       </div>
@@ -116,6 +122,7 @@
         border
         :columns="Taskcolumns"
         :data="Taskdata"
+         tooltip-theme="light"
       >
         <template slot="progress" slot-scope="{row}">
           <el-progress :percentage="row.progress"></el-progress>
@@ -146,6 +153,7 @@
         :page-size="searchForm.size"
         show-elevator
         show-total
+        show-sizer
         @on-change="pageChange"
         @on-page-size-change="pageSizeChange"
       />
@@ -158,7 +166,7 @@
         @cancel="createBuildingModal=false"
       />
     </el-dialog>
-    <el-dialog :visible.sync="editBuildingModal" title="修改任务">
+    <el-dialog :visible.sync="editBuildingModal" width="30%" title="修改楼宇">
       <EditBuilding ref="editTask" @success="updateTaskSuccess" @cancel="editBuildingModal=false" />
     </el-dialog>
 
@@ -254,7 +262,7 @@ export default {
         {
           title: "楼宇名称",
           key: "buildingName",
-          width: 100
+          width: 180
         },
         {
           title: "楼宇楼层",
@@ -310,6 +318,9 @@ export default {
      * 说明是点击某个任务进来的，如果没有就说明是查询所有的楼宇* */
     var taskObj = that.utils.localstorageGet("taskObj");
     that.taskObj = taskObj;
+    if (taskObj) {
+      that.Taskcolumns.splice(1, 1);
+    }
     that.getAllTypes();
     that.searchClick();
     that.getAreasWithPid("", (data) => {
