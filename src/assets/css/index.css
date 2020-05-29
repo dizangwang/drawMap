@@ -16,7 +16,7 @@
  html {
   line-height: 1.15; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
-  background: #f8f8f9!important;
+  /* background: #f8f8f9!important; */
 }
 
 /* Sections
@@ -28,7 +28,7 @@
 
 body {
   margin: 0;
-  background: #f8f8f9!important;
+  /* background: #f8f8f9!important; */
 }
 
 /**
@@ -368,6 +368,9 @@ template {
 .lf10{
   margin-left: 10px;
 }
+.line5{
+  height:5px;
+}
 .line10{
   height:10px;
 }
@@ -402,8 +405,8 @@ template {
 /* 图标 */
 .iconCommon{
   display: inline-block;
-  width:10px;
-  height:10px;
+  width:12px;
+  height:12px;
   vertical-align: -0.1em;
   margin-right:4px;
 }
@@ -431,6 +434,54 @@ template {
   background: url('../images/icons/add.png') no-repeat center;
   background-size: 100% 100%;
 }
+.iconEye{
+  background: url('../images/icons/eye.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconSave{
+  background: url('../images/icons/save.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconBuilding{
+  background: url('../images/icons/building.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconSet{
+  background: url('../images/icons/set.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconLine{
+  background: url('../images/icons/line.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconDraw{
+  background: url('../images/icons/draw.png') no-repeat center;
+  background-size: 100% 100%;
+}
 .el-message{
   z-index: 3030!important;
+}
+.iconSelectElement{
+  background: url('../images/icons/selectElement.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconIconMgr{
+  background: url('../images/icons/iconMgr.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconDrawElement{
+  background: url('../images/icons/drawElement.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconDrawRect{
+  background: url('../images/icons/drawRect.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconDrawPie{
+  background: url('../images/icons/drawPie.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconDrawPolygon{
+  background: url('../images/icons/drawPolygon.png') no-repeat center;
+  background-size: 100% 100%;
 }

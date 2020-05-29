@@ -6,27 +6,12 @@ const routes = [
   {
     path: "/",
     name: "/",
-    redirect: "taskManage"
-  },
-  {
-    path: "/lun",
-    name: "lun",
-    component: () => import("../components/DrawProfile.vue")
+    redirect: "drawMap"
   },
   {
     path: "/login",
     name: "login",
     component: () => import("../views/Login")
-  },
-  {
-    path: "/myProject",
-    name: "myProject",
-    component: () => import("../views/MyProject")
-  },
-  {
-    path: "/chartShowControl",
-    name: "chartShowControl",
-    component: () => import("../views/ChartShowControl")
   },
   {
     path: "/taskManage",
@@ -37,6 +22,11 @@ const routes = [
     path: "/buildingManage",
     name: "buildingManage",
     component: () => import("../views/BuildingManage")
+  },
+  {
+    path: "/drawMap",
+    name: "drawMap",
+    component: () => import("../views/DrawMap")
   }
 
 ];
