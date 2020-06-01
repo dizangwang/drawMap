@@ -23,7 +23,11 @@ const apis = {
   // 根据楼宇id获取楼宇信息
   getBuildingById: `${root}/buildingMgr/`,
   // 根据楼宇id删除楼宇信息
-  deleteBuildingById: `${root}/buildingMgr/delete`
+  deleteBuildingById: `${root}/buildingMgr/delete`,
+  // 根据楼层ID获得楼层的详细信息
+  getFloorById: `${root}/floorMgr/`,
+  // 根据楼层ID更新楼层的详细信息
+  updateFloorById: `${root}/floorMgr/updateSettings/`
 
 };
 export default apis;

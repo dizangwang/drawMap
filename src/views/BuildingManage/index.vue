@@ -124,8 +124,12 @@
         :data="Taskdata"
          tooltip-theme="light"
       >
+
+        <template slot="buildingName" slot-scope="{row}">
+          <el-link @click="goDrawMap(row)" type="primary">{{row.buildingName}}</el-link>
+        </template>
         <template slot="progress" slot-scope="{row}">
-          <el-progress :percentage="row.progress"></el-progress>
+          <el-progress :percentage="progressHandler(row)"></el-progress>
         </template>
         <template slot="floor" slot-scope="{row}">{{+row.overGroundFloor-row.underGroundFloor}}</template>
 
@@ -261,8 +265,7 @@ export default {
         },
         {
           title: "楼宇名称",
-          key: "buildingName",
-          width: 180
+          slot: "buildingName"
         },
         {
           title: "楼宇楼层",
@@ -270,7 +273,7 @@ export default {
         },
         {
           title: "完成状态",
-          key: "comment",
+          slot: "progress",
           tooltip: true
         },
 
@@ -290,8 +293,6 @@ export default {
         province: "",
         size: 10,
         buildingName: "",
-        finishStatus: "",
-        publishStatus: "",
         taskId: ""
       },
       finishStatusList: [
@@ -326,9 +327,32 @@ export default {
     that.getAreasWithPid("", (data) => {
       that.provinceList = data;
     });
+    // 清空缓存中的楼宇信息
+    that.utils.localstorageSet("buildObj", "");
   },
   methods: {
     ...mapActions(["setTaskTypes"]),
+
+    // 处理进度数据
+    progressHandler(row) {
+      var that = this;
+      var num = 0;
+      var totalFloor = +row.totalFloor;
+      var finishedFloor = +row.finishedFloor;
+      if (totalFloor === 0 || finishedFloor === 0) {
+        num = 0;
+        return num;
+      }
+      num = Math.round((finishedFloor / totalFloor) * 100);
+      return num;
+    },
+
+    // 点击楼宇名称进入绘制页面
+    goDrawMap(row) {
+      var that = this;
+      that.utils.localstorageSet("buildObj", row);
+      that.$router.push({ path: `/drawMap` });
+    },
 
     // 监听城市变动
     cityChange(id) {

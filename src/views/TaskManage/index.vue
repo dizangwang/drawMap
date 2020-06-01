@@ -102,13 +102,13 @@
             placement="right-start"
           >{{row.comment | commentFilter}}</Poptip>
         </template>
-        <!-- 列表进度条 -->
+
         <template slot="taskName" slot-scope="{row}">
           <el-link @click="goTaskBuilding(row)" type="primary">{{row.taskName}}</el-link>
         </template>
         <!-- 列表进度条 -->
         <template slot="progress" slot-scope="{row}">
-          <el-progress :percentage="row.progress"></el-progress>
+          <el-progress :percentage="progressHandler(row)"></el-progress>
         </template>
         <template
           slot="area"
@@ -329,6 +329,20 @@ export default {
   },
   methods: {
     ...mapActions(["setTaskTypes"]),
+
+    // 处理进度数据
+    progressHandler(row) {
+      var that = this;
+      var num = 0;
+      var totalFloor = +row.totalFloor;
+      var finishedFloor = +row.finishedFloor;
+      if (totalFloor === 0 || finishedFloor === 0) {
+        num = 0;
+        return num;
+      }
+      num = Math.round((finishedFloor / totalFloor) * 100);
+      return num;
+    },
 
     // 判断任务描述是否超出20个字
     commentOverFilter(value) {

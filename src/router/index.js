@@ -8,7 +8,7 @@ const routes = [
   {
     path: "/",
     name: "/",
-    redirect: "drawMap"
+    redirect: "taskManage"
   },
 
   // 登录页

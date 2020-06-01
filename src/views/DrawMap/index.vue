@@ -13,12 +13,35 @@
       <el-button size="mini" class="lf10" type="primary">
         <i class="iconCommon iconPublish"></i>发布
       </el-button>
-      <el-button size="mini" class="lf10" type="primary">
+      <el-button size="mini" class="lf10" type="primary" @click="setFloorInfoClick">
         <i class="iconCommon iconBuilding"></i>设置楼层信息
       </el-button>
       <el-input size="mini" class="lf10 searchInput" placeholder="请输入内容">
         <el-button class="searchButton" slot="append" icon="el-icon-search"></el-button>
       </el-input>
+    </div>
+
+    <!-- 底部操作栏 -->
+
+    <div class="mapFooterHandler">
+      <el-button type="primary" plain>20M</el-button>
+      <div class="zoomSelect">
+        <i class="el-icon-zoom-in lf10"></i>
+        <i class="vline lf10"></i>
+        <i class="el-icon-zoom-out lf10"></i>
+        <i class="vline lf10"></i>
+        <i class="iconCommon iconBlackBuild lf10 iconSize"></i>
+
+        <span  class="floorWord" >楼层：</span>
+        <el-select  class="floorSelect" size="mini" v-model="floor" placeholder="楼层">
+          <el-option label="F5" value="5"></el-option>
+          <el-option label="F4" value="4"></el-option>
+          <el-option label="F3" value="3"></el-option>
+          <el-option label="F2" value="2"></el-option>
+          <el-option label="F1" value="1"></el-option>
+
+        </el-select>
+      </div>
     </div>
 
     <!-- 主体内容 -->
@@ -267,28 +290,65 @@
       </div>
       <div class="rightHandlerCon" :style="{ height: height }"></div>
     </div>
+    <!-- 设置楼层信息 -->
+    <el-dialog :visible.sync="setFloorInfoModal" width="500px" title="设置楼层信息">
+      <SetFloorInfo
+        ref="setFloorInfo"
+        @success="setFloorInfoSuccess"
+        @cancel="setFloorInfoModal=false"
+      />
+    </el-dialog>
   </div>
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
+import SetFloorInfo from "./setFloorInfo.vue";
 
 export default {
   name: "ChartShowControl",
   computed: {
     ...mapGetters(["userInfo"])
   },
-  components: {},
+  components: { SetFloorInfo },
   data() {
     return {
+      // 楼层
+      floor: "",
+      // 表单字段
+      formValidate: {
+        taskId: "",
+        buildingName: "",
+        overGroundFloor: "",
+        underGroundFloor: "",
+        lineData: ""
+      },
+      // 校验规则
+      ruleValidate: {
+        buildingName: [
+          { required: true, message: "请填写楼宇名称", trigger: "blur" }
+        ]
+      },
+      // 设置楼层信息
+      setFloorInfoModal: false,
+      // 左侧-顶部-tab栏
       tabNum: 1,
-      menuSelectElement: 1,
+      // 左侧-顶部-绘制模块
+      menuSelectElement: 2,
+      // 左侧-顶部-路径模块
       menuSelectElementLine: 1,
+      // 左侧-顶部-绘制路线
       menuDrawElementLine: 1,
+      // //左侧-顶部-图标管理
       menuIconMgr: 1,
+      // 左侧-顶部-绘制元素
       menuDrawElement: 1,
+      // 元素高度
       elementHeight: 0,
+      // 标注高度
       markHeight: 0,
+      // 元素样式
       elementStyle: "",
+      // 右侧地图高度
       height: ""
     };
   },
@@ -296,10 +356,30 @@ export default {
     var that = this;
     that.height = `${window.innerHeight - 80}px`;
   },
-  methods: {}
+  methods: {
+    // 设置楼层信息
+    setFloorInfoClick() {
+      var that = this;
+      that.setFloorInfoModal = true;
+    },
+    // 保存楼层信息成功
+    setFloorInfoSuccess() {}
+  }
 };
 </script>
 <style scoped>
+.floorWord{
+  font-size: 14px;
+}
+.floorSelect{
+  width:76px;
+  border:0;
+}
+
+.iconSize {
+  width: 20px;
+  height: 20px;
+}
 .drawRectWH {
   width: 30px;
   height: 30px;
@@ -320,7 +400,6 @@ export default {
 .rightHandlerCon {
   flex: 1;
   overflow: auto;
-  background: yellow;
 }
 .handler {
   display: flex;
@@ -407,6 +486,33 @@ export default {
   text-align: center;
   margin: 0 10px 10px 10px;
   padding-top: 10px;
+}
+.zoomSelect {
+  margin-left: 30px;
+  width: 250px;
+  height: 40px;
+  font-size: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background: white;
+  box-shadow: 2px 2px 10px #c7c5c5;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.mapFooterHandler {
+  display: flex;
+  justify-content: flex-start;
+  height: 40px;
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  z-index: 1000;
+}
+.vline{
+  display: inline-block;
+  height:18px;
+  border-left:1px solid #e6e6e6 ;
 }
 </style>
 
