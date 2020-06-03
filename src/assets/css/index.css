@@ -562,6 +562,9 @@ template {
 .el-message {
   z-index: 5030 !important;
 }
+.el-message-box__wrapper{
+  z-index: 5030 !important;
+}
 
 .tableCon .ivu-table-wrapper {
   overflow: unset !important;

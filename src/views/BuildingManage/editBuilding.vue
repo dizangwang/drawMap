@@ -115,6 +115,8 @@ export default {
     };
 
     return {
+      // 用于反显轮廓
+      editOutLine: "",
       // 表单字段
       formValidate: {
         id: "",
@@ -216,11 +218,13 @@ export default {
     mapOutLineClick() {
       var that = this;
       that.fullScreenModal = true;
-      that.$refs.drawProfile.initData(
-        that.taskData.provinceName
+      that.$refs.drawProfile.initData({
+        address:
+          that.taskData.provinceName
           + that.taskData.cityName
-          + that.taskData.districtName
-      );
+          + that.taskData.districtName,
+        editOutLine: that.editOutLine
+      });
     },
 
     // 根据楼宇id获取整个楼层的信息
@@ -236,7 +240,23 @@ export default {
           var { data } = res;
           if (data.code === 200) {
             const obj = data.data;
-            Object.keys(obj).forEach((item, index) => {});
+            let str = "";
+            const newObj = {};
+            Object.keys(obj).forEach((item, index) => {
+              str += `floorOutline[${index}].floor=${item}&`;
+              str += `floorOutline[${index}].outline=${obj[item]}&`;
+              const key = +item;
+              if (key > 0) {
+                newObj[`F${key}`] = obj[item];
+              } else {
+                newObj[`B${-key}`] = obj[item];
+              }
+            });
+            // 用于编辑图层反显
+            that.editOutLine = newObj;
+
+            // 回填 lineData
+            that.formValidate.lineData = str;
           } else {
             that.$message({
               message: data.msg,

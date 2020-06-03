@@ -214,13 +214,12 @@ export default {
       const address = that.taskObj.provinceName
         + that.taskObj.cityName
         + that.taskObj.districtName;
-      that.$refs.drawProfile.initData(address);
+      that.$refs.drawProfile.initData({ address });
     },
 
     // 被外部调用时初始化方法
     init(taskObj) {
       var that = this;
-
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
       });

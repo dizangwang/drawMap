@@ -66,8 +66,12 @@ export default {
 
       // 当前的楼层
       currentFloor: "",
+      // 实例化鼠标绘制工具
       drawingManager: "",
-      isSave: false
+      // 是不是已经保存
+      isSave: false,
+      // 编辑时传过来的数据
+      editOutLine: ""
     };
   },
   mounted() {
@@ -96,7 +100,7 @@ export default {
     },
 
     // 被其他页面调用时，清空数据
-    initData(area) {
+    initData(initObj) {
       var that = this;
       that.searchValue = "";
       that.searchResult = [];
@@ -106,7 +110,27 @@ export default {
       that.indoorManager = "";
       that.floorData = {};
       that.currentFloor = "";
-      that.init(area);
+      that.init(initObj.address);
+      // 判断是否传过来轮廓的经纬度
+      if (initObj.editOutLine) {
+        that.isSave = true;
+        that.editOutLine = initObj.editOutLine;
+        // 把值赋值给floorData
+        Object.keys(that.editOutLine).forEach((key, index) => {
+          if (that.editOutLine[key]) {
+            that.floorData[key] = JSON.parse(that.editOutLine[key]);
+          }
+        });
+
+        // 默认渲染F1层
+        if (that.editOutLine.F1) {
+          that.createPolygon(JSON.parse(that.editOutLine.F1));
+        }
+        // 如果没有F1层有B1层，就渲染B1层
+        if (!that.editOutLine.F1 && that.editOutLine.B1) {
+          that.createPolygon(JSON.parse(that.editOutLine.B1));
+        }
+      }
     },
 
     // 初始化地图
@@ -148,10 +172,33 @@ export default {
 
       // 创建室内图实例
       that.indoorManager = new BMapLib.IndoorManager(map, {
+        // 室内图加载完成事件
+        complete(e) {
+          // 获取地图右侧楼层展示
+          var lis = document.querySelectorAll(".floor-select-container li");
+
+          // 拿到已经绘制好轮廓的楼层
+          var keys = Object.keys(that.floorData);
+          // that.editOutLine
+
+          // 循环楼层
+          keys.forEach((key) => {
+            // 循环地图右侧楼层
+            lis.forEach((item) => {
+              const button = item.querySelector("button");
+              const floor = button.getAttribute("data-floor");
+              // 楼层比对
+              if (floor === key) {
+                button.style.color = "red";
+              }
+            });
+          });
+        },
         // 切换楼层事件
         afterChangeFloor(e) {
           // 切换时清除所有覆盖物
           that.clearAll();
+          map.clearOverlays();
 
           // 指定当前楼层
           that.currentFloor = e.currentFloor;
@@ -161,6 +208,7 @@ export default {
 
           // 拿到已经绘制好轮廓的楼层
           var keys = Object.keys(that.cacheOverlays);
+          // that.editOutLine
 
           // 循环楼层
           keys.forEach((key) => {
@@ -168,7 +216,6 @@ export default {
             lis.forEach((item) => {
               const button = item.querySelector("button");
               const floor = button.getAttribute("data-floor");
-
               // 楼层比对
               if (floor === key) {
                 button.style.color = "red";
@@ -178,6 +225,27 @@ export default {
           // 如果图层缓存对象中有当前楼层的数据，就渲染到地图上
           if (that.cacheOverlays[e.currentFloor]) {
             that.map.addOverlay(that.cacheOverlays[e.currentFloor]);
+          } else if (that.editOutLine) {
+            // 如果是编辑
+
+            // 拿到已经绘制好轮廓的楼层
+            var keys1 = Object.keys(that.floorData);
+            // 循环楼层
+            keys1.forEach((key) => {
+              // 循环地图右侧楼层
+              lis.forEach((item) => {
+                const button = item.querySelector("button");
+                const floor = button.getAttribute("data-floor");
+                // 楼层比对
+                if (floor === key) {
+                  button.style.color = "red";
+                }
+              });
+            });
+            // 如果楼层数据中有当前楼层的数据，就绘制到地图上
+            if (that.floorData[e.currentFloor]) {
+              that.createPolygon(that.floorData[e.currentFloor]);
+            }
           }
         }
       });
@@ -271,7 +339,28 @@ export default {
       }
 
       that.clearAll();
+      that.map.clearOverlays();
+      // 编辑时
+      if (that.editOutLine) {
+        var lis = document.querySelectorAll(".floor-select-container li");
+        // 拿到已经绘制好轮廓的楼层
+        var keys = Object.keys(that.floorData);
+        // 循环楼层
+        keys.forEach((key) => {
+          // 循环地图右侧楼层
+          lis.forEach((item) => {
+            const button = item.querySelector("button");
+            const floor = button.getAttribute("data-floor");
+            // 楼层比对
+            if (floor === key) {
+              button.style.color = "red";
+            }
+          });
+        });
+      }
+      // 获取当前楼层
       that.currentFloor = that.indoorManager.getFloor();
+      // 绘制结束回调方法
       var overlaycomplete = (e) => {
         that.activeLonLatData = e.overlay.Tn;
         var currentFloor = that.indoorManager.getFloor();
@@ -280,6 +369,7 @@ export default {
         }
         that.cacheOverlays[currentFloor] = e.overlay;
         that.floorData[currentFloor] = e.overlay.Tn;
+        that.isSave = false;
       };
 
       // 线的样式

@@ -333,7 +333,6 @@
           <el-option value="1" label="图面层"></el-option>
         </el-select>
         <el-input class="lf10" size="small" placeholder="搜索" show-word-limit />
-
         <i class="el-icon-delete lf10"></i>
       </div>
 
