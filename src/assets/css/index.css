@@ -401,6 +401,10 @@ template {
   margin-left: 10px;
 }
 
+.lf5 {
+  margin-left: 5px;
+}
+
 .line5 {
   height: 5px;
 }
@@ -581,4 +585,10 @@ template {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.editElementStyle .ivu-table th{
+  background-color: white!important;
+}
+.editElementStyle .ivu-table th .ivu-checkbox{
+  display: none;
 }

@@ -7,7 +7,8 @@
           <el-option value="1" label="任务"></el-option>
           <el-option value="2" label="楼宇"></el-option>
         </el-select>
-        <el-select v-model="searchForm.taskTypeId" size="mini" class="leftSelect lf20">
+        <span class="lf5">任务类型</span>
+        <el-select v-model="searchForm.taskTypeId" size="mini" class="leftSelect lf5">
           <el-option value>任务类型</el-option>
           <el-option
             v-for="item in taskTypes"
@@ -16,11 +17,12 @@
             :key="item.id"
           ></el-option>
         </el-select>
+        <span class="lf5">任务区域</span>
         <el-select
           size="mini"
           v-model="searchForm.province"
           placeholder="省"
-          class="areaSelect lf10"
+          class="leftSelect lf5"
           @change="provinceChange"
         >
           <el-option
@@ -34,17 +36,12 @@
           size="mini"
           v-model="searchForm.city"
           placeholder="市"
-          class="areaSelect lf10"
+          class="leftSelect lf5"
           @change="cityChange"
         >
           <el-option v-for="item in cityList" :value="item.id" :label="item.name" :key="item.id"></el-option>
         </el-select>
-        <el-select
-          size="mini"
-          v-model="searchForm.district"
-          placeholder="区"
-          class="areaSelect lf10"
-        >
+        <el-select size="mini" v-model="searchForm.district" placeholder="区" class="leftSelect lf5">
           <el-option
             v-for="item in districtList"
             :value="item.id"
@@ -56,7 +53,7 @@
           v-model="searchForm.taskName"
           size="mini"
           maxlength="20"
-          class="leftInput lf20"
+          class="leftInput lf5"
           placeholder="请输入任务名称"
         />
         <el-button @click="searchClick" size="mini" class="lf20" type="primary">确定</el-button>
@@ -82,6 +79,7 @@
     <!--------------------------- 列表--start----------------------------------------- -->
     <div class="tableCon">
       <Table
+        :height="tableHeight"
         @on-selection-change="tableSelectionChange"
         size="small"
         ref="selection"
@@ -146,11 +144,11 @@
       />
     </div>
     <!-- 弹窗区 -->
-    <el-dialog :visible.sync="createTaskModal" title="创建任务">
+    <el-dialog :visible.sync="createTaskModal" width="500px" title="创建任务">
       <CreateTask ref="createTask" @success="createTaskSuccess" @cancel="createTaskModal=false" />
     </el-dialog>
 
-    <el-dialog :visible.sync="editTaskModal" title="修改任务">
+    <el-dialog :visible.sync="editTaskModal" width="500px" title="修改任务">
       <EditTask ref="editTask" @success="updateTaskSuccess" @cancel="editTaskModal=false" />
     </el-dialog>
 
@@ -158,7 +156,7 @@
       <el-radio v-model="radioBatchPublish" label="1">geoJson</el-radio>
       <el-radio v-model="radioBatchPublish" label="2">shp</el-radio>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini">取 消</el-button>
+        <el-button size="mini" @click="dataTypeBatchModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="publishBatchOkClick">确 定</el-button>
       </span>
     </el-dialog>
@@ -166,7 +164,7 @@
       <el-radio v-model="radioPublish" label="1">geoJson</el-radio>
       <el-radio v-model="radioPublish" label="2">shp</el-radio>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini">取 消</el-button>
+        <el-button size="mini" @click="dataTypeModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="publishOkClick">确 定</el-button>
       </span>
     </el-dialog>
@@ -174,7 +172,7 @@
       <el-radio v-model="radioDown" label="1">geoJson</el-radio>
       <el-radio v-model="radioDown" label="2">shp</el-radio>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini">取 消</el-button>
+        <el-button size="mini" @click="formatModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="downOkClick">确 定</el-button>
       </span>
     </el-dialog>
@@ -182,7 +180,7 @@
       <el-radio v-model="radioBatchDown" label="1">geoJson</el-radio>
       <el-radio v-model="radioBatchDown" label="2">shp</el-radio>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini">取 消</el-button>
+        <el-button size="mini" @click="formatBatchModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="downBatchOkClick">确 定</el-button>
       </span>
     </el-dialog>
@@ -208,6 +206,8 @@ export default {
   },
   data() {
     return {
+      // 表格高度
+      tableHeight: "",
       // 创建任务弹窗展示
       createTaskModal: false,
 
@@ -252,7 +252,8 @@ export default {
         {
           type: "selection",
           key: "id",
-          width: 50
+          width: 55,
+          align: "center"
         },
         {
           title: "任务名称",
@@ -261,7 +262,7 @@ export default {
         {
           title: "任务类型",
           key: "taskTypeName",
-          width: 100
+          width: 90
         },
         {
           title: "所属区域",
@@ -275,7 +276,8 @@ export default {
         },
         {
           title: "任务进度",
-          slot: "progress"
+          slot: "progress",
+          width: 150
         },
         {
           title: "任务操作",
@@ -315,9 +317,12 @@ export default {
 
     // 每次进入到任务列表，先清空缓存任务对象，防止跳转到楼宇管理的时候，数据混乱
     that.utils.localstorageSet("taskObj", "");
+    that.tableHeight = window.innerHeight - 160;
+    window.onresize = () => {
+      that.tableHeight = window.innerHeight - 160;
+    };
   },
   filters: {
-
     // 针对任务描述超过20个字进行处理
     commentFilter(value) {
       var val = `${value}`;
@@ -366,7 +371,7 @@ export default {
         that.getAreasWithPid(id, (data) => {
           that.districtList = data;
         });
-        that.formValidate.district = "";
+        that.searchForm.district = "";
       }
     },
 
@@ -377,8 +382,8 @@ export default {
         that.getAreasWithPid(id, (data) => {
           that.cityList = data;
         });
-        that.formValidate.city = "";
-        that.formValidate.district = "";
+        that.searchForm.city = "";
+        that.searchForm.district = "";
       }
     },
 
@@ -494,6 +499,7 @@ export default {
         .then((res) => {
           const { data } = res;
           if (data.code === 200) {
+            that.total = data.data.total;
             that.Taskdata = data.data.records;
           } else {
             that.$message({
@@ -752,19 +758,25 @@ export default {
 }
 .handler {
   display: block;
-  height: 50px;
+  min-height: 50px;
+  padding: 10px 0;
   background: #eafef7;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .leftSelect {
-  width: 100px;
+  width: 8%;
 }
 .leftInput {
-  width: 150px;
+  width: 13%;
+  min-width: 100px;
 }
 .right {
   margin-right: 20px;
+  white-space: nowrap;
+}
+.left {
+  white-space: nowrap;
 }
 </style>

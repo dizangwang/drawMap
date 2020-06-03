@@ -114,10 +114,12 @@ export default {
       var that = this;
 
       // 初始化地图宽高
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      that.mapStyle.width = `${width - 35}px`;
-      that.mapStyle.height = `${height - 85}px`;
+      that.mapStyle.width = `${window.innerWidth - 35}px`;
+      that.mapStyle.height = `${window.innerHeight - 85}px`;
+      window.onresize = () => {
+        that.mapStyle.width = `${window.innerWidth - 35}px`;
+        that.mapStyle.height = `${window.innerHeight - 85}px`;
+      };
 
       // 创建Map实例
       var map = new BMap.Map("map");

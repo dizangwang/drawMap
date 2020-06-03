@@ -27,7 +27,8 @@ const apis = {
   // 根据楼层ID获得楼层的详细信息
   getFloorById: `${root}/floorMgr/`,
   // 根据楼层ID更新楼层的详细信息
-  updateFloorById: `${root}/floorMgr/updateSettings/`
-
+  updateFloorById: `${root}/floorMgr/updateSettings/`,
+  // 根据楼宇ID获取整个楼层的详细信息
+  getFloorByBuildingId: `${root}/floorMgr/outline/`
 };
 export default apis;

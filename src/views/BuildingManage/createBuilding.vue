@@ -113,14 +113,7 @@ export default {
       }
       callback();
     };
-    // 校验轮廓数据
-    var validatefloorData = (rule, value, callback) => {
-      var that = this;
-      if (that.formValidate.lineData === "") {
-        callback(new Error("轮廓数据不能为空"));
-      }
-      callback();
-    };
+
     return {
       // 表单字段
       formValidate: {
@@ -152,19 +145,12 @@ export default {
             message: "总楼层数必须大于等于1",
             trigger: "blur"
           }
-        ],
-        lineData: [
-          {
-            validator: validatefloorData,
-            message: "轮廓数据不能为空"
-          }
         ]
       }
     };
   },
   mounted() {},
   methods: {
-
     // 清除轮廓信息
     clearOutLineData() {
       var that = this;
@@ -225,7 +211,9 @@ export default {
     mapOutLineClick() {
       var that = this;
       that.fullScreenModal = true;
-      const address = that.taskObj.provinceName + that.taskObj.cityName + that.taskObj.districtName;
+      const address = that.taskObj.provinceName
+        + that.taskObj.cityName
+        + that.taskObj.districtName;
       that.$refs.drawProfile.initData(address);
     },
 

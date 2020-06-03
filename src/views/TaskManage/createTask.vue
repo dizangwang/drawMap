@@ -1,5 +1,5 @@
 <template>
-  <div class="task olme">
+  <div class="task">
     <el-form ref="formValidate" :model="formValidate" :rules="ruleValidate" label-width="0">
       <table class="wd100">
         <tr>
@@ -35,53 +35,52 @@
           <td class="required rightLebal">所属区域：</td>
           <td>
             <div class="area">
-              <el-form-item size="mini" label-width="0" prop="provinceId">
-                <el-select
-                  size="small"
-                  v-model="formValidate.provinceId"
-                  placeholder="省"
-                  class="areaSelect"
-                  @change="provinceChange"
-                >
-                  <el-option
-                    v-for="item in provinceList"
-                    :value="item.id"
-                    :label="item.name"
-                    :key="item.id"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item size="mini" label-width="0" prop="cityId">
-                <el-select
-                  size="small"
-                  v-model="formValidate.cityId"
-                  placeholder="市"
-                  class="areaSelect"
-                  @change="cityChange"
-                >
-                  <el-option
-                    v-for="item in cityList"
-                    :value="item.id"
-                    :label="item.name"
-                    :key="item.id"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item size="mini" label-width="0" prop="districtId">
-                <el-select
-                  size="small"
-                  v-model="formValidate.districtId"
-                  placeholder="区"
-                  class="areaSelect"
-                >
-                  <el-option
-                    v-for="item in districtList"
-                    :value="item.id"
-                    :label="item.name"
-                    :key="item.id"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
+              <div class="areaSelect">
+                <el-form-item size="mini" label-width="0" prop="provinceId">
+                  <el-select
+                    size="small"
+                    v-model="formValidate.provinceId"
+                    placeholder="省"
+                    @change="provinceChange"
+                  >
+                    <el-option
+                      v-for="item in provinceList"
+                      :value="item.id"
+                      :label="item.name"
+                      :key="item.id"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+              <div class="areaSelect">
+                <el-form-item size="mini" label-width="0" prop="cityId">
+                  <el-select
+                    size="small"
+                    v-model="formValidate.cityId"
+                    placeholder="市"
+                    @change="cityChange"
+                  >
+                    <el-option
+                      v-for="item in cityList"
+                      :value="item.id"
+                      :label="item.name"
+                      :key="item.id"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+              <div class="areaSelect">
+                <el-form-item size="mini" label-width="0" prop="districtId">
+                  <el-select size="small" v-model="formValidate.districtId" placeholder="区">
+                    <el-option
+                      v-for="item in districtList"
+                      :value="item.id"
+                      :label="item.name"
+                      :key="item.id"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
             </div>
           </td>
         </tr>
@@ -118,7 +117,6 @@ export default {
 
   data() {
     return {
-
       // 表单字段对象
       formValidate: {
         taskName: "",
@@ -158,7 +156,6 @@ export default {
   },
   mounted() {},
   methods: {
-
     // 初始化方法
     init() {
       var that = this;
@@ -184,7 +181,7 @@ export default {
         that.getAreasWithPid(id, (data) => {
           that.districtList = data;
         });
-        that.formValidate.district = "";
+        that.formValidate.districtId = "";
       }
     },
 
@@ -195,8 +192,8 @@ export default {
         that.getAreasWithPid(id, (data) => {
           that.cityList = data;
         });
-        that.formValidate.city = "";
-        that.formValidate.district = "";
+        that.formValidate.cityId = "";
+        that.formValidate.districtId = "";
       }
     },
 
@@ -225,7 +222,6 @@ export default {
     // 保存事件
     handleSubmit() {
       var that = this;
-
       // 校验规则
       that.$refs.formValidate.validate((valid) => {
         if (valid) {
@@ -262,6 +258,9 @@ export default {
   justify-content: space-between;
 }
 .areaSelect {
-  width: 180px;
+  width: 30%;
+}
+.rightLebal {
+  width: 90px;
 }
 </style>

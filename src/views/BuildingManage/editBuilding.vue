@@ -113,14 +113,7 @@ export default {
       }
       callback();
     };
-    // 校验轮廓数据
-    var validatefloorData = (rule, value, callback) => {
-      var that = this;
-      if (that.formValidate.lineData === "") {
-        callback(new Error("轮廓数据不能为空"));
-      }
-      callback();
-    };
+
     return {
       // 表单字段
       formValidate: {
@@ -154,12 +147,6 @@ export default {
             validator: validatefloor,
             message: "总楼层数必须大于等于1",
             trigger: "blur"
-          }
-        ],
-        lineData: [
-          {
-            validator: validatefloorData,
-            message: "轮廓数据不能为空"
           }
         ]
       },
@@ -236,6 +223,29 @@ export default {
       );
     },
 
+    // 根据楼宇id获取整个楼层的信息
+    getFloorByBuildingId(id) {
+      var that = this;
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.getFloorByBuildingId + id,
+          data: ""
+        })
+        .then((res) => {
+          var { data } = res;
+          if (data.code === 200) {
+            const obj = data.data;
+            Object.keys(obj).forEach((item, index) => {});
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+
     // 被外部调用时初始化方法
     init(row) {
       var that = this;
@@ -247,6 +257,7 @@ export default {
       that.$refs.formValidate.resetFields();
       that.getBuildingById(row.id);
       that.getTaskById(row.taskId);
+      that.getFloorByBuildingId(row.id);
     },
     // 根据任务id获取详情
     getTaskById(id) {

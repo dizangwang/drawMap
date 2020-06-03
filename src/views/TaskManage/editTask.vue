@@ -35,53 +35,52 @@
           <td class="required rightLebal">所属区域：</td>
           <td>
             <div class="area">
-              <el-form-item size="mini" label-width="0" prop="provinceId">
-                <el-select
-                  size="small"
-                  v-model="formValidate.provinceId"
-                  placeholder="省"
-                  class="areaSelect"
-                  @change="provinceChange"
-                >
-                  <el-option
-                    v-for="item in provinceList"
-                    :value="item.id"
-                    :label="item.name"
-                    :key="item.id"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item size="mini" label-width="0" prop="cityId">
-                <el-select
-                  size="small"
-                  v-model="formValidate.cityId"
-                  placeholder="市"
-                  class="areaSelect"
-                  @change="cityChange"
-                >
-                  <el-option
-                    v-for="item in cityList"
-                    :value="item.id"
-                    :label="item.name"
-                    :key="item.id"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item size="mini" label-width="0" prop="districtId">
-                <el-select
-                  size="small"
-                  v-model="formValidate.districtId"
-                  placeholder="区"
-                  class="areaSelect"
-                >
-                  <el-option
-                    v-for="item in districtList"
-                    :value="item.id"
-                    :label="item.name"
-                    :key="item.id"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
+              <div class="areaSelect">
+                <el-form-item size="mini" label-width="0" prop="provinceId">
+                  <el-select
+                    size="small"
+                    v-model="formValidate.provinceId"
+                    placeholder="省"
+                    @change="provinceChange"
+                  >
+                    <el-option
+                      v-for="item in provinceList"
+                      :value="item.id"
+                      :label="item.name"
+                      :key="item.id"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+              <div class="areaSelect">
+                <el-form-item size="mini" label-width="0" prop="cityId">
+                  <el-select
+                    size="small"
+                    v-model="formValidate.cityId"
+                    placeholder="市"
+                    @change="cityChange"
+                  >
+                    <el-option
+                      v-for="item in cityList"
+                      :value="item.id"
+                      :label="item.name"
+                      :key="item.id"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+              <div class="areaSelect">
+                <el-form-item size="mini" label-width="0" prop="districtId">
+                  <el-select size="small" v-model="formValidate.districtId" placeholder="区">
+                    <el-option
+                      v-for="item in districtList"
+                      :value="item.id"
+                      :label="item.name"
+                      :key="item.id"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
             </div>
           </td>
         </tr>
@@ -222,7 +221,7 @@ export default {
         that.getAreasWithPid(id, (data) => {
           that.districtList = data;
         });
-        that.formValidate.district = "";
+        that.formValidate.districtId = "";
       }
     },
 
@@ -230,11 +229,11 @@ export default {
     provinceChange(id) {
       var that = this;
       if (id) {
-        that.formValidate.city = "";
-        that.formValidate.district = "";
+        that.formValidate.cityId = "";
+        that.formValidate.districtId = "";
         that.getAreasWithPid(id, (data) => {
           that.cityList = data;
-          that.city = that.detailData.cityId;
+          that.cityId = that.detailData.cityId;
         });
       }
     },
@@ -298,7 +297,11 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
 .areaSelect {
-  width: 180px;
+  width: 30%;
+}
+.rightLebal {
+  width: 90px;
 }
 </style>

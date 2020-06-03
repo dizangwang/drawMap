@@ -12,9 +12,7 @@
           <el-option value="1" label="任务"></el-option>
           <el-option value="2" label="楼宇"></el-option>
         </el-select>
-        <span v-if="taskObj" class="lf20">
-          {{taskObj.taskName}}
-        </span>
+        <span v-if="taskObj" class="lf20">{{taskObj.taskName}}</span>
         <!-- <el-select
           v-model="searchForm.publishStatus"
           placeholder="发布状态"
@@ -40,13 +38,14 @@
             :label="item.name"
             :key="item.id"
           ></el-option>
-        </el-select> -->
+        </el-select>-->
+        <span v-if="!taskObj" class="lf20">楼宇区域</span>
         <el-select
-        v-if="!taskObj"
+          v-if="!taskObj"
           size="mini"
           v-model="searchForm.province"
           placeholder="省"
-          class="areaSelect lf10"
+          class="leftSelect lf10"
           @change="provinceChange"
         >
           <el-option
@@ -57,21 +56,21 @@
           ></el-option>
         </el-select>
         <el-select
-        v-if="!taskObj"
+          v-if="!taskObj"
           size="mini"
           v-model="searchForm.city"
           placeholder="市"
-          class="areaSelect lf10"
+          class="leftSelect lf10"
           @change="cityChange"
         >
           <el-option v-for="item in cityList" :value="item.id" :label="item.name" :key="item.id"></el-option>
         </el-select>
         <el-select
-        v-if="!taskObj"
+          v-if="!taskObj"
           size="mini"
           v-model="searchForm.district"
           placeholder="区"
-          class="areaSelect lf10"
+          class="leftSelect lf10"
         >
           <el-option
             v-for="item in districtList"
@@ -116,15 +115,15 @@
 
     <div class="tableCon">
       <Table
+        :height="tableHeight"
         @on-selection-change="tableSelectionChange"
         size="small"
         ref="selection"
         border
         :columns="Taskcolumns"
         :data="Taskdata"
-         tooltip-theme="light"
+        tooltip-theme="light"
       >
-
         <template slot="buildingName" slot-scope="{row}">
           <el-link @click="goDrawMap(row)" type="primary">{{row.buildingName}}</el-link>
         </template>
@@ -163,14 +162,14 @@
       />
     </div>
 
-    <el-dialog :visible.sync="createBuildingModal" width="30%" title="创建楼宇">
+    <el-dialog :visible.sync="createBuildingModal" width="400px" title="创建楼宇">
       <CreateBuilding
         ref="createBuilding"
         @success="createBuildingSuccess"
         @cancel="createBuildingModal=false"
       />
     </el-dialog>
-    <el-dialog :visible.sync="editBuildingModal" width="30%" title="修改楼宇">
+    <el-dialog :visible.sync="editBuildingModal" width="400px" title="修改楼宇">
       <EditBuilding ref="editTask" @success="updateTaskSuccess" @cancel="editBuildingModal=false" />
     </el-dialog>
 
@@ -178,7 +177,7 @@
       <el-radio v-model="radioBatchPublish" label="1">geoJson</el-radio>
       <el-radio v-model="radioBatchPublish" label="2">shp</el-radio>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini">取 消</el-button>
+        <el-button size="mini" @click="dataTypeBatchModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="publishBatchOkClick">确 定</el-button>
       </span>
     </el-dialog>
@@ -186,7 +185,7 @@
       <el-radio v-model="radioPublish" label="1">geoJson</el-radio>
       <el-radio v-model="radioPublish" label="2">shp</el-radio>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini">取 消</el-button>
+        <el-button size="mini" @click="dataTypeModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="publishOkClick">确 定</el-button>
       </span>
     </el-dialog>
@@ -194,7 +193,7 @@
       <el-radio v-model="radioDown" label="1">geoJson</el-radio>
       <el-radio v-model="radioDown" label="2">shp</el-radio>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini">取 消</el-button>
+        <el-button size="mini" @click="formatModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="downOkClick">确 定</el-button>
       </span>
     </el-dialog>
@@ -202,7 +201,7 @@
       <el-radio v-model="radioBatchDown" label="1">geoJson</el-radio>
       <el-radio v-model="radioBatchDown" label="2">shp</el-radio>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini">取 消</el-button>
+        <el-button size="mini" @click="formatBatchModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="downBatchOkClick">确 定</el-button>
       </span>
     </el-dialog>
@@ -226,6 +225,8 @@ export default {
   },
   data() {
     return {
+      // 表格高度
+      tableHeight: "",
       // 创建楼宇弹窗展示
       createBuildingModal: false,
       // 编辑任务弹窗展示
@@ -257,7 +258,8 @@ export default {
         {
           type: "selection",
           key: "id",
-          width: 50
+          width: 55,
+          align: "center"
         },
         {
           title: "所属任务",
@@ -269,7 +271,8 @@ export default {
         },
         {
           title: "楼宇楼层",
-          slot: "floor"
+          slot: "floor",
+          width: 90
         },
         {
           title: "完成状态",
@@ -329,6 +332,10 @@ export default {
     });
     // 清空缓存中的楼宇信息
     that.utils.localstorageSet("buildObj", "");
+    that.tableHeight = window.innerHeight - 160;
+    window.onresize = () => {
+      that.tableHeight = window.innerHeight - 160;
+    };
   },
   methods: {
     ...mapActions(["setTaskTypes"]),
@@ -361,7 +368,7 @@ export default {
         that.getAreasWithPid(id, (data) => {
           that.districtList = data;
         });
-        that.formValidate.district = "";
+        that.searchForm.district = "";
       }
     },
 
@@ -372,8 +379,8 @@ export default {
         that.getAreasWithPid(id, (data) => {
           that.cityList = data;
         });
-        that.formValidate.city = "";
-        that.formValidate.district = "";
+        that.searchForm.city = "";
+        that.searchForm.district = "";
       }
     },
 
@@ -749,20 +756,28 @@ export default {
 }
 .handler {
   display: block;
-  height: 50px;
+
+  min-height: 50px;
+  padding: 10px 0;
   background: #eafef7;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .leftSelect {
-  width: 80px;
+  width: 10%;
 }
 .leftInput {
-  width: 150px;
+  width: 13%;
+  min-width: 120px;
 }
+
 .right {
   margin-right: 20px;
+  white-space: nowrap;
+}
+.left {
+  white-space: nowrap;
 }
 .areaSelect {
   width: 90px;
