@@ -315,7 +315,6 @@ export default {
   display: flex;
   justify-content: space-between;
 }
-
 .areaSelect {
   width: 30%;
 }

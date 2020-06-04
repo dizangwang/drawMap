@@ -14,10 +14,12 @@ export default {
   },
   data() {
     return {
+
       // 数据图表数据
       dataChartData: [{
         id: 22
       }],
+
       // 数据图表列值
       dataChartColumn: [{
         title: "选择",
@@ -45,8 +47,10 @@ export default {
         key: "id"
       }
       ],
+
       // 数据图表信息弹窗
       dataChartInfoModal: false,
+
       // 元素样式列数据
       elementStyleColumn: [{
         title: "选择",
@@ -66,6 +70,7 @@ export default {
         slot: "color"
       }
       ],
+
       // 元素样式数据
       elementStyleData: [{
         name: "样式1",
@@ -78,10 +83,13 @@ export default {
         color: "yellow"
       }
       ],
+
       // 编辑主题样式展示
       editElementStyleModal: false,
+
       // 楼层
       floor: "",
+
       // 表单字段
       formValidate: {
         taskId: "",
@@ -90,6 +98,7 @@ export default {
         underGroundFloor: "",
         lineData: ""
       },
+
       // 校验规则
       ruleValidate: {
         buildingName: [{
@@ -98,19 +107,25 @@ export default {
           trigger: "blur"
         }]
       },
+
       // 设置楼层信息
       setFloorInfoModal: false,
+
       // 左侧-顶部-tab栏
       tabNum: 1,
 
       // 元素高度
       elementHeight: 0,
+
       // 标注高度
       markHeight: 0,
+
       // 元素样式
       elementStyle: "",
+
       // 右侧地图高度
       height: "",
+
       // 楼宇信息
       buildObj: {}
     };
@@ -130,13 +145,16 @@ export default {
     that.getLabelStyles();
   },
   methods: {
+
     // 设置楼层信息
     setFloorInfoClick() {
       var that = this;
       that.setFloorInfoModal = true;
     },
+
     // 保存楼层信息成功
     setFloorInfoSuccess() {},
+
     // 获得所有的标注样式
     getLabelStyles() {
       var that = this;
@@ -160,6 +178,7 @@ export default {
           }
         });
     },
+
     // 获取所有元素样式
     getElementStyles() {
       var that = this;
@@ -183,6 +202,7 @@ export default {
           }
         });
     },
+
     // 获取所有图标
     getIcons() {
       var that = this;
@@ -206,6 +226,7 @@ export default {
           }
         });
     },
+
     // 加载楼层信息
     loadFloor() {
       var that = this;
@@ -229,6 +250,7 @@ export default {
           }
         });
     },
+
     // 设置楼层完成
     floorFinishById(id) {
       var that = this;
@@ -252,6 +274,7 @@ export default {
           }
         });
     },
+
     // 根据楼层id获取楼层信息
     getFloorInfoById(id) {
       var that = this;
@@ -275,6 +298,7 @@ export default {
           }
         });
     },
+
     // 根据楼宇id获取整个楼层的信息
     getFloorOutlineByBuildingId() {
       var that = this;
