@@ -353,6 +353,7 @@ export default {
             data
           } = res;
           if (data.code === 200) {
+            that.total = data.data.total;
             that.Taskdata = data.data.records;
           } else {
             that.$message({
