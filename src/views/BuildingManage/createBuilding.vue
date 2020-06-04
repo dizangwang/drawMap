@@ -42,8 +42,9 @@
               <div class="centerStart">
                 <el-upload
                   class="upload-demo"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  @on-success="uploadSuccess"
+                  :action="uploadUrl"
+                  :on-success="uploadSuccess"
+                  :on-error="uploadError"
                 >
                   <el-button size="mini" type="primary">
                     <i class="el-icon-upload"></i>点击上传
@@ -75,7 +76,6 @@
     </div>
 
     <!-- 全屏对话框 -->
-
     <Modal
       v-model="fullScreenModal"
       footer-hide
@@ -90,6 +90,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
+
 // 引入地图轮廓信息
 import DrawProfile from "../../components/DrawProfile.vue";
 
@@ -115,6 +116,12 @@ export default {
     };
 
     return {
+      // 上传文件id
+      uploadFileId: "",
+
+      // 上传文件url
+      uploadUrl: "",
+
       // 表单字段
       formValidate: {
         taskId: "",
@@ -123,10 +130,13 @@ export default {
         underGroundFloor: "",
         lineData: ""
       },
+
       // 上级传过来的任务对象
       taskObj: {},
+
       // 全屏展示
       fullScreenModal: false,
+
       // 校验规则
       ruleValidate: {
         buildingName: [
@@ -149,7 +159,10 @@ export default {
       }
     };
   },
-  mounted() {},
+  mounted() {
+    var that = this;
+    that.uploadUrl = that.uploadApis.uploadFiles;
+  },
   methods: {
     // 清除轮廓信息
     clearOutLineData() {
@@ -229,8 +242,26 @@ export default {
     },
 
     // 上传文件成功回调
-    uploadSuccess() {
-      // todo
+    uploadSuccess(res) {
+      var that = this;
+      if (res.code === 200) {
+        that.$message({
+          message: "上传成功",
+          type: "success"
+        });
+        that.uploadFileId = res.data.id;
+      } else {
+        that.$message({
+          message: res.msg,
+          type: "warning"
+        });
+      }
+    },
+    uploadError(res) {
+      this.$message({
+        message: "上传文件失败",
+        type: "warning"
+      });
     },
 
     // 点击取消事件

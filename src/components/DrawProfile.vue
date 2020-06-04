@@ -66,10 +66,13 @@ export default {
 
       // 当前的楼层
       currentFloor: "",
+
       // 实例化鼠标绘制工具
       drawingManager: "",
+
       // 是不是已经保存
       isSave: false,
+
       // 编辑时传过来的数据
       editOutLine: ""
     };
@@ -111,10 +114,12 @@ export default {
       that.floorData = {};
       that.currentFloor = "";
       that.init(initObj.address);
+
       // 判断是否传过来轮廓的经纬度
       if (initObj.editOutLine) {
         that.isSave = true;
         that.editOutLine = initObj.editOutLine;
+
         // 把值赋值给floorData
         Object.keys(that.editOutLine).forEach((key, index) => {
           if (that.editOutLine[key]) {
@@ -126,6 +131,7 @@ export default {
         if (that.editOutLine.F1) {
           that.createPolygon(JSON.parse(that.editOutLine.F1));
         }
+
         // 如果没有F1层有B1层，就渲染B1层
         if (!that.editOutLine.F1 && that.editOutLine.B1) {
           that.createPolygon(JSON.parse(that.editOutLine.B1));
@@ -187,6 +193,7 @@ export default {
             lis.forEach((item) => {
               const button = item.querySelector("button");
               const floor = button.getAttribute("data-floor");
+
               // 楼层比对
               if (floor === key) {
                 button.style.color = "red";
@@ -194,6 +201,7 @@ export default {
             });
           });
         },
+
         // 切换楼层事件
         afterChangeFloor(e) {
           // 切换时清除所有覆盖物
@@ -222,6 +230,7 @@ export default {
               }
             });
           });
+
           // 如果图层缓存对象中有当前楼层的数据，就渲染到地图上
           if (that.cacheOverlays[e.currentFloor]) {
             that.map.addOverlay(that.cacheOverlays[e.currentFloor]);
@@ -230,6 +239,7 @@ export default {
 
             // 拿到已经绘制好轮廓的楼层
             var keys1 = Object.keys(that.floorData);
+
             // 循环楼层
             keys1.forEach((key) => {
               // 循环地图右侧楼层
@@ -242,6 +252,7 @@ export default {
                 }
               });
             });
+
             // 如果楼层数据中有当前楼层的数据，就绘制到地图上
             if (that.floorData[e.currentFloor]) {
               that.createPolygon(that.floorData[e.currentFloor]);
@@ -255,6 +266,7 @@ export default {
     searchValueChange(val) {
       var that = this;
       that.searchValue = val.target.value;
+
       // 如果选中的值和搜索框中的值是一样的，就不进行搜索
       if (that.clickedTitle === that.searchValue) {
         return;
@@ -278,6 +290,7 @@ export default {
       var that = this;
       var { map } = that;
       var local = "";
+
       // 清除地图上的所有覆盖物
       map.clearOverlays();
       function myFun() {
@@ -340,17 +353,21 @@ export default {
 
       that.clearAll();
       that.map.clearOverlays();
+
       // 编辑时
       if (that.editOutLine) {
         var lis = document.querySelectorAll(".floor-select-container li");
+
         // 拿到已经绘制好轮廓的楼层
         var keys = Object.keys(that.floorData);
+
         // 循环楼层
         keys.forEach((key) => {
           // 循环地图右侧楼层
           lis.forEach((item) => {
             const button = item.querySelector("button");
             const floor = button.getAttribute("data-floor");
+
             // 楼层比对
             if (floor === key) {
               button.style.color = "red";
@@ -358,8 +375,10 @@ export default {
           });
         });
       }
+
       // 获取当前楼层
       that.currentFloor = that.indoorManager.getFloor();
+
       // 绘制结束回调方法
       var overlaycomplete = (e) => {
         that.activeLonLatData = e.overlay.Tn;
@@ -414,6 +433,7 @@ export default {
       that.isSave = true;
       that.$emit("save", that.floorData);
     },
+
     // 退出操作
     quitClick() {
       var that = this;

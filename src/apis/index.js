@@ -1,4 +1,4 @@
-const root = "/api";
+const root = "/api/backend";
 const apis = {
   // 获取所有任务类型
   getAllTypes: `${root}/taskTypeMgr/getAllTypes`,
@@ -28,7 +28,26 @@ const apis = {
   getFloorById: `${root}/floorMgr/`,
   // 根据楼层ID更新楼层的详细信息
   updateFloorById: `${root}/floorMgr/updateSettings/`,
-  // 根据楼宇ID获取整个楼层的详细信息
-  getFloorByBuildingId: `${root}/floorMgr/outline/`
+  // 根据楼宇ID获取整个楼层的轮廓详细信息
+  getFloorOutlineByBuildingId: `${root}/floorMgr/outline/`,
+
+  // 加载楼层信息
+  loadFloor: `${root}/floorMgr/load/`,
+  // 根据楼层id获取详细信息
+  getFloorInfoById: `${root}/floorMgr/`,
+  // 设置楼层完成
+  floorFinishById: `${root}/floorMgr/finish/`,
+  // 保存楼层信息
+  saveFloor: `${root}/floorMgr/save`,
+  // 设置楼层信息
+  updateFloorSettings: `${root}/floorMgr/updateSettings/`,
+  // 图标管理
+
+  getIcons: `${root}/iconMgr/getIcons`,
+  // 获取所有元素的样式
+  getElementStyles: `${root}/elementStyleMgr/getElementStyles`,
+  // 获得所有的标注样式
+  getLabelStyles: `${root}/labelStyleMgr/getLabelStyles`
+
 };
 export default apis;

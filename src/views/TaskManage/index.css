@@ -1,0 +1,77 @@
+.tableCon {
+  padding: 20px;
+}
+
+.area {
+  display: flex;
+  justify-content: space-between;
+}
+
+.areaSelect {
+  width: 120px;
+}
+
+.handler {
+  display: block;
+  min-height: 50px;
+  padding: 10px 0;
+  background: #eafef7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.leftSelect {
+  width: 8%;
+}
+
+.leftInput {
+  width: 13%;
+  min-width: 100px;
+}
+
+.right {
+  margin-right: 20px;
+  white-space: nowrap;
+}
+
+.left {
+  white-space: nowrap;
+}
+
+.taskDownInfoCon {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 10px;
+}
+
+.floorItem {
+  height: 40px;
+  width: 40px;
+  border: 1px solid #e5e5e5;
+  border-radius: 5px;
+  float: left;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+}
+
+.floorItemGreen {
+  background: #67c23a;
+}
+
+.floorItemRed {
+  background: #f56c6c;
+}
+
+.floorItemCon {
+  overflow: hidden;
+}
+
+.taskDownBody {
+  max-height: 250px;
+  overflow: auto
+}

@@ -1,0 +1,169 @@
+.colorOutline {
+  height: 30px;
+  width: 70px;
+  border: 1px solid #e3e3e3;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+.colorOutline > div {
+  height: 20px;
+  width: 60px;
+
+  box-sizing: border-box;
+}
+.floorWord {
+  font-size: 14px;
+}
+.floorSelect {
+  width: 76px;
+  border: 0;
+}
+
+.iconSize {
+  width: 20px;
+  height: 20px;
+}
+.drawRectWH {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+.blackGd {
+  background: #223f5c;
+}
+.container {
+  width: 100%;
+  position: relative;
+  display: flex;
+}
+.leftHandlerCon {
+  width: 340px;
+}
+.rightHandlerCon {
+  flex: 1;
+  overflow: auto;
+  background: #f8f8f8;
+}
+.handlerFor {
+  display: block;
+  min-height: 60px;
+  padding: 10px 10px;
+  
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.searchInput {
+  width: 200px;
+}
+.tabCon {
+  display: flex;
+  background: #081e33;
+  height: 80px;
+  color: white;
+}
+.tabItem {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+}
+.bigSize {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+}
+.tabItemActive {
+  background: #223f5c;
+}
+.menuItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 55px;
+  padding: 0 20px 0 20px;
+  background: #f0f4f7;
+  font-size: 16px;
+  font-weight: bolder;
+  color: #081e33;
+  cursor: pointer;
+}
+.formTable {
+  width: 100%;
+}
+
+.formTable td {
+  padding: 10px;
+}
+.formTable tr td:first-child {
+  text-align: right;
+}
+.colorWidth {
+  width: 80px;
+}
+.iconMgrCon {
+  overflow: hidden;
+  padding: 10px;
+}
+.iconMgrItem {
+  width: 40px;
+  height: 40px;
+  float: left;
+  border-radius: 5px;
+  border: 1px solid #e7e7e7;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.lastIconMgrItem {
+  background: #223f5c;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.iconMgrWord {
+  border-top: 1px solid #e7e7e7;
+  text-align: center;
+  margin: 0 10px 10px 10px;
+  padding-top: 10px;
+}
+.zoomSelect {
+  margin-left: 30px;
+  width: 250px;
+  height: 40px;
+  font-size: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background: white;
+  box-shadow: 2px 2px 10px #c7c5c5;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.mapFooterHandler {
+  display: flex;
+  justify-content: flex-start;
+  height: 40px;
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  z-index: 1000;
+}
+.vline {
+  display: inline-block;
+  height: 18px;
+  border-left: 1px solid #e6e6e6;
+}
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+}
+.leftInputWid {
+  width: 150px;
+}

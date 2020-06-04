@@ -595,3 +595,21 @@ template {
 .editElementStyle .ivu-table th .ivu-checkbox{
   display: none;
 }
+
+.taskDown .el-collapse-item__header{
+  background: #f0f4f7;
+  padding:0 0 0 20px;
+}
+.taskDown .el-card{
+  border:0!important;
+}
+.taskDown .el-card__header{
+  margin:0 20px;
+  padding:12px 0px;
+}
+.taskDown .el-card__body{
+  padding:10px 20px;
+}
+.taskDown .el-collapse-item__content{
+  padding-bottom:0!important;
+}

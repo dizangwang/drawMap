@@ -282,7 +282,7 @@ export default {
           that
             .ajax({
               method: "post",
-              url: that.apis.updateFloorById,
+              url: that.apis.saveFloor,
               data: str
             })
             .then((res) => {

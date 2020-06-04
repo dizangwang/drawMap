@@ -222,6 +222,7 @@ export default {
     // 保存事件
     handleSubmit() {
       var that = this;
+
       // 校验规则
       that.$refs.formValidate.validate((valid) => {
         if (valid) {

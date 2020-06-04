@@ -90,6 +90,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
+
 // 引入轮廓绘制插件
 import DrawProfile from "../../components/DrawProfile.vue";
 
@@ -115,8 +116,10 @@ export default {
     };
 
     return {
+
       // 用于反显轮廓
       editOutLine: "",
+
       // 表单字段
       formValidate: {
         id: "",
@@ -127,11 +130,15 @@ export default {
         lineData: ""
       },
       // 上级传过来的任务对象
+
       taskObj: {},
+
       // 全屏展示
       fullScreenModal: false,
+
       // 从列表中传过来的数据
       detailFromPre: {},
+
       // 校验规则
       ruleValidate: {
         buildingName: [
@@ -152,12 +159,14 @@ export default {
           }
         ]
       },
+
       // 任务对象
       taskData: {}
     };
   },
   mounted() {},
   methods: {
+
     // 清除轮廓信息
     clearOutLineData() {
       var that = this;
@@ -227,13 +236,13 @@ export default {
       });
     },
 
-    // 根据楼宇id获取整个楼层的信息
+    // 根据楼宇id获取整个楼层的轮廓信息
     getFloorByBuildingId(id) {
       var that = this;
       that
         .ajax({
           method: "get",
-          url: that.apis.getFloorByBuildingId + id,
+          url: that.apis.getFloorOutlineByBuildingId + id,
           data: ""
         })
         .then((res) => {
@@ -252,6 +261,7 @@ export default {
                 newObj[`B${-key}`] = obj[item];
               }
             });
+
             // 用于编辑图层反显
             that.editOutLine = newObj;
 
@@ -279,6 +289,7 @@ export default {
       that.getTaskById(row.taskId);
       that.getFloorByBuildingId(row.id);
     },
+
     // 根据任务id获取详情
     getTaskById(id) {
       var that = this;

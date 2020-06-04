@@ -117,6 +117,8 @@ export default {
 
   data() {
     return {
+
+      // 表单数据
       formValidate: {
         taskName: "",
         provinceId: "",
@@ -125,10 +127,20 @@ export default {
         comment: "",
         taskTypeId: ""
       },
+
+      // 省份列表
       provinceList: [],
+
+      // 城市列表
       cityList: [],
+
+      // 区域列表
       districtList: [],
+
+      // 类型列表
       taskTypeList: [],
+
+      // 校验规则
       ruleValidate: {
         taskName: [
           { required: true, message: "请填写任务名称", trigger: "blur" }
@@ -141,12 +153,17 @@ export default {
           { required: true, message: "请选择所属区域", trigger: "change" }
         ]
       },
+
+      // 任务id
       id: "",
+
+      // 任务详情对象
       detailData: {}
     };
   },
   mounted() {},
   methods: {
+
     // 初始化编辑任务
     init(id) {
       var that = this;
@@ -162,6 +179,7 @@ export default {
         });
       });
     },
+
     // 根据任务id获取详情
     getTaskById(id) {
       var that = this;
