@@ -370,6 +370,12 @@
           </div>
         </el-collapse-item>
       </el-collapse>
+      <div slot="footer">
+        <div class="center">
+          <el-button size="mini" @click="downTaskModal=false">取消</el-button>
+          <el-button type="primary" size="mini">下载</el-button>
+        </div>
+      </div>
     </el-dialog>
 
     <el-dialog title="请选择数据类型" :visible.sync="dataTypeBatchModal" width="30%">
