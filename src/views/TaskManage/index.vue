@@ -413,10 +413,10 @@
   </div>
 </template>
 <script>
-import Entity from "./index";
+import Entity from "./indexJs";
 
 export default Entity;
 </script>
 <style scoped>
-@import url("./index.css");
+@import url("./indexCss.css");
 </style>

@@ -11,32 +11,25 @@ const routes = [
     redirect: "taskManage"
   },
 
-  // 登录页
-  {
-    path: "/login",
-    name: "login",
-    component: () => import("../views/Login")
-  },
-
   // 任务管理页
   {
     path: "/taskManage",
     name: "taskManage",
-    component: () => import("../views/TaskManage")
+    component: () => import("../views/TaskManage/index.vue")
   },
 
   // 楼宇管理页
   {
     path: "/buildingManage",
     name: "buildingManage",
-    component: () => import("../views/BuildingManage")
+    component: () => import("../views/BuildingManage/index.vue")
   },
 
   // 绘制页面
   {
     path: "/drawMap",
     name: "drawMap",
-    component: () => import("../views/DrawMap")
+    component: () => import("../views/DrawMap/index.vue")
   }
 
 ];

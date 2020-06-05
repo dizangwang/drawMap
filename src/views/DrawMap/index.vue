@@ -60,7 +60,7 @@
                       <span></span>
                     </div>
                   </template>
-                  <div class="taskDownBody">
+                  <div>
                     <el-card body-style="{border:0}" shadow="never">
                       <table class="formTable">
                         <tr>
@@ -125,7 +125,7 @@
                       <span></span>
                     </div>
                   </template>
-                  <div class="taskDownBody">
+                  <div>
                     <el-card body-style="{border:0}" shadow="never">
                       <div class="iconMgrCon">
                         <span class="iconMgrItem"></span>
@@ -154,7 +154,7 @@
                       <span></span>
                     </div>
                   </template>
-                  <div class="taskDownBody">
+                  <div>
                     <el-card body-style="{border:0}" shadow="never">
                       <table class="formTable">
                         <tr>
@@ -222,7 +222,7 @@
                       <span></span>
                     </div>
                   </template>
-                  <div class="taskDownBody">
+                  <div>
                     <el-card body-style="{border:0}" shadow="never">
                       <table class="formTable">
                         <tr>
@@ -262,7 +262,7 @@
                       <span></span>
                     </div>
                   </template>
-                  <div class="taskDownBody">
+                  <div>
                     <el-card body-style="{border:0}" shadow="never">
                       <table class="formTable">
                         <tr>
@@ -369,11 +369,11 @@
   </div>
 </template>
 <script>
-import Entity from "./index";
+import Entity from "./indexJs";
 
 export default Entity;
 </script>
 <style scoped>
-@import url("./index.css");
+@import url("./indexCss.css");
 </style>
 
