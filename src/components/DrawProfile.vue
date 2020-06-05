@@ -431,6 +431,7 @@ export default {
         type: "success"
       });
       that.isSave = true;
+
       that.$emit("save", that.floorData);
     },
 

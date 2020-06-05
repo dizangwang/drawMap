@@ -1,5 +1,6 @@
 <template>
   <div class="task olme">
+    <input style="height:0px;width:0px" type="file" id="file" />
     <el-form ref="formValidate" :model="formValidate" :rules="ruleValidate" label-width="0">
       <table class="wd100">
         <tr>
@@ -40,18 +41,14 @@
           <td>
             <el-form-item size="mini" label-width="0" prop="lineData">
               <div class="centerStart">
-                <el-upload
-                  class="upload-demo"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  @on-success="uploadSuccess"
-                >
-                  <el-button size="mini" type="primary">
-                    <i class="el-icon-upload"></i>点击上传
-                  </el-button>
-                </el-upload>
-                <el-popover placement="top-start" trigger="hover" content="下载示例，查看数据格式">
-                  <i slot="reference" class="el-icon-download iconleft"></i>
-                </el-popover>
+                <el-button @click="uploadFile" size="mini" type="primary">
+                  <i class="el-icon-upload"></i>点击上传
+                </el-button>
+                 <a href="./template.geojson" download>
+                  <el-popover placement="top-start" trigger="hover" content="下载示例，查看数据格式">
+                    <i slot="reference" class="el-icon-download iconleft"></i>
+                  </el-popover>
+                </a>
                 <el-popover placement="top-start" trigger="hover" content="绘制地图轮廓">
                   <i
                     slot="reference"
@@ -164,9 +161,32 @@ export default {
       taskData: {}
     };
   },
-  mounted() {},
-  methods: {
+  mounted() {
+    var that = this;
 
+    // 上传geojson文件
+    that.utils.parseGeson(that, "file").then((res) => {
+      if (res.code === 200) {
+        const { data } = res;
+        let str = "";
+        Object.keys(data).forEach((item, index) => {
+          str += `floorOutline[${index}].floor=${item}&`;
+          const coorArr = data[item].geometry.coordinates;
+          const arr = [];
+          coorArr.forEach((it) => {
+            arr.push({ lng: it[0], lat: it[1] });
+          });
+          str += `floorOutline[${index}].outline=${JSON.stringify(arr)}&`;
+        });
+        that.formValidate.lineData = str;
+      }
+    });
+  },
+  methods: {
+  // 点击上传文件
+    uploadFile() {
+      document.querySelector("#file").click();
+    },
     // 清除轮廓信息
     clearOutLineData() {
       var that = this;
@@ -407,5 +427,9 @@ export default {
   font-size: 20px;
   font-weight: bolder;
   cursor: pointer;
+}
+a {
+  color: unset;
+  display: block;
 }
 </style>

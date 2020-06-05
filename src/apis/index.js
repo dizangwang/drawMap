@@ -47,7 +47,15 @@ const apis = {
   // 获取所有元素的样式
   getElementStyles: `${root}/elementStyleMgr/getElementStyles`,
   // 获得所有的标注样式
-  getLabelStyles: `${root}/labelStyleMgr/getLabelStyles`
+  getLabelStyles: `${root}/labelStyleMgr/getLabelStyles`,
+  // 任务发布接口
+  taskMgrPublish: `${root}/taskMgr/publish`,
+  // 任务下架接口
+  taskMgrUnPublish: `${root}/taskMgr/unpublish`,
+  // 楼宇发布接口
+  buildingMgrPublish: `${root}/buildingMgr/publish`,
+  // 楼宇下架接口
+  buildingMgrUnPublish: `${root}/buildingMgr/unpublish`
 
 };
 export default apis;

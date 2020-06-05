@@ -9,7 +9,7 @@
         </el-select>
         <span class="lf5">任务类型</span>
         <el-select v-model="searchForm.taskTypeId" size="mini" class="leftSelect lf5">
-          <el-option value>任务类型</el-option>
+          <el-option value="">全部</el-option>
           <el-option
             v-for="item in taskTypes"
             :value="item.id"
@@ -114,13 +114,13 @@
         >{{row.provinceName}}{{row.cityName}}{{row.districtName}}</template>
         <!-- 列表的操作栏 -->
         <template slot="action" slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="publishClick">
+          <el-button size="mini" type="primary" @click="publishClick(row)">
             <i class="iconCommon iconPublish"></i>发布
           </el-button>
-          <el-button size="mini" class="lf10" type="primary" @click="underCarriageClick">
+          <el-button size="mini" class="lf10" type="primary" @click="underCarriageClick(row)">
             <i class="iconCommon iconUndercarriage"></i>下架
           </el-button>
-          <el-button size="mini" class="lf10" type="primary" @click="downloadClick">
+          <el-button size="mini" class="lf10" type="primary" @click="downloadClick(row)">
             <i class="iconCommon iconDownload"></i>下载
           </el-button>
           <el-button size="mini" class="lf10" type="primary" @click="editTaskClick(row)">
@@ -129,11 +129,27 @@
           <el-button size="mini" class="lf10" type="primary" @click="deleteClick(row)">
             <i class="iconCommon iconDelete"></i>删除
           </el-button>
+          <!-- <el-link size="mini" type="primary" @click="publishClick">
+            发布
+          </el-link>
+          <el-link size="mini" class="lf10" type="primary" @click="underCarriageClick">
+            下架
+          </el-link>
+          <el-link size="mini" class="lf10" type="primary" @click="downloadClick">
+            下载
+          </el-link>
+          <el-link size="mini" class="lf10" type="primary" @click="editTaskClick(row)">
+            编辑
+          </el-link>
+          <el-link size="mini" class="lf10" type="primary" @click="deleteClick(row)">
+            删除
+          </el-link> -->
         </template>
       </Table>
       <div class="line10"></div>
       <!-- 分页器 -->
-      <Page
+      <div class="pageCon">
+        <Page
         :total="total"
         :page-size="searchForm.size"
         show-elevator
@@ -142,6 +158,8 @@
         @on-change="pageChange"
         @on-page-size-change="pageSizeChange"
       />
+      </div>
+
     </div>
     <!-- 弹窗区 -->
     <el-dialog :visible.sync="createTaskModal" width="500px" title="创建任务">
@@ -379,32 +397,32 @@
     </el-dialog>
 
     <el-dialog title="请选择数据类型" :visible.sync="dataTypeBatchModal" width="30%">
-      <el-radio v-model="radioBatchPublish" label="1">geoJson</el-radio>
-      <el-radio v-model="radioBatchPublish" label="2">shp</el-radio>
+      <el-radio v-model="radioBatchPublish" label="geojson">geojson</el-radio>
+      <el-radio v-model="radioBatchPublish" label="shp" disabled>shp</el-radio>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dataTypeBatchModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="publishBatchOkClick">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="请选择数据类型" :visible.sync="dataTypeModal" width="30%">
-      <el-radio v-model="radioPublish" label="1">geoJson</el-radio>
-      <el-radio v-model="radioPublish" label="2">shp</el-radio>
+      <el-radio v-model="radioPublish" label="geojson">geojson</el-radio>
+      <el-radio v-model="radioPublish" label="shp" disabled>shp</el-radio>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dataTypeModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="publishOkClick">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="请选择下载格式" :visible.sync="formatModal" width="30%">
-      <el-radio v-model="radioDown" label="1">geoJson</el-radio>
-      <el-radio v-model="radioDown" label="2">shp</el-radio>
+      <el-radio v-model="radioDown" label="geojson">geojson</el-radio>
+      <el-radio v-model="radioDown" label="shp"  disabled>shp</el-radio>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="formatModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="downOkClick">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="请选择下载格式" :visible.sync="formatBatchModal" width="30%">
-      <el-radio v-model="radioBatchDown" label="1">geoJson</el-radio>
-      <el-radio v-model="radioBatchDown" label="2">shp</el-radio>
+      <el-radio v-model="radioBatchDown" label="geojson">geojson</el-radio>
+      <el-radio v-model="radioBatchDown" label="shp"  disabled>shp</el-radio>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="formatBatchModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="downBatchOkClick">确 定</el-button>

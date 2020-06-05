@@ -43,16 +43,16 @@ export default {
       formatBatchModal: false,
 
       // 顶部-发布-数据类型
-      radioBatchPublish: "",
+      radioBatchPublish: "geojson",
 
       // 表格-发布-数据类型
-      radioPublish: "",
+      radioPublish: "geojson",
 
       // 表格-下载-数据类型
-      radioDown: "",
+      radioDown: "geojson",
 
       // 顶部-下载-数据类型
-      radioBatchDown: "",
+      radioBatchDown: "geojson",
 
       // 顶部 任务/楼宇 选择
       task: "2",
@@ -152,7 +152,10 @@ export default {
       total: 1,
 
       // 任务对象
-      taskObj: ""
+      taskObj: "",
+
+      // 发布id
+      publishId: ""
     };
   },
   mounted() {
@@ -355,6 +358,7 @@ export default {
           if (data.code === 200) {
             that.total = data.data.total;
             that.Taskdata = data.data.records;
+            that.tableSelectionArr = [];
           } else {
             that.$message({
               message: data.msg,
@@ -381,10 +385,13 @@ export default {
           type: "warning"
         })
         .then(() => {
-          that.$message({
-            type: "success",
-            message: "下架成功!"
+          let ids = "";
+          const arr = [];
+          that.tableSelectionArr.forEach((item) => {
+            arr.push(item.id);
           });
+          ids = arr.join(",");
+          that.buildingMgrUnPublish(ids);
         })
         .catch(() => {
           that.$message({
@@ -395,7 +402,7 @@ export default {
     },
 
     // 表格操作栏-按钮-下架--点击事件
-    underCarriageClick() {
+    underCarriageClick(row) {
       var that = this;
       that
         .$confirm("是否下架该楼宇?", "提示", {
@@ -404,10 +411,7 @@ export default {
           type: "warning"
         })
         .then(() => {
-          that.$message({
-            type: "success",
-            message: "下架成功!"
-          });
+          that.buildingMgrUnPublish(row.id);
         })
         .catch(() => {
           that.$message({
@@ -434,10 +438,13 @@ export default {
     publishBatchOkClick() {
       var that = this;
       that.dataTypeBatchModal = false;
-      that.$message({
-        type: "success",
-        message: "发布成功!"
+      let ids = "";
+      const arr = [];
+      that.tableSelectionArr.forEach((item) => {
+        arr.push(item.id);
       });
+      ids = arr.join(",");
+      that.publishBuilding(ids, that.radioBatchPublish);
     },
 
     // 表格操作栏-按钮-下载-弹窗-确定--点击事件
@@ -480,8 +487,9 @@ export default {
     },
 
     // 表格操作栏-按钮-发布--点击事件
-    publishClick() {
+    publishClick(row) {
       var that = this;
+      that.publishId = row.id;
       that.dataTypeModal = true;
     },
 
@@ -489,10 +497,7 @@ export default {
     publishOkClick() {
       var that = this;
       that.dataTypeModal = false;
-      that.$message({
-        type: "success",
-        message: "发布成功!"
-      });
+      that.publishBuilding(that.publishId, that.radioPublish);
     },
 
     // 顶部操作栏-按钮-删除--点击事件
@@ -527,6 +532,67 @@ export default {
             type: "info",
             message: "已取消删除"
           });
+        });
+    },
+    // 发布
+    publishBuilding(id, type) {
+      var that = this;
+      var param = {
+        id,
+        type
+      };
+      that
+        .ajax({
+          method: "post",
+          url: that.apis.buildingMgrPublish,
+          data: param
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            that.$message({
+              type: "success",
+              message: "发布成功!"
+            });
+            that.search();
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+    // 下架
+    buildingMgrUnPublish(id) {
+      var that = this;
+      var param = {
+        id
+      };
+      that
+        .ajax({
+          method: "post",
+          url: that.apis.buildingMgrUnPublish,
+          data: param
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            that.$message({
+              type: "success",
+              message: "下架成功!"
+            });
+            that.search();
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
         });
     },
 

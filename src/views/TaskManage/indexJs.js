@@ -1,4 +1,7 @@
-import { mapActions, mapGetters } from "vuex";
+import {
+  mapActions,
+  mapGetters
+} from "vuex";
 
 // 创建任务组件
 import CreateTask from "./createTask.vue";
@@ -17,10 +20,13 @@ export default {
   },
   data() {
     return {
+
       // 下载任务弹窗
       downTaskModal: false,
+
       // 表格高度
       tableHeight: "",
+
       // 创建任务弹窗展示
       createTaskModal: false,
 
@@ -40,16 +46,16 @@ export default {
       formatBatchModal: false,
 
       // 顶部-发布-数据类型
-      radioBatchPublish: "",
+      radioBatchPublish: "geojson",
 
       // 表格-发布-数据类型
-      radioPublish: "",
+      radioPublish: "geojson",
 
       // 表格-下载-数据类型
-      radioDown: "",
+      radioDown: "geojson",
 
       // 顶部-下载-数据类型
-      radioBatchDown: "",
+      radioBatchDown: "geojson",
 
       // 顶部 任务/楼宇 选择
       task: "1",
@@ -61,42 +67,40 @@ export default {
       tableSelectionArr: [],
 
       // 表格的列数据
-      Taskcolumns: [
-        {
-          type: "selection",
-          key: "id",
-          width: 55,
-          align: "center"
-        },
-        {
-          title: "任务名称",
-          slot: "taskName"
-        },
-        {
-          title: "任务类型",
-          key: "taskTypeName",
-          width: 90
-        },
-        {
-          title: "所属区域",
-          slot: "area"
-        },
-        {
-          title: "任务描述",
-          slot: "comment",
-
-          tooltip: true
-        },
-        {
-          title: "任务进度",
-          slot: "progress",
-          width: 150
-        },
-        {
-          title: "任务操作",
-          slot: "action",
-          width: 430
-        }
+      Taskcolumns: [{
+        type: "selection",
+        key: "id",
+        width: 55,
+        align: "center"
+      },
+      {
+        title: "任务名称",
+        slot: "taskName"
+      },
+      {
+        title: "任务类型",
+        key: "taskTypeName",
+        width: 90
+      },
+      {
+        title: "所属区域",
+        slot: "area"
+      },
+      {
+        title: "任务描述",
+        slot: "comment",
+        tooltip: true
+      },
+      {
+        title: "任务进度",
+        slot: "progress",
+        width: 150
+      },
+      {
+        title: "任务操作",
+        slot: "action",
+        width: 430
+      }
       ],
 
       // 表格的数据
@@ -115,9 +119,18 @@ export default {
 
       // 返回的记录总条数
       total: 1,
+
+      // 省份列表
       provinceList: [],
+
+      // 城市列表
       cityList: [],
-      districtList: []
+
+      // 区域列表
+      districtList: [],
+
+      // 发布任务id
+      publishId: ""
     };
   },
   mounted() {
@@ -174,7 +187,9 @@ export default {
     goTaskBuilding(row) {
       var that = this;
       that.utils.localstorageSet("taskObj", row);
-      that.$router.push({ path: `/buildingManage` });
+      that.$router.push({
+        path: `/buildingManage`
+      });
     },
 
     // 监听城市变动
@@ -207,10 +222,14 @@ export default {
         .ajax({
           method: "get",
           url: that.apis.getAreasWithPid,
-          data: { pid }
+          data: {
+            pid
+          }
         })
         .then((res) => {
-          const { data } = res;
+          const {
+            data
+          } = res;
           if (data.code === 200) {
             fn(data.data);
           } else {
@@ -232,7 +251,9 @@ export default {
           data: {}
         })
         .then((res) => {
-          const { data } = res;
+          const {
+            data
+          } = res;
           if (data.code === 200) {
             that.taskTypeList = data.data;
             that.setTaskTypes(data.data);
@@ -265,10 +286,14 @@ export default {
       that.utils.localstorageSet("taskObj", "");
       if (typeof e === "string") {
         if (e === "2") {
-          that.$router.push({ path: "/buildingManage" });
+          that.$router.push({
+            path: "/buildingManage"
+          });
         }
       } else if (e === 2) {
-        that.$router.push({ path: "/buildingManage" });
+        that.$router.push({
+          path: "/buildingManage"
+        });
       }
     },
 
@@ -310,10 +335,13 @@ export default {
           data: param
         })
         .then((res) => {
-          const { data } = res;
+          const {
+            data
+          } = res;
           if (data.code === 200) {
             that.total = data.data.total;
             that.Taskdata = data.data.records;
+            that.tableSelectionArr = [];
           } else {
             that.$message({
               message: data.msg,
@@ -333,6 +361,12 @@ export default {
         });
         return;
       }
+      let ids = "";
+      const arr = [];
+      that.tableSelectionArr.forEach((item) => {
+        arr.push(item.id);
+      });
+      ids = arr.join(",");
       that
         .$confirm("是否批量下架该?", "提示", {
           confirmButtonText: "确定",
@@ -340,10 +374,7 @@ export default {
           type: "warning"
         })
         .then(() => {
-          that.$message({
-            type: "success",
-            message: "下架成功!"
-          });
+          that.unpublishTask(ids);
         })
         .catch(() => {
           that.$message({
@@ -354,7 +385,7 @@ export default {
     },
 
     // 表格操作栏-按钮-下架--点击事件
-    underCarriageClick() {
+    underCarriageClick(row) {
       var that = this;
       that
         .$confirm("是否下架该文件?", "提示", {
@@ -363,10 +394,7 @@ export default {
           type: "warning"
         })
         .then(() => {
-          that.$message({
-            type: "success",
-            message: "下架成功!"
-          });
+          that.unpublishTask(row.id);
         })
         .catch(() => {
           that.$message({
@@ -386,6 +414,7 @@ export default {
         });
         return;
       }
+
       that.dataTypeBatchModal = true;
     },
 
@@ -393,10 +422,13 @@ export default {
     publishBatchOkClick() {
       var that = this;
       that.dataTypeBatchModal = false;
-      that.$message({
-        type: "success",
-        message: "发布成功!"
+      let ids = "";
+      const arr = [];
+      that.tableSelectionArr.forEach((item) => {
+        arr.push(item.id);
       });
+      ids = arr.join(",");
+      that.publishTask(ids, that.radioBatchPublish);
     },
 
     // 表格操作栏-按钮-下载-弹窗-确定--点击事件
@@ -439,8 +471,9 @@ export default {
     },
 
     // 表格操作栏-按钮-发布--点击事件
-    publishClick() {
+    publishClick(row) {
       var that = this;
+      that.publishId = row.id;
       that.dataTypeModal = true;
     },
 
@@ -448,10 +481,7 @@ export default {
     publishOkClick() {
       var that = this;
       that.dataTypeModal = false;
-      that.$message({
-        type: "success",
-        message: "发布成功!"
-      });
+      that.publishTask(that.publishId, that.radioPublish);
     },
 
     // 顶部操作栏-按钮-删除--点击事件
@@ -488,6 +518,67 @@ export default {
           });
         });
     },
+    // 单个或批量下架
+    unpublishTask(id) {
+      var that = this;
+      var param = {
+        id
+      };
+      that
+        .ajax({
+          method: "post",
+          url: that.apis.taskMgrUnPublish,
+          data: param
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            that.$message({
+              type: "success",
+              message: "下架成功!"
+            });
+            that.search();
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+    // 单个或批量发布
+    publishTask(id, type) {
+      var that = this;
+      var param = {
+        id,
+        type
+      };
+      that
+        .ajax({
+          method: "post",
+          url: that.apis.taskMgrPublish,
+          data: param
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            that.$message({
+              type: "success",
+              message: "发布成功!"
+            });
+            that.search();
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
 
     // 根据id删除任务
     deleteTask(id) {
@@ -502,7 +593,9 @@ export default {
           data: param
         })
         .then((res) => {
-          const { data } = res;
+          const {
+            data
+          } = res;
           if (data.code === 200) {
             that.$message({
               type: "success",
