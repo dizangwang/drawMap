@@ -1,9 +1,9 @@
-const root = "/api";
+
 const apis = {
   // 上传文件
-  uploadFiles: `${root}/files/upload`,
+  uploadFiles: `/files/upload`,
   // 下载文件
-  downloadFiles: `${root}/files/img/`
+  downloadFiles: `/files/img/`
 };
 
 export default apis;

@@ -1,4 +1,4 @@
-const root = "/api/backend";
+const root = "/backend";
 const apis = {
   // 获取所有任务类型
   getAllTypes: `${root}/taskTypeMgr/getAllTypes`,
@@ -30,7 +30,6 @@ const apis = {
   updateFloorById: `${root}/floorMgr/updateSettings/`,
   // 根据楼宇ID获取整个楼层的轮廓详细信息
   getFloorOutlineByBuildingId: `${root}/floorMgr/outline/`,
-
   // 加载楼层信息
   loadFloor: `${root}/floorMgr/load/`,
   // 根据楼层id获取详细信息
@@ -42,7 +41,6 @@ const apis = {
   // 设置楼层信息
   updateFloorSettings: `${root}/floorMgr/updateSettings/`,
   // 图标管理
-
   getIcons: `${root}/iconMgr/getIcons`,
   // 获取所有元素的样式
   getElementStyles: `${root}/elementStyleMgr/getElementStyles`,
@@ -56,6 +54,5 @@ const apis = {
   buildingMgrPublish: `${root}/buildingMgr/publish`,
   // 楼宇下架接口
   buildingMgrUnPublish: `${root}/buildingMgr/unpublish`
-
 };
 export default apis;

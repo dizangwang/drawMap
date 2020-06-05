@@ -8,12 +8,18 @@ module.exports = {
   devServer: {
     port: "30000",
     proxy: {
-      "/api": {
-        pathRewrite: {
-          "^/api": "/"
-        },
+      "/backend": {
+        target: "http://101.132.113.86:4000"
+      },
+      "/files": {
         target: "http://101.132.113.86:4000"
       }
+      // "/api": {
+      //   pathRewrite: {
+      //     "^/api": "/"
+      //   },
+      //   target: "http://101.132.113.86:4000"
+      // }
     }
   },
 
