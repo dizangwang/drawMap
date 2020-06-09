@@ -34,6 +34,8 @@ const apis = {
   loadFloor: `${root}/floorMgr/load/`,
   // 根据楼层id获取详细信息
   getFloorInfoById: `${root}/floorMgr/`,
+  // 根据楼层id获取详细信息
+  getFloorInfoByBuildingId: `${root}/floorMgr`,
   // 设置楼层完成
   floorFinishById: `${root}/floorMgr/finish/`,
   // 保存楼层信息
@@ -53,6 +55,13 @@ const apis = {
   // 楼宇发布接口
   buildingMgrPublish: `${root}/buildingMgr/publish`,
   // 楼宇下架接口
-  buildingMgrUnPublish: `${root}/buildingMgr/unpublish`
+  buildingMgrUnPublish: `${root}/buildingMgr/unpublish`,
+  // 任务下载接口
+  floorMgrFinishDownload: `${root}/floorMgr/finishDownload`,
+  // 单楼层下载准备接口
+  floorMgrGetDownloadFlag: `${root}/floorMgr/getDownloadFlag`,
+  // 单楼层下载准备接口
+  floorMgrPrepareDownload: `${root}/floorMgr/prepareDownload`
+
 };
 export default apis;

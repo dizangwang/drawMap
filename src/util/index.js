@@ -27,6 +27,34 @@ export default {
     localStorage.removeItem(rmKey);
   },
 
+  // post请求文件
+  postDownload(config) {
+    var iframe = document.createElement("iframe");
+    iframe.setAttribute("id", "downFilePostIframe");
+    iframe.setAttribute("name", "downFilePostIframe");
+    iframe.setAttribute("enctype", "multipart/form-data");
+    iframe.style.height = "0px";
+    iframe.style.display = "none";
+    var form = document.createElement("form");
+    form.setAttribute("target", "down-file-iframe");
+    form.setAttribute("method", "post");
+    form.setAttribute("id", "downFilePostForm");
+    form.setAttribute("action", config.url);
+    Object.keys(config.data).forEach((key) => {
+      const input = document.createElement("input");
+      input.setAttribute("type", "hidden");
+      input.setAttribute("name", key);
+      input.setAttribute("value", config.data[key]);
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(iframe);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(iframe);
+    document.body.removeChild(form);
+  },
+
   // 上传并解析geojson文件
   parseGeson(context, fileInputId) {
     return new Promise(((resolve) => {

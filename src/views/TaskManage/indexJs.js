@@ -130,7 +130,28 @@ export default {
       districtList: [],
 
       // 发布任务id
-      publishId: ""
+      publishId: "",
+
+      // 下载的记录id
+      downloadTaskObjArr: [],
+
+      // 下载默认展示窗口
+      collapseActiveName: "1",
+      // 任务下载楼宇接口
+      downloadBuildingArrs: [],
+      // 下载标记
+      downloadFlag: "",
+      // 渲染任务下载数据
+      downloadTaskObjArrCopy: [],
+      // 渲染任务下载数据时loading
+      downloadLoading: false,
+      // 需要被下载的楼层
+      floorForDownloadArr: [],
+      // 是否请求超时
+      isTimeout: false,
+      // 左下角下载按钮展示
+      leftBottomTaskDownShow: false
+
     };
   },
   mounted() {
@@ -143,10 +164,13 @@ export default {
 
     // 每次进入到任务列表，先清空缓存任务对象，防止跳转到楼宇管理的时候，数据混乱
     that.utils.localstorageSet("taskObj", "");
+    // 动态调整容器长度
     that.tableHeight = window.innerHeight - 160;
     window.onresize = () => {
       that.tableHeight = window.innerHeight - 160;
     };
+
+    // that.utils.postDownload({url:"http://localhost:30000/template.geojson",data:{}})
   },
   filters: {
     // 针对任务描述超过20个字进行处理
@@ -156,11 +180,353 @@ export default {
         val = `${val.substring(0, 20)}...`;
       }
       return val;
+    },
+    // 格式化楼层
+    formatFloorFilter(value) {
+      var val = +value;
+      if (val > 0) {
+        return `F${val}`;
+      }
+      if (val < 0) {
+        return `B${-val}`;
+      }
+      return value;
+    },
+    // 格式化非值
+    formatNullValue(value) {
+      var val = +value;
+      if (val) {
+        return val;
+      }
+      return 0;
     }
   },
   methods: {
     ...mapActions(["setTaskTypes"]),
+    // 取消任务下载
+    taskDownloadCancle() {
+      var that = this;
+      that.downTaskModal = false;
+      that.leftBottomTaskDownShow = false;
+    },
+    // 任务下载窗口关闭事件
+    taskDownloadClose(done) {
+      var that = this;
+      if (that.isTimeout) {
+        that.leftBottomTaskDownShow = true;
+        that.getFloorMgrPrepareDownload();
+      }
+      done();
+    },
+    // 任务下载接口
+    floorMgrFinishDownload(id) {
+      var that = this;
+      that
+        .ajax({
+          method: "post",
+          url: that.apis.floorMgrFinishDownload,
+          data: {
+            flag: that.downloadFlag,
+            type: that.radioDown,
+            taskId: id
+          }
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code !== 200) {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+    // 下载点击事件
+    downFloorClick() {
+      var that = this;
+      var taskIds = [];
+      that.downloadTaskObjArr.forEach((item) => {
+        taskIds.push(item.id);
+      });
+      that.leftBottomTaskDownShow = false;
+      that.utils.postDownload({
+        url: window.location.origin + that.apis.floorMgrFinishDownload,
+        data: {
+          flag: that.downloadFlag,
+          taskId: taskIds.join(","),
+          type: that.radioDown
+        }
+      });
+    },
+    // 获取下载数据处理情况
+    getFloorMgrPrepareDownload() {
+      var that = this;
+      window.timer = setInterval(() => {
+        that
+          .ajax({
+            method: "timeoutPost",
+            url: that.apis.floorMgrPrepareDownload,
+            data: {
+              flag: that.downloadFlag,
+              id: that.floorForDownloadArr.join(","),
+              type: that.radioDown
+            }
+          })
+          .then((res) => {
+            const {
+              data
+            } = res;
+            if (data.code === 200) {
+              that.$message({
+                message: "下载数据已处理完成，可查看处理情况及下载",
+                type: "success"
+              });
+              window.clearInterval(window.timer);
+              window.timer = "";
+            }
+          });
+      }, 3000);
+    },
+    // 单楼层下载准备接口
+    floorMgrPrepareDownload(id) {
+      var that = this;
+      that.isTimeout = false;
+      that.leftBottomTaskDownShow = false;
+      that
+        .ajax({
+          method: "timeoutPost",
+          url: that.apis.floorMgrPrepareDownload,
+          data: {
+            flag: that.downloadFlag,
+            id,
+            type: that.radioDown
+          }
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            const result = data.data;
+            that.downloadLoading = false;
+            that.downloadTaskObjArrCopy = JSON.parse(JSON.stringify(that.downloadTaskObjArr));
+            if (result) {
+              that.downloadTaskObjArrCopy.forEach((element, num) => {
+                let taskRedNum = 0;
+                let taskGreenNum = 0;
+                that.downloadTaskObjArrCopy[num].downloadBuildingArrs.forEach((item, ind) => {
+                  const itemCopy = JSON.parse(JSON.stringify(item));
+                  const {
+                    floors
+                  } = itemCopy;
+                  let redNum = 0;
+                  let greenNum = 0;
+                  floors.forEach((it, index) => {
+                    if (result[it.id]) {
+                      itemCopy.floors[index].isRed = true;
+                      redNum += 1;
+                      taskRedNum += 1;
+                    } else {
+                      itemCopy.floors[index].isGreen = true;
+                      greenNum += 1;
+                      taskGreenNum += 1;
+                    }
+                  });
 
+                  itemCopy.redNum = redNum;
+                  itemCopy.greenNum = greenNum;
+                  that.downloadTaskObjArrCopy[num].downloadBuildingArrs[ind] = itemCopy;
+                });
+                that.downloadTaskObjArrCopy[num].redNum = taskRedNum;
+                that.downloadTaskObjArrCopy[num].greenNum = taskGreenNum;
+              });
+            } else {
+              that.downloadTaskObjArrCopy.forEach((element, num) => {
+                const taskRedNum = 0;
+                let taskGreenNum = 0;
+                if (that.downloadTaskObjArrCopy[num].downloadBuildingArrs && that
+                  .downloadTaskObjArrCopy[num].downloadBuildingArrs.length > 0) {
+                  that.downloadTaskObjArrCopy[num].downloadBuildingArrs.forEach((item, ind) => {
+                    const itemCopy = JSON.parse(JSON.stringify(item));
+                    const {
+                      floors
+                    } = itemCopy;
+                    const redNum = 0;
+                    let greenNum = 0;
+                    if (floors && floors.length > 0) {
+                      floors.forEach((it, index) => {
+                        greenNum += 1;
+                        taskGreenNum += 1;
+                        itemCopy.floors[index].isGreen = true;
+                      });
+                    }
+
+                    itemCopy.redNum = redNum;
+                    itemCopy.greenNum = greenNum;
+                    that.downloadTaskObjArrCopy[num].downloadBuildingArrs[ind] = itemCopy;
+                  });
+                }
+
+                that.downloadTaskObjArrCopy[num].redNum = taskRedNum;
+                that.downloadTaskObjArrCopy[num].greenNum = taskGreenNum;
+              });
+            }
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        })
+        .catch((error) => {
+          if (/timeout/gi.test(error)) {
+            that.isTimeout = true;
+            that.$message({
+              message: "后台正在处理下载数据，请稍后",
+              type: "warning"
+            });
+          }
+        });
+    },
+    // 单楼层下载准备接口
+    floorMgrGetDownloadFlag() {
+      var that = this;
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.floorMgrGetDownloadFlag,
+          data: {}
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            // 获取flag
+            that.downloadFlag = data.msg;
+            var arr = [];
+            // 循环任务对象列表 包括单个和列表勾选的
+            that.downloadTaskObjArr.forEach((element, num) => {
+              if (that.downloadTaskObjArr[num].downloadBuildingArrs) {
+                that.downloadTaskObjArr[num].downloadBuildingArrs.forEach((item) => {
+                  const {
+                    floors
+                  } = item;
+                  if (floors) {
+                    floors.forEach((it) => {
+                      arr.push(it.id);
+                    });
+                  }
+                });
+              }
+            });
+            that.floorForDownloadArr = arr;
+            if (arr.length > 0) {
+              that.floorMgrPrepareDownload(arr.join(","));
+            } else {
+              that.downloadLoading = false;
+              that.floorForDownloadArr = [];
+              that.downloadTaskObjArrCopy = JSON.parse(JSON.stringify(that.downloadTaskObjArr));
+            }
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+    // 根据楼宇id获取整个楼层的信息
+    getFloorOutlineByBuildingId(id, fn) {
+      var that = this;
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.getFloorInfoByBuildingId,
+          data: {
+            buildingId: id
+          }
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            fn(data.data);
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+    // 根据任务id查询楼宇列表；
+    getBuildingByTaskId() {
+      var that = this;
+      that.downloadLoading = true;
+      that.collapseActiveName = "1";
+      that.downloadTaskObjArrCopy = [];
+      that.downloadTaskObjArr.forEach((itm, indexNum) => {
+        const param = {};
+        param.taskId = itm.id;
+        that
+          .ajax({
+            method: "get",
+            url: that.apis.buildingMgrList,
+            data: param
+          })
+          .then((res) => {
+            const {
+              data
+            } = res;
+            if (data.code === 200) {
+              // 组装数据 给任务挂载楼宇列表 给楼宇挂载楼层列表
+              const {
+                records
+              } = data.data;
+              if (records.length !== 0) {
+                const promiseArr = [];
+                records.forEach((item, index) => {
+                  const promise = new Promise((resolve) => {
+                    that.getFloorOutlineByBuildingId(item.id, (resultData) => {
+                      records[index].floors = resultData;
+                      that.downloadTaskObjArr[indexNum].downloadBuildingArrs = records;
+                      const obj = {};
+                      obj.index = indexNum;
+                      obj.data = resultData;
+                      resolve(obj);
+                    });
+                  });
+                  promiseArr.push(promise);
+                });
+                // 执行所有promise
+                Promise.all(promiseArr).then((result) => {
+                  // 当执行到最后一个时执行floorMgrGetDownloadFlag方法
+                  if ((indexNum + 1) === that.downloadTaskObjArr.length) {
+                    that.floorMgrGetDownloadFlag();
+                  }
+                }).catch((error) => {
+                  // todo
+                });
+              } else if (that.downloadTaskObjArr.length === 1) {
+                // 如果没有楼层且任务数量为一个时，直接进行展示
+                that.downloadLoading = false;
+                that.floorForDownloadArr = [];
+                that.downloadTaskObjArrCopy = JSON.parse(JSON.stringify(that
+                  .downloadTaskObjArr));
+              }
+            } else {
+              that.$message({
+                message: data.msg,
+                type: "warning"
+              });
+            }
+          });
+      });
+    },
     // 处理进度数据
     progressHandler(row) {
       var that = this;
@@ -174,7 +540,6 @@ export default {
       num = Math.round((finishedFloor / totalFloor) * 100);
       return num;
     },
-
     // 判断任务描述是否超出20个字
     commentOverFilter(value) {
       var val = `${value}`;
@@ -403,7 +768,6 @@ export default {
           });
         });
     },
-
     // 顶部操作栏-按钮-发布--点击事件
     publishBatchClick() {
       var that = this;
@@ -414,7 +778,6 @@ export default {
         });
         return;
       }
-
       that.dataTypeBatchModal = true;
     },
 
@@ -435,16 +798,16 @@ export default {
     downOkClick() {
       var that = this;
       that.formatModal = false;
-      that.$message({
-        type: "success",
-        message: "下载成功!"
-      });
+      that.downTaskModal = true;
+      that.getBuildingByTaskId();
     },
 
     // 表格操作栏-按钮-下载--点击事件
-    downloadClick() {
+    downloadClick(row) {
       var that = this;
       that.formatModal = true;
+      that.downloadTaskObjArr = [row];
+      // that.getBuildingByTaskId();
     },
 
     // 顶部操作栏-按钮-下载-弹窗-确定--点击事件
@@ -467,7 +830,9 @@ export default {
         });
         return;
       }
-      that.formatBatchModal = true;
+      that.downloadTaskObjArr = that.tableSelectionArr;
+      //  that.getBuildingByTaskId();
+      that.formatModal = true;
     },
 
     // 表格操作栏-按钮-发布--点击事件
@@ -488,7 +853,6 @@ export default {
     deleteBatchClick() {
       var that = this;
       // 判断有没有勾选
-
       if (that.tableSelectionArr.length === 0) {
         that.$message({
           type: "error",
@@ -630,7 +994,6 @@ export default {
           });
         });
     },
-
     // 表格操作栏-按钮-编辑--点击事件
     editTaskClick(row) {
       var that = this;
@@ -639,7 +1002,6 @@ export default {
         that.$refs.editTask.init(row.id);
       });
     },
-
     // 顶部操作栏-按钮-创建任务--点击事件
     createTaskClick() {
       var that = this;

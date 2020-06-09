@@ -1,5 +1,18 @@
 <template>
   <div class="myProject">
+    <el-popover placement="top-start" trigger="hover" content="点击查看后台数据处理进度">
+      <el-button
+        slot="reference"
+        @click="downOkClick"
+        v-show="leftBottomTaskDownShow"
+        type="info"
+        size="mini"
+        class="downloadTem"
+      >
+        <i class="el-icon-download"></i>
+      </el-button>
+    </el-popover>
+
     <!--------------------------- 顶部操作栏--start----------------------------------- -->
     <div class="handler">
       <div class="left">
@@ -9,7 +22,7 @@
         </el-select>
         <span class="lf5">任务类型</span>
         <el-select v-model="searchForm.taskTypeId" size="mini" class="leftSelect lf5">
-          <el-option value="">全部</el-option>
+          <el-option value>全部</el-option>
           <el-option
             v-for="item in taskTypes"
             :value="item.id"
@@ -143,23 +156,22 @@
           </el-link>
           <el-link size="mini" class="lf10" type="primary" @click="deleteClick(row)">
             删除
-          </el-link> -->
+          </el-link>-->
         </template>
       </Table>
       <div class="line10"></div>
       <!-- 分页器 -->
       <div class="pageCon">
         <Page
-        :total="total"
-        :page-size="searchForm.size"
-        show-elevator
-        show-total
-        show-sizer
-        @on-change="pageChange"
-        @on-page-size-change="pageSizeChange"
-      />
+          :total="total"
+          :page-size="searchForm.size"
+          show-elevator
+          show-total
+          show-sizer
+          @on-change="pageChange"
+          @on-page-size-change="pageSizeChange"
+        />
       </div>
-
     </div>
     <!-- 弹窗区 -->
     <el-dialog :visible.sync="createTaskModal" width="500px" title="创建任务">
@@ -169,229 +181,74 @@
     <el-dialog :visible.sync="editTaskModal" width="500px" title="修改任务">
       <EditTask ref="editTask" @success="updateTaskSuccess" @cancel="editTaskModal=false" />
     </el-dialog>
-    <el-dialog :visible.sync="downTaskModal" width="480px" title="任务下载">
-      <el-collapse class="taskDown" accordion>
-        <el-collapse-item>
-          <template slot="title">
-            <div class="taskDownInfoCon">
-              <span>任务1（下载中）</span>
-              <span>26(18/4)</span>
+    <el-dialog
+      :before-close="taskDownloadClose"
+      :visible.sync="downTaskModal"
+      width="480px"
+      title="任务下载"
+    >
+      <div v-loading="downloadLoading" style="min-height:200px" element-loading-text="数据加载中...">
+        <el-collapse
+          v-if="downloadTaskObjArrCopy.length>0"
+          class="taskDown"
+          accordion
+          v-model="collapseActiveName"
+        >
+          <el-collapse-item
+            :name="index+1+''"
+            v-for="(downloadTaskObj,index) in downloadTaskObjArrCopy"
+            :key="downloadTaskObj.id"
+          >
+            <template slot="title">
+              <div class="taskDownInfoCon">
+                <span>{{downloadTaskObj.taskName}}</span>
+                <span>
+                  {{downloadTaskObj.totalFloor}}
+                  ({{downloadTaskObj.greenNum | formatNullValue}}
+                  /{{downloadTaskObj.redNum | formatNullValue}})
+                </span>
+              </div>
+            </template>
+            <div class="taskDownBody">
+              <el-card
+                v-for="item in downloadTaskObj.downloadBuildingArrs"
+                :key="item.id"
+                body-style="{border:0}"
+                shadow="never"
+              >
+                <div slot="header" style="height:30px" class="clearfix">
+                  <span>{{item.buildingName}}</span>
+                  <span
+                    style="float: right;"
+                  >{{item.totalFloor}}({{item.greenNum | formatNullValue}}/{{item.redNum | formatNullValue}})</span>
+                </div>
+                <div class="floorItemCon">
+                  <div
+                    class="floorItem"
+                    :class="{floorItemGreen:it.isGreen,floorItemRed:it.isRed}"
+                    v-for="it in item.floors"
+                    :key="it.id"
+                  >{{it.floorNum | formatFloorFilter}}</div>
+                </div>
+              </el-card>
             </div>
-          </template>
-          <div class="taskDownBody">
-            <el-card body-style="{border:0}" shadow="never">
-              <div slot="header" style="height:30px" class="clearfix">
-                <span>楼宇1（下载中）</span>
-                <span style="float: right;">10(3/5)</span>
-              </div>
-              <div class="floorItemCon">
-                <div class="floorItem">9F</div>
-                <div class="floorItem">10F</div>
-                <div class="floorItem floorItemGreen">1F</div>
-                <div class="floorItem floorItemGreen">2F</div>
-                <div class="floorItem floorItemGreen">3F</div>
-                <div class="floorItem floorItemGreen">4F</div>
-                <div class="floorItem floorItemGreen">5F</div>
-                <div class="floorItem floorItemRed">6F</div>
-                <div class="floorItem floorItemRed">7F</div>
-                <div class="floorItem floorItemRed">8F</div>
-                <div class="floorItem">9F</div>
-                <div class="floorItem">10F</div>
-              </div>
-            </el-card>
-            <el-card body-style="{border:0}" shadow="never">
-              <div slot="header" style="height:30px" class="clearfix">
-                <span>楼宇1（下载中）</span>
-                <span style="float: right;">10(3/5)</span>
-              </div>
-              <div class="floorItemCon">
-                <div class="floorItem floorItemGreen">1F</div>
-                <div class="floorItem floorItemGreen">2F</div>
-                <div class="floorItem floorItemGreen">3F</div>
-                <div class="floorItem floorItemGreen">4F</div>
-                <div class="floorItem floorItemGreen">5F</div>
-                <div class="floorItem floorItemRed">6F</div>
-                <div class="floorItem floorItemRed">7F</div>
-                <div class="floorItem floorItemRed">8F</div>
-                <div class="floorItem">9F</div>
-                <div class="floorItem">10F</div>
-                <div class="floorItem floorItemGreen">1F</div>
-                <div class="floorItem floorItemGreen">2F</div>
-                <div class="floorItem floorItemGreen">3F</div>
-              </div>
-            </el-card>
-            <el-card body-style="{border:0}" shadow="never">
-              <div slot="header" style="height:30px" class="clearfix">
-                <span>楼宇1（下载中）</span>
-                <span style="float: right;">10(3/5)</span>
-              </div>
-              <div class="floorItemCon">
-                <div class="floorItem floorItemGreen">1F</div>
-                <div class="floorItem floorItemGreen">2F</div>
-                <div class="floorItem floorItemGreen">3F</div>
-                <div class="floorItem floorItemGreen">4F</div>
-                <div class="floorItem floorItemGreen">5F</div>
-
-                <div class="floorItem floorItemGreen">4F</div>
-                <div class="floorItem floorItemGreen">5F</div>
-                <div class="floorItem floorItemRed">6F</div>
-                <div class="floorItem floorItemRed">7F</div>
-                <div class="floorItem floorItemRed">8F</div>
-                <div class="floorItem">9F</div>
-                <div class="floorItem">10F</div>
-              </div>
-            </el-card>
-          </div>
-        </el-collapse-item>
-        <el-collapse-item>
-          <template slot="title">
-            <div class="taskDownInfoCon">
-              <span>任务1（下载中）</span>
-              <span>26(18/4)</span>
-            </div>
-          </template>
-          <div class="taskDownBody">
-            <el-card body-style="{border:0}" shadow="never">
-              <div slot="header" style="height:30px" class="clearfix">
-                <span>楼宇1（下载中）</span>
-                <span style="float: right;">10(3/5)</span>
-              </div>
-              <div class="floorItemCon">
-                <div class="floorItem">9F</div>
-                <div class="floorItem">10F</div>
-                <div class="floorItem floorItemGreen">1F</div>
-                <div class="floorItem floorItemGreen">2F</div>
-                <div class="floorItem floorItemGreen">3F</div>
-                <div class="floorItem floorItemGreen">4F</div>
-                <div class="floorItem floorItemGreen">5F</div>
-                <div class="floorItem floorItemRed">6F</div>
-                <div class="floorItem floorItemRed">7F</div>
-                <div class="floorItem floorItemRed">8F</div>
-                <div class="floorItem">9F</div>
-                <div class="floorItem">10F</div>
-              </div>
-            </el-card>
-            <el-card body-style="{border:0}" shadow="never">
-              <div slot="header" style="height:30px" class="clearfix">
-                <span>楼宇1（下载中）</span>
-                <span style="float: right;">10(3/5)</span>
-              </div>
-              <div class="floorItemCon">
-                <div class="floorItem floorItemGreen">1F</div>
-                <div class="floorItem floorItemGreen">2F</div>
-                <div class="floorItem floorItemGreen">3F</div>
-                <div class="floorItem floorItemGreen">4F</div>
-                <div class="floorItem floorItemGreen">5F</div>
-                <div class="floorItem floorItemRed">6F</div>
-                <div class="floorItem floorItemRed">7F</div>
-                <div class="floorItem floorItemRed">8F</div>
-                <div class="floorItem">9F</div>
-                <div class="floorItem">10F</div>
-                <div class="floorItem floorItemGreen">1F</div>
-                <div class="floorItem floorItemGreen">2F</div>
-                <div class="floorItem floorItemGreen">3F</div>
-              </div>
-            </el-card>
-            <el-card body-style="{border:0}" shadow="never">
-              <div slot="header" style="height:30px" class="clearfix">
-                <span>楼宇1（下载中）</span>
-                <span style="float: right;">10(3/5)</span>
-              </div>
-              <div class="floorItemCon">
-                <div class="floorItem floorItemGreen">1F</div>
-                <div class="floorItem floorItemGreen">2F</div>
-                <div class="floorItem floorItemGreen">3F</div>
-                <div class="floorItem floorItemGreen">4F</div>
-                <div class="floorItem floorItemGreen">5F</div>
-
-                <div class="floorItem floorItemGreen">4F</div>
-                <div class="floorItem floorItemGreen">5F</div>
-                <div class="floorItem floorItemRed">6F</div>
-                <div class="floorItem floorItemRed">7F</div>
-                <div class="floorItem floorItemRed">8F</div>
-                <div class="floorItem">9F</div>
-                <div class="floorItem">10F</div>
-              </div>
-            </el-card>
-          </div>
-        </el-collapse-item>
-        <el-collapse-item>
-          <template slot="title">
-            <div class="taskDownInfoCon">
-              <span>任务1（下载中）</span>
-              <span>26(18/4)</span>
-            </div>
-          </template>
-          <div class="taskDownBody">
-            <el-card body-style="{border:0}" shadow="never">
-              <div slot="header" style="height:30px" class="clearfix">
-                <span>楼宇1（下载中）</span>
-                <span style="float: right;">10(3/5)</span>
-              </div>
-              <div class="floorItemCon">
-                <div class="floorItem">9F</div>
-                <div class="floorItem">10F</div>
-                <div class="floorItem floorItemGreen">1F</div>
-                <div class="floorItem floorItemGreen">2F</div>
-                <div class="floorItem floorItemGreen">3F</div>
-                <div class="floorItem floorItemGreen">4F</div>
-                <div class="floorItem floorItemGreen">5F</div>
-                <div class="floorItem floorItemRed">6F</div>
-                <div class="floorItem floorItemRed">7F</div>
-                <div class="floorItem floorItemRed">8F</div>
-                <div class="floorItem">9F</div>
-                <div class="floorItem">10F</div>
-              </div>
-            </el-card>
-            <el-card body-style="{border:0}" shadow="never">
-              <div slot="header" style="height:30px" class="clearfix">
-                <span>楼宇1（下载中）</span>
-                <span style="float: right;">10(3/5)</span>
-              </div>
-              <div class="floorItemCon">
-                <div class="floorItem floorItemGreen">1F</div>
-                <div class="floorItem floorItemGreen">2F</div>
-                <div class="floorItem floorItemGreen">3F</div>
-                <div class="floorItem floorItemGreen">4F</div>
-                <div class="floorItem floorItemGreen">5F</div>
-                <div class="floorItem floorItemRed">6F</div>
-                <div class="floorItem floorItemRed">7F</div>
-                <div class="floorItem floorItemRed">8F</div>
-                <div class="floorItem">9F</div>
-                <div class="floorItem">10F</div>
-                <div class="floorItem floorItemGreen">1F</div>
-                <div class="floorItem floorItemGreen">2F</div>
-                <div class="floorItem floorItemGreen">3F</div>
-              </div>
-            </el-card>
-            <el-card body-style="{border:0}" shadow="never">
-              <div slot="header" style="height:30px" class="clearfix">
-                <span>楼宇1（下载中）</span>
-                <span style="float: right;">10(3/5)</span>
-              </div>
-              <div class="floorItemCon">
-                <div class="floorItem floorItemGreen">1F</div>
-                <div class="floorItem floorItemGreen">2F</div>
-                <div class="floorItem floorItemGreen">3F</div>
-                <div class="floorItem floorItemGreen">4F</div>
-                <div class="floorItem floorItemGreen">5F</div>
-
-                <div class="floorItem floorItemGreen">4F</div>
-                <div class="floorItem floorItemGreen">5F</div>
-                <div class="floorItem floorItemRed">6F</div>
-                <div class="floorItem floorItemRed">7F</div>
-                <div class="floorItem floorItemRed">8F</div>
-                <div class="floorItem">9F</div>
-                <div class="floorItem">10F</div>
-              </div>
-            </el-card>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
+          </el-collapse-item>
+        </el-collapse>
+        <div
+          style="min-height:200px"
+          v-show="downloadTaskObjArrCopy.length==0&&!downloadLoading"
+          class="center"
+        >暂无楼层信息</div>
+      </div>
       <div slot="footer">
         <div class="center">
-          <el-button size="mini" @click="downTaskModal=false">取消</el-button>
-          <el-button type="primary" size="mini">下载</el-button>
+          <el-button size="mini" @click="taskDownloadCancle">取消</el-button>
+          <el-button
+            type="primary"
+            v-show="floorForDownloadArr.length!=0"
+            size="mini"
+            @click="downFloorClick"
+          >下载</el-button>
         </div>
       </div>
     </el-dialog>
@@ -414,7 +271,7 @@
     </el-dialog>
     <el-dialog title="请选择下载格式" :visible.sync="formatModal" width="30%">
       <el-radio v-model="radioDown" label="geojson">geojson</el-radio>
-      <el-radio v-model="radioDown" label="shp"  disabled>shp</el-radio>
+      <el-radio v-model="radioDown" label="shp" disabled>shp</el-radio>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="formatModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="downOkClick">确 定</el-button>
@@ -422,7 +279,7 @@
     </el-dialog>
     <el-dialog title="请选择下载格式" :visible.sync="formatBatchModal" width="30%">
       <el-radio v-model="radioBatchDown" label="geojson">geojson</el-radio>
-      <el-radio v-model="radioBatchDown" label="shp"  disabled>shp</el-radio>
+      <el-radio v-model="radioBatchDown" label="shp" disabled>shp</el-radio>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="formatBatchModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="downBatchOkClick">确 定</el-button>

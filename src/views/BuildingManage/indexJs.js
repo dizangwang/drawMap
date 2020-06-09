@@ -155,7 +155,11 @@ export default {
       taskObj: "",
 
       // 发布id
-      publishId: ""
+      publishId: "",
+      // 需要下载的楼宇
+      buildingForDownloadArr: [],
+      // 下载标记
+      downloadFlag: ""
     };
   },
   mounted() {
@@ -451,16 +455,148 @@ export default {
     downOkClick() {
       var that = this;
       that.formatModal = false;
-      that.$message({
-        type: "success",
-        message: "下载成功!"
+      var promiseArr = [];
+      that.buildingForDownloadArr.forEach((item, index) => {
+        const promise = new Promise(((resolve) => {
+          that.getFloorOutlineByBuildingId(item.id, (data) => {
+            if (data) {
+              that.buildingForDownloadArr[index].floors = data;
+            }
+            resolve(data);
+          });
+        }));
+        promiseArr.push(promise);
       });
+
+      // 执行所有promise
+      Promise.all(promiseArr).then((result) => {
+        that.floorMgrGetDownloadFlag();
+      });
+    },
+    // 单楼层下载准备接口
+    floorMgrGetDownloadFlag() {
+      var that = this;
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.floorMgrGetDownloadFlag,
+          data: {}
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            // 获取flag
+            that.downloadFlag = data.msg;
+            const arr = [];
+            that.buildingForDownloadArr.forEach((item, index) => {
+              if (item.floors) {
+                item.floors.forEach((it, ind) => {
+                  arr.push(it.id);
+                });
+              }
+            });
+            if (arr.length > 0) {
+              that.floorMgrPrepareDownload(arr.join(","));
+            } else {
+              that.$message({
+                message: "暂无楼层信息",
+                type: "warning"
+              });
+            }
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+
+    floorMgrPrepareDownload(id) {
+      var that = this;
+      that
+        .ajax({
+          method: "timeoutPost",
+          url: that.apis.floorMgrPrepareDownload,
+          data: {
+            flag: that.downloadFlag,
+            id,
+            type: that.radioDown
+          }
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            that.downFloorClick();
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        })
+        .catch((error) => {
+          if (/timeout/gi.test(error)) {
+            that.isTimeout = true;
+            that.$message({
+              message: "请求超时",
+              type: "warning"
+            });
+          }
+        });
+    },
+    // 下载点击事件
+    downFloorClick() {
+      var that = this;
+      var buildIds = [];
+      that.buildingForDownloadArr.forEach((item) => {
+        buildIds.push(item.id);
+      });
+      that.leftBottomTaskDownShow = false;
+      that.utils.postDownload({
+        url: window.location.origin + that.apis.floorMgrFinishDownload,
+        data: {
+          flag: that.downloadFlag,
+          buildingId: buildIds.join(","),
+          type: that.radioDown
+        }
+      });
+    },
+    // 根据楼宇id获取整个楼层的信息
+    getFloorOutlineByBuildingId(id, fn) {
+      var that = this;
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.getFloorInfoByBuildingId,
+          data: {
+            buildingId: id
+          }
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            fn(data.data);
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
     },
 
     // 表格操作栏-按钮-下载--点击事件
-    downloadClick() {
+    downloadClick(row) {
       var that = this;
       that.formatModal = true;
+      that.buildingForDownloadArr = [row];
     },
 
     // 顶部操作栏-按钮-下载-弹窗-确定--点击事件
@@ -483,7 +619,8 @@ export default {
         });
         return;
       }
-      that.formatBatchModal = true;
+      that.buildingForDownloadArr = that.tableSelectionArr;
+      that.formatModal = true;
     },
 
     // 表格操作栏-按钮-发布--点击事件
