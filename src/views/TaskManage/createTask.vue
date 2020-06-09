@@ -154,9 +154,7 @@ export default {
       }
     };
   },
-  mounted() {
-
-  },
+  mounted() {},
   methods: {
     // 初始化方法
     init() {

@@ -44,7 +44,7 @@
                 <el-button @click="uploadFile" size="mini" type="primary">
                   <i class="el-icon-upload"></i>点击上传
                 </el-button>
-                 <a href="./template.geojson" download>
+                <a href="./template.geojson" download>
                   <el-popover placement="top-start" trigger="hover" content="下载示例，查看数据格式">
                     <i slot="reference" class="el-icon-download iconleft"></i>
                   </el-popover>
@@ -113,7 +113,6 @@ export default {
     };
 
     return {
-
       // 用于反显轮廓
       editOutLine: "",
 
@@ -183,7 +182,7 @@ export default {
     });
   },
   methods: {
-  // 点击上传文件
+    // 点击上传文件
     uploadFile() {
       document.querySelector("#file").click();
     },

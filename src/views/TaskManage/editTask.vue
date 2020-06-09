@@ -117,7 +117,6 @@ export default {
 
   data() {
     return {
-
       // 表单数据
       formValidate: {
         taskName: "",
@@ -163,7 +162,6 @@ export default {
   },
   mounted() {},
   methods: {
-
     // 初始化编辑任务
     init(id) {
       var that = this;

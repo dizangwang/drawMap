@@ -1,13 +1,16 @@
 .tableCon {
   padding: 20px;
 }
+
 .area {
   display: flex;
   justify-content: space-between;
 }
+
 .areaSelect {
   width: 120px;
 }
+
 .handler {
   display: block;
   min-height: 50px;
@@ -17,9 +20,11 @@
   justify-content: space-between;
   align-items: center;
 }
+
 .leftSelect {
   width: 10%;
 }
+
 .leftInput {
   width: 13%;
   min-width: 120px;
@@ -29,9 +34,11 @@
   margin-right: 20px;
   white-space: nowrap;
 }
+
 .left {
   white-space: nowrap;
 }
+
 .areaSelect {
   width: 90px;
   margin-left: 10px;

@@ -180,7 +180,6 @@ export default {
     });
   },
   methods: {
-
     // 点击上传文件
     uploadFile() {
       document.querySelector("#file").click();

@@ -75,12 +75,14 @@
   max-height: 150px;
   overflow: auto
 }
-.downloadTem{
+
+.downloadTem {
   position: absolute;
-  left:20px;
-  bottom:15px;
+  left: 20px;
+  bottom: 15px;
   z-index: 333;
 }
-.myProject{
+
+.myProject {
   position: relative;
 }

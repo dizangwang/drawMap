@@ -20,52 +20,36 @@ export default {
   },
   data() {
     return {
-
       // 下载任务弹窗
       downTaskModal: false,
-
       // 表格高度
       tableHeight: "",
-
       // 创建任务弹窗展示
       createTaskModal: false,
-
       // 编辑任务弹窗展示
       editTaskModal: false,
-
       // 表格-发布-数据类型弹窗-展示
       dataTypeModal: false,
-
       // 表格-下载-数据类型弹窗-展示
       formatModal: false,
-
       // 顶部-发布-数据类型弹窗-展示
       dataTypeBatchModal: false,
-
       // 顶部-下载-数据类型弹窗-展示
       formatBatchModal: false,
-
       // 顶部-发布-数据类型
       radioBatchPublish: "geojson",
-
       // 表格-发布-数据类型
       radioPublish: "geojson",
-
       // 表格-下载-数据类型
       radioDown: "geojson",
-
       // 顶部-下载-数据类型
       radioBatchDown: "geojson",
-
       // 顶部 任务/楼宇 选择
       task: "1",
-
       // 任务类型
       type: "",
-
       // 选中的表格数据
       tableSelectionArr: [],
-
       // 表格的列数据
       Taskcolumns: [{
         type: "selection",
@@ -102,10 +86,8 @@ export default {
         width: 430
       }
       ],
-
       // 表格的数据
       Taskdata: [],
-
       // 搜索列表数据的参数对象
       searchForm: {
         city: "",
@@ -116,25 +98,18 @@ export default {
         taskName: "",
         taskTypeId: ""
       },
-
       // 返回的记录总条数
       total: 1,
-
       // 省份列表
       provinceList: [],
-
       // 城市列表
       cityList: [],
-
       // 区域列表
       districtList: [],
-
       // 发布任务id
       publishId: "",
-
       // 下载的记录id
       downloadTaskObjArr: [],
-
       // 下载默认展示窗口
       collapseActiveName: "1",
       // 任务下载楼宇接口
@@ -169,8 +144,6 @@ export default {
     window.onresize = () => {
       that.tableHeight = window.innerHeight - 160;
     };
-
-    // that.utils.postDownload({url:"http://localhost:30000/template.geojson",data:{}})
   },
   filters: {
     // 针对任务描述超过20个字进行处理
@@ -348,7 +321,8 @@ export default {
                 let taskGreenNum = 0;
                 if (that.downloadTaskObjArrCopy[num].downloadBuildingArrs && that
                   .downloadTaskObjArrCopy[num].downloadBuildingArrs.length > 0) {
-                  that.downloadTaskObjArrCopy[num].downloadBuildingArrs.forEach((item, ind) => {
+                  that.downloadTaskObjArrCopy[num].downloadBuildingArrs.forEach((item,
+                    ind) => {
                     const itemCopy = JSON.parse(JSON.stringify(item));
                     const {
                       floors
@@ -556,7 +530,6 @@ export default {
         path: `/buildingManage`
       });
     },
-
     // 监听城市变动
     cityChange(id) {
       var that = this;
@@ -567,7 +540,6 @@ export default {
         that.searchForm.district = "";
       }
     },
-
     // 监听省份变动
     provinceChange(id) {
       var that = this;
@@ -579,7 +551,6 @@ export default {
         that.searchForm.district = "";
       }
     },
-
     // 根据区域id获取区域列表
     getAreasWithPid(pid, fn) {
       var that = this;
@@ -605,7 +576,6 @@ export default {
           }
         });
     },
-
     // 获取任务类型放到vuex中
     getAllTypes() {
       var that = this;
@@ -630,21 +600,18 @@ export default {
           }
         });
     },
-
     // 创建任务成功后执行的操作
     createTaskSuccess() {
       var that = this;
       that.createTaskModal = false;
       that.search();
     },
-
     // 更新任务成功后执行的操作
     updateTaskSuccess() {
       var that = this;
       that.editTaskModal = false;
       that.search();
     },
-
     // 左上角 任务/楼宇 切换界面
     taskChange(e) {
       var that = this;
@@ -661,34 +628,29 @@ export default {
         });
       }
     },
-
     // 勾选表格下拉框事件
     tableSelectionChange(e) {
       var that = this;
       that.tableSelectionArr = e;
     },
-
     // 分页器-页码变动
     pageChange(num) {
       var that = this;
       that.searchForm.current = num;
       that.search();
     },
-
     // 分页器-展示记录数变动
     pageSizeChange(num) {
       var that = this;
       that.searchForm.size = num;
       that.search();
     },
-
     // 点击搜索按钮
     searchClick() {
       var that = this;
       that.searchForm.current = 1;
       that.search();
     },
-
     // 根据条件查询列表；
     search() {
       var that = this;
@@ -748,7 +710,6 @@ export default {
           });
         });
     },
-
     // 表格操作栏-按钮-下架--点击事件
     underCarriageClick(row) {
       var that = this;
@@ -780,7 +741,6 @@ export default {
       }
       that.dataTypeBatchModal = true;
     },
-
     // 表格操作栏-按钮-发布--点击事件
     publishBatchOkClick() {
       var that = this;
@@ -793,7 +753,6 @@ export default {
       ids = arr.join(",");
       that.publishTask(ids, that.radioBatchPublish);
     },
-
     // 表格操作栏-按钮-下载-弹窗-确定--点击事件
     downOkClick() {
       var that = this;
@@ -801,15 +760,12 @@ export default {
       that.downTaskModal = true;
       that.getBuildingByTaskId();
     },
-
     // 表格操作栏-按钮-下载--点击事件
     downloadClick(row) {
       var that = this;
       that.formatModal = true;
       that.downloadTaskObjArr = [row];
-      // that.getBuildingByTaskId();
     },
-
     // 顶部操作栏-按钮-下载-弹窗-确定--点击事件
     downBatchOkClick() {
       var that = this;
@@ -819,7 +775,6 @@ export default {
         message: "下载成功!"
       });
     },
-
     // 顶部操作栏-按钮-下载--点击事件
     downBatchloadClick() {
       var that = this;
@@ -834,21 +789,18 @@ export default {
       //  that.getBuildingByTaskId();
       that.formatModal = true;
     },
-
     // 表格操作栏-按钮-发布--点击事件
     publishClick(row) {
       var that = this;
       that.publishId = row.id;
       that.dataTypeModal = true;
     },
-
     // 表格操作栏-按钮-发布-弹窗-确定-点击事件
     publishOkClick() {
       var that = this;
       that.dataTypeModal = false;
       that.publishTask(that.publishId, that.radioPublish);
     },
-
     // 顶部操作栏-按钮-删除--点击事件
     deleteBatchClick() {
       var that = this;
@@ -943,7 +895,6 @@ export default {
           }
         });
     },
-
     // 根据id删除任务
     deleteTask(id) {
       var that = this;
@@ -974,7 +925,6 @@ export default {
           }
         });
     },
-
     // 表格操作栏-按钮-删除--点击事件
     deleteClick(row) {
       var that = this;
