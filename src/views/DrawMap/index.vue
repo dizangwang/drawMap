@@ -2,6 +2,7 @@
   <div class="app">
     <!-- 操作栏 -->
     <div class="handlerFor">
+      <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>
       <el-button size="mini" class="lf10" type="primary">调整平面图</el-button>
       <el-button size="mini" class="lf10" type="primary">完成</el-button>
       <el-button size="mini" class="lf10" type="primary">
@@ -62,29 +63,56 @@
                   </template>
                   <div>
                     <el-card body-style="{border:0}" shadow="never">
-                      <table class="formTable">
+                      <div v-show="!selectedElement.id">
+                        <div class="center">请在底图上选择要编辑的元素</div>
+                        <div class="center">（按住crtl键可以选择多个元素）</div>
+                      </div>
+                      <table class="formTable" v-show="selectedElement.id">
                         <tr>
                           <td>元素类型</td>
                           <td>
-                            <el-input class="leftInputWid" size="mini" disabled placeholder="请输入内容"></el-input>
+                            <el-input
+                              class="leftInputWid"
+                              :value="selectedElement.layername"
+                              size="mini"
+                              disabled
+                              placeholder="请输入内容"
+                            ></el-input>
                           </td>
                         </tr>
                         <tr>
                           <td>元素ID</td>
                           <td>
-                            <el-input class="leftInputWid" size="mini" disabled placeholder="请输入内容"></el-input>
+                            <el-input
+                              class="leftInputWid"
+                              :value="selectedElement.id"
+                              size="mini"
+                              disabled
+                              placeholder="请输入内容"
+                            ></el-input>
                           </td>
                         </tr>
                         <tr>
                           <td>类型ID</td>
                           <td>
-                            <el-input class="leftInputWid" size="mini" disabled placeholder="请输入内容"></el-input>
+                            <el-input
+                              class="leftInputWid"
+                              :value="selectedElement.value.typeID"
+                              size="mini"
+                              disabled
+                              placeholder="请输入内容"
+                            ></el-input>
                           </td>
                         </tr>
                         <tr>
                           <td>元素名称</td>
                           <td>
-                            <el-input class="leftInputWid" size="mini" placeholder="请输入内容"></el-input>
+                            <el-input
+                              class="leftInputWid"
+                              v-model="selectedElement.value.name"
+                              size="mini"
+                              placeholder="请输入内容"
+                            ></el-input>
                           </td>
                         </tr>
                         <tr>
@@ -93,7 +121,7 @@
                             <el-select
                               class="leftInputWid"
                               size="mini"
-                              v-model="elementStyle"
+                              v-model="selectedElement.value.styleID"
                               placeholder="请选择"
                             >
                               <el-option label="dddd" value="dddd"></el-option>
@@ -105,7 +133,10 @@
                         <tr>
                           <td>填充颜色</td>
                           <td>
-                            <el-color-picker class="colorWidth"></el-color-picker>
+                            <el-color-picker
+                              v-model="selectedElement.value.color"
+                              class="colorWidth"
+                            ></el-color-picker>
                           </td>
                         </tr>
                       </table>
@@ -160,14 +191,36 @@
                         <tr>
                           <td>形状</td>
                           <td>
-                            <span class="iconMgrItem blackGd" style="background:#223f5c">
-                              <i class="iconDrawRect drawRectWH"></i>
+                            <!-- blackGd -->
+                            <span
+                              @click="drawRect"
+                              class="iconMgrItem"
+                              :class="{blackGd:drawActiveType==1}"
+                            >
+                              <i
+                                class="iconDrawRect drawRectWH"
+                                :class="{iconDrawRectActive:drawActiveType==1}"
+                              ></i>
                             </span>
-                            <span class="iconMgrItem">
-                              <i class="iconDrawPie drawRectWH"></i>
+                            <span
+                              @click="drawcircle"
+                              class="iconMgrItem"
+                              :class="{blackGd:drawActiveType==2}"
+                            >
+                              <i
+                                class="iconDrawPie drawRectWH"
+                                :class="{iconDrawPieActive:drawActiveType==2}"
+                              ></i>
                             </span>
-                            <span class="iconMgrItem">
-                              <i class="iconDrawPolygon drawRectWH"></i>
+                            <span
+                              class="iconMgrItem"
+                              @click="drawpolygon"
+                              :class="{blackGd:drawActiveType==3}"
+                            >
+                              <i
+                                class="iconDrawPolygon drawRectWH"
+                                :class="{iconDrawPolygonActive:drawActiveType==3}"
+                              ></i>
                             </span>
                           </td>
                         </tr>
@@ -228,9 +281,14 @@
                         <tr>
                           <td>设施类型</td>
                           <td>
-                            <span class="iconMgrItem"></span>
-                            <span class="iconMgrItem"></span>
-                            <span class="iconMgrItem"></span>
+                            <span class="iconMgrItem">
+                              <img
+                                :src="facilityTypeTarget.value.img"
+                                width="30px"
+                                height="30px"
+                                alt
+                              />
+                            </span>
                           </td>
                         </tr>
                         <tr>
@@ -268,15 +326,44 @@
                         <tr>
                           <td>绘制路线</td>
                           <td>
-                            <span class="iconMgrItem"></span>
+                            <span class="iconMgrItem" @click="drawLine">
+                              <i class="route drawRectWH"></i>
+                            </span>
                           </td>
                         </tr>
                         <tr>
                           <td>设施类型</td>
                           <td>
-                            <span class="iconMgrItem"></span>
-                            <span class="iconMgrItem"></span>
-                            <span class="iconMgrItem"></span>
+                            <span
+                              class="iconMgrItem"
+                              @click="verticalFloorClick"
+                              :class="{blackGd:drawActiveLine==1}"
+                            >
+                              <i
+                                class="verticalFloor drawRectWH"
+                                :class="{verticalFloorActive:drawActiveLine==1}"
+                              ></i>
+                            </span>
+                            <span
+                              class="iconMgrItem"
+                              @click="holdFloorClick"
+                              :class="{blackGd:drawActiveLine==2}"
+                            >
+                              <i
+                                class="holdFloor drawRectWH"
+                                :class="{holdFloorActive:drawActiveLine==2}"
+                              ></i>
+                            </span>
+                            <span
+                              class="iconMgrItem"
+                              @click="commonFloorClick"
+                              :class="{blackGd:drawActiveLine==3}"
+                            >
+                              <i
+                                class="commonFloor drawRectWH"
+                                :class="{floorActive:drawActiveLine==3}"
+                              ></i>
+                            </span>
                           </td>
                         </tr>
                       </table>
@@ -288,7 +375,14 @@
           </div>
         </div>
       </div>
-      <div class="rightHandlerCon" :style="{ height: height }"></div>
+      <div class="rightHandlerCon" :style="{ height: height }">
+        <div
+          v-show="!hasUnderPainting"
+          class="noUnderPaint center"
+          :style="{ height: height }"
+        >当前楼层未设置底图，不可绘制。请点击设置楼层信息按钮，录入底图等信息</div>
+        <div :style="{ height: height }" id="mapInDoor"></div>
+      </div>
     </div>
     <!-- 设置楼层信息 -->
     <el-dialog :visible.sync="setFloorInfoModal" width="500px" title="设置楼层信息">
@@ -348,21 +442,28 @@
 
     <!-- 底部操作栏 -->
     <div class="mapFooterHandler">
-      <el-button type="primary" plain>20M</el-button>
+      <!-- <el-button type="primary" plain>20M</el-button> -->
       <div class="zoomSelect">
-        <i class="el-icon-zoom-in lf10"></i>
+        <i class="el-icon-zoom-in lf10" @click="mapBiggerClick"></i>
         <i class="vline lf10"></i>
-        <i class="el-icon-zoom-out lf10"></i>
+        <i class="el-icon-zoom-out lf10" @click="mapLittleClick"></i>
         <i class="vline lf10"></i>
         <i class="iconCommon iconBlackBuild lf10 iconSize"></i>
 
         <span class="floorWord">楼层：</span>
-        <el-select class="floorSelect" size="mini" v-model="floor" placeholder="楼层">
-          <el-option label="F5" value="5"></el-option>
-          <el-option label="F4" value="4"></el-option>
-          <el-option label="F3" value="3"></el-option>
-          <el-option label="F2" value="2"></el-option>
-          <el-option label="F1" value="1"></el-option>
+        <el-select
+          @change="floorChange"
+          class="floorSelect"
+          size="mini"
+          v-model="activeFloor"
+          placeholder="楼层"
+        >
+          <el-option
+            v-for="(item,index) in floorArr"
+            :key="index"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
         </el-select>
       </div>
     </div>

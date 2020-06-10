@@ -169,9 +169,18 @@ html {
   background: url('../images/icons/drawRect.png') no-repeat center;
   background-size: 100% 100%;
 }
+.iconDrawRectActive {
+  background: url('../images/icons/drawRectActive.png') no-repeat center;
+  background-size: 100% 100%;
+}
+
 
 .iconDrawPie {
   background: url('../images/icons/drawPie.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.iconDrawPieActive {
+  background: url('../images/icons/drawPieActive.png') no-repeat center;
   background-size: 100% 100%;
 }
 
@@ -179,9 +188,43 @@ html {
   background: url('../images/icons/drawPolygon.png') no-repeat center;
   background-size: 100% 100%;
 }
+.iconDrawPolygonActive {
+  background: url('../images/icons/drawPolygonActive.png') no-repeat center;
+  background-size: 100% 100%;
+}
 
 .iconBlackBuild {
   background: url('../images/icons/blackBuild.png') no-repeat center;
+  background-size: 100% 100%;
+}
+
+.route {
+  background: url('../images/icons/route.png') no-repeat center;
+  background-size: 100% 100%;
+}
+
+.verticalFloor{
+  background: url('../images/icons/verticalFloor.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.verticalFloorActive{
+  background: url('../images/icons/verticalFloorActive.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.holdFloor{
+  background: url('../images/icons/holdFloor.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.holdFloorActive{
+  background: url('../images/icons/holdFloorActive.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.commonFloor{
+  background: url('../images/icons/floor.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.floorActive{
+  background: url('../images/icons/floorActive.png') no-repeat center;
   background-size: 100% 100%;
 }
 

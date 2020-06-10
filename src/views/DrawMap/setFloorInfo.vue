@@ -1,5 +1,6 @@
 <template>
   <div class="task olme">
+    <input style="height:0px;width:0px" type="file" id="file" />
     <el-form ref="formValidate" :model="formValidate" :rules="ruleValidate" label-width="0">
       <table class="wd100">
         <tr>
@@ -8,15 +9,9 @@
           <td>
             <el-form-item size="mini" label-width="0">
               <div class="centerStart">
-                <el-upload
-                  class="upload-demo"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  @on-success="uploadSuccess"
-                >
-                  <el-button size="mini" type="primary">
-                    <i class="el-icon-upload"></i>点击上传
-                  </el-button>
-                </el-upload>
+                <el-button @click="uploadFile" size="mini" type="primary">
+                  <i class="el-icon-upload"></i>点击上传
+                </el-button>
 
                 <el-popover placement="top-start" trigger="hover" content="绘制地图轮廓">
                   <i
@@ -32,12 +27,13 @@
         <tr>
           <td class="required rightLebal">上传平面图：</td>
           <td>
-            <el-form-item size="mini" label-width="0" prop="lineData">
+            <el-form-item size="mini" label-width="0" prop="planarGraph">
               <div class="centerStart">
                 <el-upload
                   class="upload-demo"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  @on-success="uploadSuccess"
+                  :action="uploadUrl"
+                  :on-success="uploadSuccess"
+                  :on-error="uploadError"
                 >
                   <el-button size="mini" type="primary">
                     <i class="el-icon-upload"></i>点击上传
@@ -135,14 +131,18 @@ export default {
   },
   data() {
     // 校验轮廓数据
-    var validatefloorData = (rule, value, callback) => {
+    var validateUnderPicId = (rule, value, callback) => {
       var that = this;
-      if (that.formValidate.lineData === "") {
-        callback(new Error("轮廓数据不能为空"));
+      if (that.formValidate.planarGraph === "") {
+        callback(new Error("请上传平面图"));
       }
       callback();
     };
     return {
+      //楼宇所在的位置
+      location: "",
+      //上传的url
+      uploadUrl: "",
       // 表单字段
       formValidate: {
         lineData: "",
@@ -159,21 +159,65 @@ export default {
       fullScreenModal: false,
       // 校验规则
       ruleValidate: {
-        buildingName: [
-          { required: true, message: "请填写楼宇名称", trigger: "blur" }
-        ],
-
-        lineData: [
+        planarGraph: [
           {
-            validator: validatefloorData,
-            message: "请上传平面图"
+            validator: validateUnderPicId,
+            message: "请上传平面图",
+            trigger: "change"
           }
         ]
       }
     };
   },
-  mounted() {},
+  mounted() {
+    var that = this;
+    that.uploadUrl = that.uploadApis.uploadFiles;
+    //获取楼宇详情
+    var taskId = that.utils.localstorageGet("buildObj")["taskId"];
+    that.getTaskById(taskId);
+    // 上传geojson文件
+    that.utils.parseGeson(that, "file").then(res => {
+      if (res.code === 200) {
+        const { data } = res;
+        let str = "";
+        Object.keys(data).forEach((item, index) => {
+          str += `floorOutline[${index}].floor=${item}&`;
+          const coorArr = data[item].geometry.coordinates;
+          const arr = [];
+          coorArr.forEach(it => {
+            arr.push({ lng: it[0], lat: it[1] });
+          });
+          str += `floorOutline=${JSON.stringify(arr)}&`;
+        });
+        that.formValidate.lineData = str;
+      }
+    });
+  },
   methods: {
+    // 点击上传文件
+    uploadFile() {
+      document.querySelector("#file").click();
+    },
+    // 根据任务id获取详情
+    getTaskById(id) {
+      var that = this;
+      var param = {};
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.getTaskById + id,
+          data: param
+        })
+        .then(res => {
+          const { data } = res;
+          if (data.code === 200) {
+            that.location =
+              data.data.provinceName +
+              data.data.cityName +
+              data.data.districtName;
+          }
+        });
+    },
     // 清除轮廓信息
     clearOutLineData() {
       var that = this;
@@ -222,10 +266,8 @@ export default {
         if (item.indexOf("M") > -1) {
           floorNum = -+item.replace("M", "");
         }
-        str += `floorOutline[${index}].floor=${floorNum}&`;
-        str += `floorOutline[${index}].outline=${JSON.stringify(
-          lineData[item]
-        )}&`;
+
+        str += `floorOutline=${JSON.stringify(lineData[item])}&`;
       });
       that.formValidate.lineData = str;
     },
@@ -234,27 +276,42 @@ export default {
     mapOutLineClick() {
       var that = this;
       that.fullScreenModal = true;
-      const address = that.taskObj.provinceName
-        + that.taskObj.cityName
-        + that.taskObj.districtName;
-      that.$refs.drawProfile.initData(address);
+      const address = that.location;
+      that.$refs.drawProfile.initData({ address: address });
     },
 
     // 被外部调用时初始化方法
-    init(taskObj) {
+    init(obj) {
       var that = this;
 
-      Object.keys(that.formValidate).forEach((key) => {
+      Object.keys(that.formValidate).forEach(key => {
         that.formValidate[key] = "";
       });
       that.$refs.formValidate.resetFields();
-      that.taskObj = taskObj;
-      that.formValidate.taskId = taskObj.id;
+      that.formValidate.id = obj.id;
     },
 
     // 上传文件成功回调
-    uploadSuccess() {
-      // todo
+    uploadSuccess(data) {
+      var that = this;
+      if (data.code === 200) {
+        that.formValidate.planarGraph = data.data.id;
+        this.$message({
+          message: "文件上传成功",
+          type: "success"
+        });
+      } else {
+        this.$message({
+          message: "文件上传失败",
+          type: "warning"
+        });
+      }
+    },
+    uploadError() {
+      this.$message({
+        message: "文件上传失败",
+        type: "warning"
+      });
     },
 
     // 点击取消事件
@@ -265,16 +322,17 @@ export default {
     // 提交表单事件
     handleSubmit() {
       var that = this;
-      this.$refs.formValidate.validate((valid) => {
+      this.$refs.formValidate.validate(valid => {
         if (valid) {
           const obj = {
-            taskId: "",
-            buildingName: "",
-            overGroundFloor: "",
-            underGroundFloor: ""
+            planarGraph: "",
+            upperLeftCornerLongitude: "",
+            upperLeftCornerLatitude: "",
+            lowerRightCornerLongitude: "",
+            lowerRightCornerLatitude: ""
           };
           let str = "";
-          Object.keys(obj).forEach((item) => {
+          Object.keys(obj).forEach(item => {
             str += `${item}=${that.formValidate[item]}&`;
           });
           str += that.formValidate.lineData;
@@ -282,10 +340,10 @@ export default {
           that
             .ajax({
               method: "post",
-              url: that.apis.saveFloor,
+              url: that.apis.floorMgrUpdateSettings + that.formValidate.id,
               data: str
             })
-            .then((res) => {
+            .then(res => {
               const { data } = res;
               if (data.code === 200) {
                 that.$message({

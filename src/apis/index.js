@@ -61,7 +61,11 @@ const apis = {
   // 单楼层下载准备接口
   floorMgrGetDownloadFlag: `${root}/floorMgr/getDownloadFlag`,
   // 单楼层下载准备接口
-  floorMgrPrepareDownload: `${root}/floorMgr/prepareDownload`
+  floorMgrPrepareDownload: `${root}/floorMgr/prepareDownload`,
+  //设备楼层信息
+  floorMgrUpdateSettings: `${root}/floorMgr/updateSettings/`
+
+
 
 };
 export default apis;
