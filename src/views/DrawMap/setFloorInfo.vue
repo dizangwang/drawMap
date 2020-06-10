@@ -139,9 +139,9 @@ export default {
       callback();
     };
     return {
-      //楼宇所在的位置
+      // 楼宇所在的位置
       location: "",
-      //上传的url
+      // 上传的url
       uploadUrl: "",
       // 表单字段
       formValidate: {
@@ -172,11 +172,11 @@ export default {
   mounted() {
     var that = this;
     that.uploadUrl = that.uploadApis.uploadFiles;
-    //获取楼宇详情
-    var taskId = that.utils.localstorageGet("buildObj")["taskId"];
+    // 获取楼宇详情
+    var { taskId } = that.utils.localstorageGet("buildObj");
     that.getTaskById(taskId);
     // 上传geojson文件
-    that.utils.parseGeson(that, "file").then(res => {
+    that.utils.parseGeson(that, "file").then((res) => {
       if (res.code === 200) {
         const { data } = res;
         let str = "";
@@ -184,7 +184,7 @@ export default {
           str += `floorOutline[${index}].floor=${item}&`;
           const coorArr = data[item].geometry.coordinates;
           const arr = [];
-          coorArr.forEach(it => {
+          coorArr.forEach((it) => {
             arr.push({ lng: it[0], lat: it[1] });
           });
           str += `floorOutline=${JSON.stringify(arr)}&`;
@@ -208,13 +208,12 @@ export default {
           url: that.apis.getTaskById + id,
           data: param
         })
-        .then(res => {
+        .then((res) => {
           const { data } = res;
           if (data.code === 200) {
-            that.location =
-              data.data.provinceName +
-              data.data.cityName +
-              data.data.districtName;
+            that.location = data.data.provinceName
+              + data.data.cityName
+              + data.data.districtName;
           }
         });
     },
@@ -277,14 +276,14 @@ export default {
       var that = this;
       that.fullScreenModal = true;
       const address = that.location;
-      that.$refs.drawProfile.initData({ address: address });
+      that.$refs.drawProfile.initData({ address });
     },
 
     // 被外部调用时初始化方法
     init(obj) {
       var that = this;
 
-      Object.keys(that.formValidate).forEach(key => {
+      Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
       });
       that.$refs.formValidate.resetFields();
@@ -322,7 +321,7 @@ export default {
     // 提交表单事件
     handleSubmit() {
       var that = this;
-      this.$refs.formValidate.validate(valid => {
+      this.$refs.formValidate.validate((valid) => {
         if (valid) {
           const obj = {
             planarGraph: "",
@@ -332,7 +331,7 @@ export default {
             lowerRightCornerLatitude: ""
           };
           let str = "";
-          Object.keys(obj).forEach(item => {
+          Object.keys(obj).forEach((item) => {
             str += `${item}=${that.formValidate[item]}&`;
           });
           str += that.formValidate.lineData;
@@ -343,7 +342,7 @@ export default {
               url: that.apis.floorMgrUpdateSettings + that.formValidate.id,
               data: str
             })
-            .then(res => {
+            .then((res) => {
               const { data } = res;
               if (data.code === 200) {
                 that.$message({
