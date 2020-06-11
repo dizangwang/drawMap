@@ -3,8 +3,8 @@
     <!-- 操作栏 -->
     <div class="handlerFor">
       <el-button size="mini" class="lf10" type="primary" @click="themeClick">主题</el-button>
-      <el-button size="mini" class="lf10" type="primary" @click="getAllData">获取数据</el-button>
-      <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>
+      <!-- <el-button size="mini" class="lf10" type="primary" @click="getAllData">获取数据</el-button>
+      <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button> -->
       <el-button size="mini" class="lf10" type="primary">调整平面图</el-button>
       <el-button size="mini" class="lf10" type="primary">完成</el-button>
       <el-button size="mini" class="lf10" type="primary">
@@ -462,11 +462,12 @@
           </td>
         </tr>
       </table>
+
       <div class="editElementStyle">
-        <Table :columns="elementStyleColumn" :data="elementStyleData">
+        <Table :columns="elementStyleColumn" :data="elementStyleList">
           <template slot="color" slot-scope="{row}">
             <div class="colorOutline center">
-              <div :style="{ background: row.color}"></div>
+              <div :style="{ background: row.fillColor}"></div>
             </div>
           </template>
         </Table>
