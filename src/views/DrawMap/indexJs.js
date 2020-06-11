@@ -73,19 +73,6 @@ export default {
       }
       ],
 
-      // 元素样式数据
-      elementStyleData: [{
-        name: "样式1",
-        typeId: 555,
-        color: "red"
-      },
-      {
-        name: "样式1",
-        typeId: 555,
-        color: "yellow"
-      }
-      ],
-
       // 编辑主题样式展示
       editElementStyleModal: false,
 
@@ -268,6 +255,7 @@ export default {
       if (num !== 1) {
         that.iconActiveNum = "";
       }
+      that.mapEditor.cancelDraw();
     },
     activeFloorData(result) {
       var that = this;
@@ -539,7 +527,11 @@ export default {
       that.mapEditor.selectFeature((e) => {
         that.selectedElement = e;
         if (e.layername === "POI图层") {
-          that.facilityTypeTarget = e;
+          if (that.tabNum === 2) {
+            if (/\/icon\//.test(e.value.img)) {
+              that.facilityTypeTarget = e;
+            }
+          }
           that.selectedElement = e;
           that.selectedElement.value.fillColor = "#ffffff";
         }
@@ -562,7 +554,10 @@ export default {
           that.selectedElement = e;
         }
         if (e.layername === "POI图层") {
-          that.facilityTypeTarget = e;
+          if (that.tabNum === 2) {
+            that.facilityTypeTarget = e;
+          }
+
           if (that.isDrawfacibility) {
             that.goFloorNumModal = true;
             // 清空楼层选择
