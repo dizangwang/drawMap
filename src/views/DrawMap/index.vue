@@ -2,6 +2,8 @@
   <div class="app">
     <!-- 操作栏 -->
     <div class="handlerFor">
+      <el-button size="mini" class="lf10" type="primary" @click="themeClick">主题</el-button>
+      <el-button size="mini" class="lf10" type="primary" @click="getAllData">获取数据</el-button>
       <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>
       <el-button size="mini" class="lf10" type="primary">调整平面图</el-button>
       <el-button size="mini" class="lf10" type="primary">完成</el-button>
@@ -65,7 +67,7 @@
                     <el-card body-style="{border:0}" shadow="never">
                       <div v-show="!selectedElement.id">
                         <div class="center">请在底图上选择要编辑的元素</div>
-                        <div class="center">（按住crtl键可以选择多个元素）</div>
+                        <!-- <div class="center">（按住crtl键可以选择多个元素）</div> -->
                       </div>
                       <table class="formTable" v-show="selectedElement.id">
                         <tr>
@@ -112,6 +114,7 @@
                               v-model="selectedElement.value.name"
                               size="mini"
                               placeholder="请输入内容"
+                              @input="drawSelectedNameInput"
                             ></el-input>
                           </td>
                         </tr>
@@ -123,19 +126,25 @@
                               size="mini"
                               v-model="selectedElement.value.styleID"
                               placeholder="请选择"
+                              @change="styleSelectChange"
                             >
-                              <el-option label="dddd" value="dddd"></el-option>
-                              <el-option label="eeee" value="eeeee"></el-option>
+                              <el-option
+                                v-for="(item,index) in elementStyleList"
+                                :key="index"
+                                :label="item.name"
+                                :value="index"
+                              ></el-option>
                             </el-select>
-                            <i class="el-icon-delete lf10"></i>
+                            <!-- <i class="el-icon-delete lf10"></i> -->
                           </td>
                         </tr>
                         <tr>
                           <td>填充颜色</td>
                           <td>
                             <el-color-picker
-                              v-model="selectedElement.value.color"
+                              v-model="selectedElement.value.fillColor"
                               class="colorWidth"
+                              @active-change="drawSelectedColorChange"
                             ></el-color-picker>
                           </td>
                         </tr>
@@ -159,16 +168,27 @@
                   <div>
                     <el-card body-style="{border:0}" shadow="never">
                       <div class="iconMgrCon">
-                        <span class="iconMgrItem"></span>
-                        <span class="iconMgrItem"></span>
-                        <span class="iconMgrItem"></span>
-                        <span class="iconMgrItem"></span>
-                        <span class="iconMgrItem"></span>
+                        <span
+                          @click="commonIconClick(item,index)"
+                          class="iconMgrItem iconMgrItemHover"
+                          :class="{iconMgrItemActive:iconActiveNum==(index+1)}"
+                          v-for="(item,index) in allIconsArr"
+                          :key="item.id"
+                        >
+                          <img
+                            :alt="item.name"
+                            :title="item.name"
+                            :src="item.imgPath"
+                            width="30px"
+                            height="30px"
+                          />
+                        </span>
+
                         <span class="iconMgrItem lastIconMgrItem">
                           <i class="el-icon-plus"></i>
                         </span>
                       </div>
-                      <div class="iconMgrWord">洗手间</div>
+                      <div class="iconMgrWord" v-if="iconName">{{iconName}}</div>
                     </el-card>
                   </div>
                 </el-collapse-item>
@@ -230,11 +250,15 @@
                             <el-select
                               class="leftInputWid"
                               size="mini"
-                              v-model="elementStyle"
+                              v-model="preDrawStyle"
                               placeholder="请选择"
                             >
-                              <el-option label="dddd" value="dddd"></el-option>
-                              <el-option label="eeee" value="eeeee"></el-option>
+                              <el-option
+                                v-for="(item,index) in elementStyleList"
+                                :key="index"
+                                :label="item.name"
+                                :value="index"
+                              ></el-option>
                             </el-select>
                           </td>
                         </tr>
@@ -249,12 +273,12 @@
                             />&nbsp;&nbsp;米(m)
                           </td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                           <td>标注高度</td>
                           <td>
                             <el-input-number v-model="markHeight" size="small" :min="0" :max="10" />&nbsp;&nbsp;米(m)
                           </td>
-                        </tr>
+                        </tr>-->
                       </table>
                     </el-card>
                   </div>
@@ -277,7 +301,11 @@
                   </template>
                   <div>
                     <el-card body-style="{border:0}" shadow="never">
-                      <table class="formTable">
+                      <div v-show="!facilityTypeTarget.id">
+                        <div class="center">请在底图上选择元素</div>
+                        <!-- <div class="center">（按住crtl键可以选择多个元素）</div> -->
+                      </div>
+                      <table class="formTable" v-show="facilityTypeTarget.id">
                         <tr>
                           <td>设施类型</td>
                           <td>
@@ -294,13 +322,23 @@
                         <tr>
                           <td>到达楼层</td>
                           <td>
-                            <el-input class="leftInputWid" size="mini" placeholder="请输入内容"></el-input>
+                            <el-input
+                              class="leftInputWid"
+                              v-model="facilityToFloor"
+                              size="mini"
+                              placeholder="请输入内容"
+                            ></el-input>
                           </td>
                         </tr>
                         <tr>
                           <td>分组名称</td>
                           <td>
-                            <el-input class="leftInputWid" size="mini" placeholder="请输入内容"></el-input>
+                            <el-input
+                              class="leftInputWid"
+                              v-model="facilityGroup"
+                              size="mini"
+                              placeholder="请输入内容"
+                            ></el-input>
                           </td>
                         </tr>
                       </table>
@@ -326,8 +364,12 @@
                         <tr>
                           <td>绘制路线</td>
                           <td>
-                            <span class="iconMgrItem" @click="drawLine">
-                              <i class="route drawRectWH"></i>
+                            <span
+                              class="iconMgrItem"
+                              :class="{blackGd:isDrawLine}"
+                              @click="drawLine"
+                            >
+                              <i class="route drawRectWH" :class="{routeActive:isDrawLine}"></i>
                             </span>
                           </td>
                         </tr>
@@ -391,6 +433,18 @@
         @success="setFloorInfoSuccess"
         @cancel="setFloorInfoModal=false"
       />
+    </el-dialog>
+
+    <!-- 到达楼层信息 -->
+    <el-dialog :visible.sync="goFloorNumModal" width="500px" :title="floorNumTitle">
+      <el-checkbox v-model="goFloorNumCheckAll" @change="goFloorNumAllChange">全选</el-checkbox>
+      <el-checkbox-group v-model="goFloorArr" size="medium">
+        <el-checkbox-button
+          v-for="(item) in floorArr"
+          :label="item.value"
+          :key="item.label"
+        >{{item.label}}</el-checkbox-button>
+      </el-checkbox-group>
     </el-dialog>
 
     <!-- 编辑主题样式 -->

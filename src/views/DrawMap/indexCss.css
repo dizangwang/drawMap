@@ -205,3 +205,13 @@
 .leftInputWid {
   width: 150px;
 }
+
+.iconMgrItemHover:hover {
+  border-color: hsl(210, 100%, 63%);
+  border-width: 2px;
+}
+
+.iconMgrItemActive {
+  border-color: hsl(210, 100%, 63%);
+  border-width: 2px;
+}

@@ -202,6 +202,10 @@ html {
   background: url('../images/icons/route.png') no-repeat center;
   background-size: 100% 100%;
 }
+.routeActive {
+  background: url('../images/icons/routeActive.png') no-repeat center;
+  background-size: 100% 100%;
+}
 
 .verticalFloor{
   background: url('../images/icons/verticalFloor.png') no-repeat center;
