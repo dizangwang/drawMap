@@ -31,6 +31,7 @@ var TestData = {
       }, // /geoJSeon
       imageData: {
         data: "https://www.fengmap.com/img/editor/guide-operation/menu1.png",
+       // data: "http://localhost:30000/1.jpg",
         extent: [13222863.074897416, 3768562.394749727, 13223197.033369796, 3768825.0433383826]
       },
       layerData: {

@@ -232,6 +232,7 @@ export default {
           type: that.radioDown
         }
       });
+      that.downTaskModal = false;
     },
     // 获取下载数据处理情况
     getFloorMgrPrepareDownload() {

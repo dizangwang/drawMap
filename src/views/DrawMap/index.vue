@@ -4,7 +4,7 @@
     <div class="handlerFor">
       <el-button size="mini" class="lf10" type="primary" @click="themeClick">主题</el-button>
       <!-- <el-button size="mini" class="lf10" type="primary" @click="getAllData">获取数据</el-button>
-      <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button> -->
+      <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>-->
       <el-button size="mini" class="lf10" type="primary">调整平面图</el-button>
       <el-button size="mini" class="lf10" type="primary">完成</el-button>
       <el-button size="mini" class="lf10" type="primary">
@@ -184,7 +184,7 @@
                           />
                         </span>
 
-                        <span class="iconMgrItem lastIconMgrItem">
+                        <span @click="addIconClick" class="iconMgrItem lastIconMgrItem">
                           <i class="el-icon-plus"></i>
                         </span>
                       </div>
@@ -447,6 +447,41 @@
       </el-checkbox-group>
     </el-dialog>
 
+    <!-- 所有图标 -->
+    <el-dialog :visible.sync="allIconModal" width="500px" title="所有图标">
+      <div style="overflow:hidden" v-if="iconPreview">
+        <div class="iconMgrItem" style="width:70px;height:70px;float:right">
+          <img
+            :alt="iconPreview.name"
+            :title="iconPreview.name"
+            :src="iconPreview.imgPath"
+            width="60px"
+            height="60px"
+          />
+        </div>
+      </div>
+
+      <div class="iconMgrCon">
+        <span
+          @mouseover="iconItemHover(item)"
+          @click="iconItemClick(item)"
+          class="iconMgrItem iconMgrItemHover"
+          v-for="(item) in allIconsArr"
+          :key="item.id"
+        >
+          <img :alt="item.name" :title="item.name" :src="item.imgPath" width="30px" height="30px" />
+        </span>
+      </div>
+    </el-dialog>
+
+    <!-- 新建样式 -->
+    <el-dialog :visible.sync="createStyleModal" width="500px" title="新建样式">
+      <CreateStyle ref="createStyle"></CreateStyle>
+    </el-dialog>
+    <!-- 编辑样式 -->
+    <el-dialog :visible.sync="editStyleModal" width="500px" title="新建样式">
+      <EditStyle ref="editStyle"></EditStyle>
+    </el-dialog>
     <!-- 编辑主题样式 -->
     <el-dialog :visible.sync="editElementStyleModal" width="500px" title="编辑主题样式">
       <table class="wd100">
@@ -456,15 +491,18 @@
           <td>
             <div class="center">
               <el-input size="small" placeholder show-word-limit />
-              <i class="el-icon-plus lf10"></i>
-              <i class="el-icon-delete lf10"></i>
+              <i class="el-icon-plus lf10 cursor" @click="createStyleClick"></i>
+              <i class="el-icon-delete lf10 cursor" @click="deleteStyleClick"></i>
             </div>
           </td>
         </tr>
       </table>
-
       <div class="editElementStyle">
-        <Table :columns="elementStyleColumn" :data="elementStyleList">
+        <Table
+          @on-selection-change="styleTableSelectChange"
+          :columns="elementStyleColumn"
+          :data="elementStyleList"
+        >
           <template slot="color" slot-scope="{row}">
             <div class="colorOutline center">
               <div :style="{ background: row.fillColor}"></div>

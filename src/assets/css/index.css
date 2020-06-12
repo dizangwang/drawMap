@@ -294,3 +294,7 @@ html {
 .ivu-table th {
   background-color:#dcdcdc!important;
 }
+
+.cursor{
+  cursor: pointer;
+}

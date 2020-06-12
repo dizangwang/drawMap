@@ -3,6 +3,8 @@ import {
   mapGetters
 } from "vuex";
 import SetFloorInfo from "./setFloorInfo.vue";
+import CreateStyle from "./createStyle.vue";
+import EditStyle from "./editStyle.vue";
 import MapEditor from "../../assets/map/js/main";
 import TestData from "../../assets/map/data/data";
 
@@ -12,10 +14,23 @@ export default {
     ...mapGetters(["userInfo"])
   },
   components: {
-    SetFloorInfo
+    SetFloorInfo,
+    CreateStyle,
+    EditStyle
   },
   data() {
     return {
+      // 列表中被选中的样式
+      styleTableSelectedArr: [],
+      // 图标预览
+      iconPreview: "",
+      // 所有图标
+      allIconModal: false,
+      // 编辑样式弹窗
+      editStyleModal: false,
+
+      // 创建样式弹窗
+      createStyleModal: false,
 
       // 数据图表数据
       dataChartData: [{
@@ -332,6 +347,63 @@ export default {
     }
   },
   methods: {
+    // 样式勾选变动监听
+    styleTableSelectChange(styles) {
+      this.styleTableSelectedArr = styles;
+    },
+    // 删除选中的样式
+    deleteStyleClick() {
+      var that = this;
+      if (that.styleTableSelectedArr.length === 0) {
+        that.$message({
+          message: "请选择要删除的样式",
+          type: "warning"
+        });
+      } else {
+        that
+          .ajax({
+            method: "get",
+            url: that.apis.getLabelStyles,
+            data: ""
+          })
+          .then((res) => {
+            const {
+              data
+            } = res;
+            if (data.code === 200) {
+              // todo
+            } else {
+              that.$message({
+                message: data.msg,
+                type: "warning"
+              });
+            }
+          });
+      }
+    },
+    // 所有图标中-图标的点击事件
+    iconItemClick(item) {
+      var that = this;
+      that.mapEditor.drawPoint({
+        img: item.imgPath,
+        size: 50
+      });
+      that.allIconModal = false;
+    },
+    // 所有图标中-图标的鼠标移出事件
+    iconItemMouseOut() {
+      this.iconPreview = "";
+    },
+    // 所有图标中-图标的鼠标经过事件
+    iconItemHover(icon) {
+      this.iconPreview = icon;
+    },
+    // 增加图标
+    addIconClick() {
+      var that = this;
+      that.allIconModal = true;
+      this.iconPreview = "";
+    },
     // 图标管理
     commonIconClick(item, index) {
       var that = this;
@@ -358,6 +430,22 @@ export default {
     themeClick() {
       var that = this;
       that.editElementStyleModal = true;
+    },
+    // 新建样式
+    createStyleClick() {
+      var that = this;
+      that.createStyleModal = true;
+      that.$nextTick(() => {
+        that.$refs.createStyle.init();
+      });
+    },
+    // 编辑样式
+    editStyleClick() {
+      var that = this;
+      that.editStyleModal = true;
+      that.$nextTick(() => {
+        that.$refs.editStyle.init();
+      });
     },
 
     // 监听样式选择器变动

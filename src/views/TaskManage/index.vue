@@ -181,6 +181,7 @@
     <el-dialog :visible.sync="editTaskModal" width="500px" title="修改任务">
       <EditTask ref="editTask" @success="updateTaskSuccess" @cancel="editTaskModal=false" />
     </el-dialog>
+    <!-- 任务下载 -->
     <el-dialog
       :before-close="taskDownloadClose"
       :visible.sync="downTaskModal"
