@@ -1,2 +1,3 @@
-/public/mapLib
-/src/assets/map
+public/mapLib
+src/assets/map
+dist

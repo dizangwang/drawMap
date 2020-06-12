@@ -20,6 +20,9 @@ export default {
   },
   data() {
     return {
+
+      // 查询样式列表关键字
+      searchStyleWord: "",
       // 列表中被选中的样式
       styleTableSelectedArr: [],
       // 图标预览
@@ -79,8 +82,12 @@ export default {
         key: "name"
       },
       {
-        title: "类型ID",
-        key: "typeId"
+        title: "边框宽度",
+        key: "borderWidth"
+      },
+      {
+        title: "边框颜色",
+        slot: "borderColor"
       },
       {
         title: "填充颜色",
@@ -250,6 +257,21 @@ export default {
     });
   },
   watch: {
+    preDrawStyle() {
+      var that = this;
+      switch (that.drawActiveType) {
+        case 1:
+          that.drawRect();
+          break;
+        case 2:
+          that.drawcircle();
+          break;
+        case 3:
+          that.drawpolygon();
+          break;
+        default:
+      }
+    },
     goFloorArr(flrArr) {
       var that = this;
       const arr = [];
@@ -274,79 +296,87 @@ export default {
     },
     activeFloorData(result) {
       var that = this;
+
       // 是否有轮廓信息
       const val = result;
-      let hasOutline = false;
-      if (!!val.geometry && !!val.geometry.coordinates) {
-        if (val.geometry.coordinates.length > 0) {
-          hasOutline = true;
-        } else {
-          hasOutline = false;
-        }
-      } else {
-        hasOutline = false;
-      }
+      const hasOutline = false;
+
+      // if (!!val.geometry && !!val.geometry.coordinates) {
+      //   if (val.geometry.coordinates.length > 0) {
+      //     hasOutline = true;
+      //   } else {
+      //     hasOutline = false;
+      //   }
+      // } else {
+      //   hasOutline = false;
+      // }
       // 是否有对角线
-      let hasRectLatLon = false;
-      if (val.imageData.extent) {
-        if (val.imageData.extent.length > 0) {
-          hasRectLatLon = true;
-        } else {
-          hasRectLatLon = false;
-        }
-      } else {
-        hasRectLatLon = false;
-      }
+      // let hasRectLatLon = false;
+      // if (val.imageData.extent) {
+      //   if (val.imageData.extent.length > 0) {
+      //     hasRectLatLon = true;
+      //   } else {
+      //     hasRectLatLon = false;
+      //   }
+      // } else {
+      //   hasRectLatLon = false;
+      // }
 
       // 是否有底图
-      if (!val.imageData.data && !val.imageData.id) {
-        that.hasUnderPainting = false;
-        that.$message({
-          message: "无法进行任何绘制操作",
-          type: "warning"
-        });
-        return;
-      }
-      that.hasUnderPainting = true;
+      // if (!val.imageData.data && !val.imageData.id) {
+      //   that.hasUnderPainting = false;
+      //   that.$message({
+      //     message: "无法进行任何绘制操作",
+      //     type: "warning"
+      //   });
+      //   return;
+      // }
+      // that.hasUnderPainting = true;
 
       // 处理图片
-      if (!val.imageData.data && val.imageData.id) {
-        const {
-          id
-        } = val.imageData;
-        val.imageData.data = `/files/img/${id}`;
-      }
+      // if (!val.imageData.data && val.imageData.id) {
+      //   const {
+      //     id
+      //   } = val.imageData;
+      //   val.imageData.data = `/files/img/${id}`;
+      // }
 
       // （1）如果有对角线信息，则提示“楼层信息设置成功”，页面自动加载底图。
-      if (hasRectLatLon) {
-        that.$message({
-          message: "楼层信息设置成功",
-          type: "success"
-        });
-        //  that.mapEditor.setData(val);
-        return;
-      }
+      // if (hasRectLatLon) {
+      //   that.$message({
+      //     message: "楼层信息设置成功",
+      //     type: "success"
+      //   });
+      //   //  that.mapEditor.setData(val);
+      //   return;
+      // }
 
       // （2）如果没对角线信息，有轮廓信息，则提示“请点击调整底图按钮，根据轮廓进行缩放平移”，
-      if (hasOutline) {
-        that.$message({
-          message: "请点击调整底图按钮，根据轮廓进行缩放平移",
-          type: "info"
-        });
-        // that.mapEditor.setData(val);
-        return;
-      }
+      // if (hasOutline) {
+      //   that.$message({
+      //     message: "请点击调整底图按钮，根据轮廓进行缩放平移",
+      //     type: "info"
+      //   });
+      //   // that.mapEditor.setData(val);
+      //   return;
+      // }
 
       // （3）如果没对角线信息，没轮廓信息，则提示“当前楼层不具备经纬度信息，将不能发布”
-      if (!hasOutline && !hasRectLatLon) {
-        that.$message({
-          message: "当前楼层不具备经纬度信息，将不能发布",
-          type: "warning"
-        });
-      }
+      // if (!hasOutline && !hasRectLatLon) {
+      //   that.$message({
+      //     message: "当前楼层不具备经纬度信息，将不能发布",
+      //     type: "warning"
+      //   });
+      // }
     }
   },
   methods: {
+    // 创建样式成功调用方法
+    createStyleSuccess() {
+      this.createStyleModal = false;
+      this.editStyleModal = false;
+      this.getElementStyles();
+    },
     // 样式勾选变动监听
     styleTableSelectChange(styles) {
       this.styleTableSelectedArr = styles;
@@ -361,23 +391,42 @@ export default {
         });
       } else {
         that
-          .ajax({
-            method: "get",
-            url: that.apis.getLabelStyles,
-            data: ""
+          .$confirm("是否删除选中的样式?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
           })
-          .then((res) => {
-            const {
-              data
-            } = res;
-            if (data.code === 200) {
-              // todo
-            } else {
-              that.$message({
-                message: data.msg,
-                type: "warning"
+          .then(() => {
+            const ids = [];
+            that.styleTableSelectedArr.forEach((item) => {
+              ids.push(item.id);
+            });
+
+            that
+              .ajax({
+                method: "post",
+                url: that.apis.elementStyleMgrDelete,
+                data: {
+                  id: ids.join(",")
+                }
+              })
+              .then((res) => {
+                const {
+                  data
+                } = res;
+                if (data.code === 200) {
+                  that.$message({
+                    message: "删除成功",
+                    type: "success"
+                  });
+                  that.getElementStyles();
+                } else {
+                  that.$message({
+                    message: data.msg,
+                    type: "warning"
+                  });
+                }
               });
-            }
           });
       }
     },
@@ -431,6 +480,28 @@ export default {
       var that = this;
       that.editElementStyleModal = true;
     },
+    // 编辑样式
+    editStyleClick() {
+      var that = this;
+      if (that.styleTableSelectedArr.length === 0) {
+        that.$message({
+          message: "请选择要编辑的样式",
+          type: "warning"
+        });
+        return;
+      }
+      if (that.styleTableSelectedArr.length > 1) {
+        that.$message({
+          message: "只能选择一个要编辑的样式",
+          type: "warning"
+        });
+        return;
+      }
+      that.editStyleModal = true;
+      that.$nextTick(() => {
+        that.$refs.editStyle.init(that.styleTableSelectedArr[0]);
+      });
+    },
     // 新建样式
     createStyleClick() {
       var that = this;
@@ -439,15 +510,6 @@ export default {
         that.$refs.createStyle.init();
       });
     },
-    // 编辑样式
-    editStyleClick() {
-      var that = this;
-      that.editStyleModal = true;
-      that.$nextTick(() => {
-        that.$refs.editStyle.init();
-      });
-    },
-
     // 监听样式选择器变动
     styleSelectChange(styleIndex) {
       var that = this;
@@ -652,6 +714,11 @@ export default {
             that.goFloorArr = [];
             that.goFloorNumCheckAll = false;
           }
+        } else {
+          // setTimeout(()=>{
+          //   that.canceldraw();
+          // },500)
+
         }
       });
     },

@@ -298,3 +298,6 @@ html {
 .cursor{
   cursor: pointer;
 }
+.styleHandler .el-color-picker__trigger{
+  width:130px;
+}

@@ -1,5 +1,5 @@
 <template>
-  <div class="task">
+  <div class="styleHandler">
     <el-form ref="formValidate" :model="formValidate" :rules="ruleValidate" label-width="0">
       <table class="wd100">
         <tr>
@@ -11,21 +11,32 @@
           </td>
         </tr>
         <tr>
-          <td class="rightLebal">类型ID：</td>
+          <td class="required rightLebal">边框宽度：</td>
           <td>
-            <el-form-item size="mini" label-width="0" prop="typeId">
-              <el-select size="small" v-model="formValidate.typeId" style="width:100%">
-                <el-option value="1">样式类型1</el-option>
-                <el-option value="2">样式类型2</el-option>
-              </el-select>
+            <el-form-item size="mini" label-width="0" prop="borderWidth">
+              <el-input-number
+                              v-model="formValidate.borderWidth"
+                              size="small"
+                              :min="0"
+                              :max="100"
+                            />
             </el-form-item>
           </td>
         </tr>
         <tr>
+          <td class="required rightLebal">边框颜色：</td>
+          <td>
+            <el-form-item size="mini" label-width="0" prop="borderColor">
+              <el-color-picker size="medium " v-model="formValidate.borderColor"></el-color-picker>
+            </el-form-item>
+          </td>
+        </tr>
+
+        <tr>
           <td class="required rightLebal">填充颜色：</td>
           <td>
-            <el-form-item size="mini" label-width="0" prop="color">
-              <el-color-picker size="medium " v-model="formValidate.color"></el-color-picker>
+            <el-form-item size="mini" label-width="0" prop="fillColor">
+              <el-color-picker size="medium " v-model="formValidate.fillColor"></el-color-picker>
             </el-form-item>
           </td>
         </tr>
@@ -51,28 +62,31 @@ export default {
     return {
       // 表单字段对象
       formValidate: {
-        taskName: "",
-        typeId: "",
-        color: ""
+        id: "",
+        name: "",
+        borderColor: "",
+        borderWidth: "",
+        fillColor: ""
       },
       // 校验规则
       ruleValidate: {
         name: [
           { required: true, message: "请填写样式名称", trigger: "change" }
         ],
-        typeId: [{ required: true, message: "请选择类型", trigger: "change" }],
-        color: [{ required: true, message: "请选择颜色", trigger: "change" }]
+        borderWidth: [{ required: true, message: "请填写边框宽度", trigger: "change" }],
+        borderColor: [{ required: true, message: "请选择边框颜色", trigger: "change" }],
+        fillColor: [{ required: true, message: "请选择填充颜色", trigger: "change" }]
       }
     };
   },
   mounted() {},
   methods: {
     // 初始化方法
-    init() {
+    init(obj) {
       var that = this;
       that.$refs.formValidate.resetFields();
       Object.keys(that.formValidate).forEach((key) => {
-        that.formValidate[key] = "";
+        that.formValidate[key] = obj[key];
       });
     },
 
@@ -91,7 +105,7 @@ export default {
           that
             .ajax({
               method: "post",
-              url: that.apis.taskSave,
+              url: that.apis.elementStyleMgrUpdate + that.formValidate.id,
               data: that.formValidate
             })
             .then((res) => {

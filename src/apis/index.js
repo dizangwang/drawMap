@@ -63,7 +63,13 @@ const apis = {
   // 单楼层下载准备接口
   floorMgrPrepareDownload: `${root}/floorMgr/prepareDownload`,
   // 设备楼层信息
-  floorMgrUpdateSettings: `${root}/floorMgr/updateSettings/`
+  floorMgrUpdateSettings: `${root}/floorMgr/updateSettings/`,
+  // 保存元素样式信息
+  elementStyleMgrSave: `${root}/elementStyleMgr/save`,
+  // 删除元素样式信息
+  elementStyleMgrDelete: `${root}/elementStyleMgr/delete`,
+  // 更新元素样式信息
+  elementStyleMgrUpdate: `${root}/elementStyleMgr/`
 
 };
 export default apis;

@@ -476,11 +476,13 @@
 
     <!-- 新建样式 -->
     <el-dialog :visible.sync="createStyleModal" width="500px" title="新建样式">
-      <CreateStyle ref="createStyle"></CreateStyle>
+      <CreateStyle ref="createStyle"  @success="createStyleSuccess"
+        @cancel="createStyleModal=false"></CreateStyle>
     </el-dialog>
     <!-- 编辑样式 -->
-    <el-dialog :visible.sync="editStyleModal" width="500px" title="新建样式">
-      <EditStyle ref="editStyle"></EditStyle>
+    <el-dialog :visible.sync="editStyleModal" width="500px" title="编辑样式">
+      <EditStyle ref="editStyle"   @success="createStyleSuccess"
+        @cancel="editStyleModal=false"></EditStyle>
     </el-dialog>
     <!-- 编辑主题样式 -->
     <el-dialog :visible.sync="editElementStyleModal" width="500px" title="编辑主题样式">
@@ -490,8 +492,10 @@
 
           <td>
             <div class="center">
-              <el-input size="small" placeholder show-word-limit />
+              <el-input size="small" v-model="searchStyleWord" placeholder show-word-limit />
               <i class="el-icon-plus lf10 cursor" @click="createStyleClick"></i>
+              <i class="el-icon-edit lf10 cursor" @click="editStyleClick"></i>
+
               <i class="el-icon-delete lf10 cursor" @click="deleteStyleClick"></i>
             </div>
           </td>
@@ -503,6 +507,12 @@
           :columns="elementStyleColumn"
           :data="elementStyleList"
         >
+
+        <template slot="borderColor" slot-scope="{row}">
+            <div class="colorOutline center">
+              <div :style="{ background: row.borderColor}"></div>
+            </div>
+          </template>
           <template slot="color" slot-scope="{row}">
             <div class="colorOutline center">
               <div :style="{ background: row.fillColor}"></div>

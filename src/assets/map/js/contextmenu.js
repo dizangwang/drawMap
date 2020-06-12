@@ -1,15 +1,14 @@
 export class ContextMenu {
-  constructor(mapedit) {
-    this.mapEditor = mapedit;
+    constructor(mapedit) {
+        this.mapEditor = mapedit;
 
-    this.init();
-  }
-
-  init() {
-    // /右键菜单样式
-    var style = document.createElement("style");
-    style.type = "text/css";
-    style.innerHTML = `
+        this.init()
+    }
+    init() {
+        ///右键菜单样式
+        var style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML = `
          .map-contextmenu{
              position: absolute;
              padding: 12px 0;
@@ -30,42 +29,49 @@ export class ContextMenu {
              background-color: rgba(255, 0, 0, 0.5);
          }
          `;
-    document.getElementsByTagName("head")[0].appendChild(style);
+        document.getElementsByTagName('head')[0].appendChild(style);
 
-    this.contextmenuDiv = document.createElement("div");
-    this.contextmenuDiv.id = "map-contextmenu";
-    this.contextmenuDiv.className = "map-contextmenu";
 
-    this.contextmenuUl = document.createElement("ul");
 
-    document.getElementsByTagName("body")[0].appendChild(this.contextmenuDiv);
-    this.contextmenuDiv.appendChild(this.contextmenuUl);
+        this.contextmenuDiv = document.createElement('div');
+        this.contextmenuDiv.id = "map-contextmenu";
+        this.contextmenuDiv.className = "map-contextmenu";
 
-    this.menu_overlay = new ol.Overlay({
-      element: this.contextmenuDiv,
-      positioning: "center-center"
-    });
-    this.menu_overlay.setMap(this.mapEditor.ol.map);
+        this.contextmenuUl = document.createElement('ul');
 
-    this.mapEditor.ol.map.getViewport().addEventListener("contextmenu", (e) => {
-      e.preventDefault();
-      if (this.mapEditor.interactionManage.getSelectFeatures().getLength() == 0) return;
+        document.getElementsByTagName('body')[0].appendChild(this.contextmenuDiv);
+        this.contextmenuDiv.appendChild(this.contextmenuUl);
 
-      const coordinate = this.mapEditor.ol.map.getEventCoordinate(e);
-      this.menu_overlay.setPosition(coordinate);
-    });
+        this.menu_overlay = new ol.Overlay({
+            element: this.contextmenuDiv,
+            positioning: 'center-center'
+        });
+        this.menu_overlay.setMap(this.mapEditor.ol.map);
 
-    this.mapEditor.ol.map.getViewport().addEventListener("click", (e) => {
-      e.preventDefault();
-      this.menu_overlay.setPosition(undefined);
-    });
-  }
+        this.mapEditor.ol.map.getViewport().addEventListener("contextmenu", (e) => {
 
-  // /添加右键菜单事件
-  add(name, fun) {
-    const li = document.createElement("li");
-    li.innerHTML = name;
-    li.onclick = fun;
-    this.contextmenuUl.appendChild(li);
-  }
+            e.preventDefault();
+            if (this.mapEditor.interactionManage.getSelectFeatures().getLength() == 0)
+                return;
+
+            let coordinate = this.mapEditor.ol.map.getEventCoordinate(e);
+            this.menu_overlay.setPosition(coordinate);
+        });
+
+        this.mapEditor.ol.map.getViewport().addEventListener("click", (e) => {
+            e.preventDefault();
+            this.menu_overlay.setPosition(undefined);
+        });
+    }
+
+    ///添加右键菜单事件
+    add(name, fun) {
+        let li = document.createElement('li');
+        li.innerHTML = name;
+        li.onclick = fun;
+        this.contextmenuUl.appendChild(li);
+    }
+
+
+    
 }
