@@ -114,7 +114,9 @@ var TestData = {
             }
         },
         2: {
-            ///同1
+            floorData: {}, 
+            imageData: {extent:[]},
+            layerData: {point: {},path: {},polygon: {},}
         },
         3: {
             ///同1

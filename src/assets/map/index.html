@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>MapEditor</title>
+    <style>
+        html,
+        body,
+        #map {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* 比例尺控件css样式 */
+    </style>
+
+    <link rel="stylesheet" href="./libs/ol.css">
+    <script src="./libs/ol.js"></script>
+    <script type="module">
+        import MapEditor from './js/main.js';
+        import TestData from "./data/data.js";
+        window.onload = () => {
+            var mapEditor = new MapEditor({
+                container: "map",
+                data: TestData.floors[1],
+            });
+
+            ///选择要素回调事件
+            mapEditor.selectFeature(e => {
+                console.log(e);
+            })
+
+            ///绘制要素回调事件
+            mapEditor.drawFeature(e => {
+                console.log(e);
+            })
+
+
+            ///绘制点
+            document.getElementById("drawpoint").onclick = () => {
+                mapEditor.drawPoint({
+                    img: "../img/poi.png",
+                    size: 50,
+                });
+            }
+
+            ///绘制线
+            document.getElementById("drawpath").onclick = () => {
+                mapEditor.drawPath({
+                    width: 10, ///边线线宽
+                    color: 'rgba(255,155,155,1)', ///填充颜色
+                });
+            }
+
+            ///绘制面
+            document.getElementById("drawpolygon").onclick = () => {
+                mapEditor.drawPolygon({
+                    name: "polygon1",
+                    width: 5, ///边线线宽
+                    fillColor: 'rgba(255,255,255,0.1)', ///填充颜色
+                    borderColor: 'rgba(0,0,0,1)', ///边线颜色
+                    fontSize: 12, ///字号大小
+                    fontFillColor: 'rgba(255,255,255,1)', ///填充颜色
+                    fontBorderColor: 'rgba(0,0,0,1)', ///边线颜色
+                });
+            }
+
+            ///绘制圆形
+            document.getElementById("drawcircle").onclick = () => {
+                mapEditor.drawCircle({
+                    name: "polygon1",
+                    width: 5, ///边线线宽
+                    fillColor: 'rgba(255,255,255,0.1)', ///填充颜色
+                    borderColor: 'rgba(0,0,0,1)', ///边线颜色
+                    fontSize: 12, ///字号大小
+                    fontFillColor: 'rgba(255,255,255,1)', ///填充颜色
+                    fontBorderColor: 'rgba(0,0,0,1)', ///边线颜色
+                });
+            }
+
+            ///绘制圆形
+            document.getElementById("drawbox").onclick = () => {
+                mapEditor.drawBox({
+                    name: "polygon1",
+                    width: 5, ///边线线宽
+                    fillColor: 'rgba(255,255,255,0.1)', ///填充颜色
+                    borderColor: 'rgba(0,0,0,1)', ///边线颜色
+                    fontSize: 12, ///字号大小
+                    fontFillColor: 'rgba(255,255,255,1)', ///填充颜色
+                    fontBorderColor: 'rgba(0,0,0,1)', ///边线颜色
+                });
+            }
+
+            ///取消绘制
+            document.getElementById("canceldraw").onclick = () => {
+                mapEditor.cancelDraw();
+            }
+
+            ///视图放大
+            document.getElementById("zoomout").onclick = () => {
+                mapEditor.zoomOut();
+            }
+
+            ///视图缩小
+            document.getElementById("zoomin").onclick = () => {
+                mapEditor.zoomIn();
+            }
+
+            ///设置建筑物样式
+            document.getElementById("setBuildStyle").onclick = () => {
+                mapEditor.setBuildStyle("要素ID （1_floor 或者UUID）", {
+                    width: 5, ///边线线宽
+                    fillColor: 'rgba(247,254,255,0.3)', ///填充颜色
+                    borderColor: 'rgba(217,0,0,1.0)', ///边线颜色
+                });
+            }
+
+            ///设置点样式
+            document.getElementById("setPointStyle").onclick = () => {
+                mapEditor.setPointStyle("要素ID （1_point 或者UUID）", {
+                    img: "../img/poi.png",
+                    size: 50,
+
+                });
+            }
+
+            ///设置线样式
+            document.getElementById("setPathStyle").onclick = () => {
+                mapEditor.setPathStyle("要素ID （1_line 或者UUID）", {
+                    width: 10, ///边线线宽
+                    color: 'rgba(255,155,155,1)', ///填充颜色
+                });
+            }
+
+            ///设置面样式
+            document.getElementById("setPolygonStyle").onclick = () => {
+                mapEditor.setPolygonStyle("要素ID （1_polygon 或者UUID）", {
+                    name: "polygon1",
+                    width: 5, ///边线线宽
+                    fillColor: 'rgba(255,255,255,0.1)', ///填充颜色
+                    borderColor: 'rgba(0,0,0,1)', ///边线颜色
+                    fontSize: 12, ///字号大小
+                    fontFillColor: 'rgba(255,255,255,1)', ///填充颜色
+                    fontBorderColor: 'rgba(0,0,0,1)', ///边线颜色
+                });
+            }
+
+            ///获取数据
+            document.getElementById("getData").onclick = () => {
+                console.log(mapEditor.getData("build"));
+                console.log(mapEditor.getData("point"));
+                console.log(mapEditor.getData("path"));
+                console.log(mapEditor.getData("polygon"));
+                console.log(mapEditor.getData("all"));
+            }
+
+            ///图层隐藏
+            document.getElementById("layerHide").onclick = () => {
+                mapEditor.setLayerDisplay("image", false);
+                mapEditor.setLayerDisplay("build", false);
+                mapEditor.setLayerDisplay("point", false);
+                mapEditor.setLayerDisplay("path", false);
+                mapEditor.setLayerDisplay("polygon", false);
+            }
+
+            ///图层显示
+            document.getElementById("lyaerShow").onclick = () => {
+                mapEditor.setLayerDisplay("image", true);
+                mapEditor.setLayerDisplay("build", true);
+                mapEditor.setLayerDisplay("point", true);
+                mapEditor.setLayerDisplay("path", true);
+                mapEditor.setLayerDisplay("polygon", true);
+            }
+
+            ///图层不可选择
+            document.getElementById("layerSelect_no").onclick = () => {
+                mapEditor.setIsSelect("build", false);
+                mapEditor.setIsSelect("point", false);
+                mapEditor.setIsSelect("path", false);
+                mapEditor.setIsSelect("polygon", false);
+            }
+
+            ///图层可选择
+            document.getElementById("layerSelect").onclick = () => {
+                mapEditor.setIsSelect("build", true);
+                mapEditor.setIsSelect("point", true);
+                mapEditor.setIsSelect("path", true);
+                mapEditor.setIsSelect("polygon", true);
+            }
+
+            ///坐标系转换
+            document.getElementById("transform").onclick = () => {
+                console.log(mapEditor.transformTo3857(118.783, 32.042));
+                console.log(mapEditor.transformTo4326(13222863.074897416, 3768825.0433383826));
+            }
+
+            ///设置数据
+            document.getElementById("setData").onclick = () => {
+                mapEditor.setData(TestData.floors[1]);
+            }
+
+            ///设置底图数据
+            document.getElementById("setImageData").onclick = () => {
+                mapEditor.setImageData({
+                    data: "../img/poi.png",
+                    extent: [13222863.074897416, 3768562.394749727, 13223197.033369796, 3768825.0433383826]
+                });
+            }
+
+            ///设置建筑物轮廓数据
+            document.getElementById("setBuildData").onclick = () => {
+                mapEditor.setBuildData({
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [13222863.074897416, 3768825.0433383826],
+                                [13222863.074897416, 3768562.394749727],
+                                [13223197.033369796, 3768562.394749727],
+                                [13223197.033369796, 3768825.0433383826],
+                                [13222863.074897416, 3768825.0433383826]
+                            ]
+                        ]
+                    },
+                    "properties": {
+                        id: "要素ID （1_floor 或者UUID）",
+                        name: "A大楼",
+                        floors: 1, ///楼层
+                        styleID: "样式ID 或者 空 给前端绑定样式管理器用",
+                        width: 2, ///边线线宽
+                        fillColor: '#000000', ///填充颜色
+                        borderColor: 'rgba(217,237,253,1.0)', ///边线颜色
+                        ///有需要补充的数据讨论好KEY 往下添加
+                    }
+                });
+            }
+
+
+        } 
+    </script>
+
+</head>
+
+<body>
+
+    <div id="map">
+        <div id="toolbar" style="position:absolute; z-index: 999; left:10px; top:20px; ">
+            <input type="button" value="绘制点" id="drawpoint">
+            <input type="button" value="绘制路径" id="drawpath">
+            <input type="button" value="绘制面" id="drawpolygon">
+            <input type="button" value="绘制圆" id="drawcircle">
+            <input type="button" value="绘制矩形" id="drawbox">
+            <input type="button" value="取消绘制" id="canceldraw">
+            <input type="button" value="地图放大" id="zoomout">
+            <input type="button" value="地图缩小" id="zoomin">
+            <input type="button" value="建筑物样式" id="setBuildStyle">
+            <input type="button" value="点样式" id="setPointStyle">
+            <input type="button" value="路径样式" id="setPathStyle">
+            <input type="button" value="面样式" id="setPolygonStyle">
+            <input type="button" value="获取数据" id="getData">
+            <input type="button" value="图层隐藏" id="layerHide">
+            <input type="button" value="图层显示" id="lyaerShow">
+            <input type="button" value="图层不可选择" id="layerSelect_no">
+            <input type="button" value="图层可选择" id="layerSelect">
+            <input type="button" value="坐标转换" id="transform">
+            <input type="button" value="设置数据" id="setData">
+            <input type="button" value="设置底图数据" id="setImageData">
+            <input type="button" value="设置建筑物轮廓数据" id="setBuildData">
+
+            <!-- 比例尺容器 样式可以改 ID写死 -->
+            <div id="scaleLine" style="position:absolute; z-index: 999;top: 70px; "></div>
+        </div>
+    </div>
+
+</body>
+
+</html>

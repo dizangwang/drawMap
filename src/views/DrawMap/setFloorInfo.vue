@@ -34,10 +34,18 @@
                   :action="uploadUrl"
                   :on-success="uploadSuccess"
                   :on-error="uploadError"
+                  :show-file-list="false"
                 >
-                  <el-button size="mini" type="primary">
+                  <el-button v-if="!formValidate.planarGraph" size="mini" type="primary">
                     <i class="el-icon-upload"></i>点击上传
                   </el-button>
+                  <img
+                    v-if="formValidate.planarGraph"
+                    width="100px"
+                    height="auto"
+                    :src="'/files/img/'+formValidate.planarGraph"
+                    alt
+                  />
                 </el-upload>
               </div>
             </el-form-item>
@@ -288,6 +296,46 @@ export default {
       });
       that.$refs.formValidate.resetFields();
       that.formValidate.id = obj.id;
+      that.getFloorInfoById(obj.id).then((res) => {
+        that.formValidate.lineData = res.floorOutline;
+        that.formValidate.planarGraph = res.planarGraph;
+        that.formValidate.upperLeftCornerLongitude = res.upperLeftCornerLongitude === null
+          ? ""
+          : res.upperLeftCornerLongitude;
+        that.formValidate.upperLeftCornerLatitude = res.upperLeftCornerLatitude === null
+          ? ""
+          : res.upperLeftCornerLatitude;
+        that.formValidate.lowerRightCornerLongitude = res.lowerRightCornerLongitude === null
+          ? ""
+          : res.lowerRightCornerLongitude;
+        that.formValidate.lowerRightCornerLatitude = res.lowerRightCornerLatitude === null
+          ? ""
+          : res.lowerRightCornerLatitude;
+      });
+    },
+
+    // 根据楼层id获取楼层信息
+    getFloorInfoById(id) {
+      var that = this;
+      return new Promise((resolve) => {
+        that
+          .ajax({
+            method: "get",
+            url: that.apis.getFloorInfoById + id,
+            data: ""
+          })
+          .then((res) => {
+            const { data } = res;
+            if (data.code === 200) {
+              resolve(data.data);
+            } else {
+              that.$message({
+                message: data.msg,
+                type: "warning"
+              });
+            }
+          });
+      });
     },
 
     // 上传文件成功回调
@@ -330,6 +378,7 @@ export default {
             lowerRightCornerLongitude: "",
             lowerRightCornerLatitude: ""
           };
+
           let str = "";
           Object.keys(obj).forEach((item) => {
             str += `${item}=${that.formValidate[item]}&`;
@@ -349,7 +398,7 @@ export default {
                   message: "提交成功",
                   type: "success"
                 });
-                that.$emit("success");
+                that.$emit("success", that.formValidate.id);
               } else {
                 that.$message({
                   message: data.msg,

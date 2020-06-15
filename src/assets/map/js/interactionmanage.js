@@ -246,6 +246,7 @@ export class InterCtionManage {
             if (s != null)
                 style = Style.objToPolygonStyle(s);
 
+            f.set("name", s.name);
             f.set("borderColor", style.getStroke().getColor());
             f.set("width", style.getStroke().getWidth());
             f.set("fillColor", style.getFill().getColor());

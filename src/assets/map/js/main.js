@@ -319,6 +319,7 @@ export default class MapEditor {
         if (typeof (f) != "undefined") {
             this.interactionManage.clearSelectFeatures();
             f.setStyle(Style.objToPolygonStyle(style));
+            f.set("name", style.name);
             f.set("borderColor", style.borderColor);
             f.set("width", style.width);
             f.set("fillColor", style.fillColor);
@@ -380,6 +381,7 @@ export default class MapEditor {
         this.interactionManage.setIsSelect(layer, isSelect);
     }
 
+    ///设置底图数据
     setImageData(data) {
         this.map.imageData = data;
 
@@ -398,17 +400,30 @@ export default class MapEditor {
                 });
 
         }
+    }
 
-        // this.ol.layers.imageLayer = new ol.layer.Image({
-        //     source: new ol.source.ImageStatic({
-        //         url: this.map.imageData.data,
-        //         projection: new ol.proj.Projection({
-        //             code: "EPSG:3857"
-        //         }),
-        //         imageExtent: this.map.imageData.extent
-        //     })
-        // });
+    ///设置底图数据
+    setBuildData(data) {
+        this.map.floorData = data;
 
+
+
+        this.ol.layers.buildLayer.getSource().clear();
+
+        ///添加要素
+        if (typeof (this.map.floorData.geometry) != "undefined") {
+            let v = (new ol.format.GeoJSON()).readFeatures(this.map.floorData);
+            v.forEach(f => {
+                // f.getGeometry().transform("EPSG:4326", "EPSG:3857");
+                // console.log((new ol.format.GeoJSON()).writeFeatures([f]));
+                this.ol.layers.buildLayer.getSource().addFeature(f);
+                this.ol.map.getView().fit(f.getGeometry().getExtent(), {
+                    padding: [100, 100, 100, 100],
+                });
+                f.setStyle(Style.featureToBuildStyle(f));
+                f.setId(f.get("id"));
+            });
+        }
 
     }
 

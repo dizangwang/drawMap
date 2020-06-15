@@ -3,8 +3,8 @@
     <!-- 操作栏 -->
     <div class="handlerFor">
       <el-button size="mini" class="lf10" type="primary" @click="themeClick">主题</el-button>
-      <!-- <el-button size="mini" class="lf10" type="primary" @click="getAllData">获取数据</el-button>
-      <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>-->
+      <!-- <el-button size="mini" class="lf10" type="primary" @click="getAllData">获取数据</el-button> -->
+      <!-- <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>-->
       <el-button size="mini" class="lf10" type="primary">调整平面图</el-button>
       <el-button size="mini" class="lf10" type="primary">完成</el-button>
       <el-button size="mini" class="lf10" type="primary">
@@ -56,7 +56,7 @@
               <el-collapse class="taskDown" accordion>
                 <el-collapse-item>
                   <template slot="title">
-                    <div class="taskDownInfoCon">
+                    <div class="taskDownInfoCon" @click="selectElementClick">
                       <span>
                         <i class="iconCommon iconSelectElement bigSize"></i>选择元素
                       </span>
@@ -146,6 +146,17 @@
                               class="colorWidth"
                               @active-change="drawSelectedColorChange"
                             ></el-color-picker>
+                          </td>
+                        </tr>
+                        <tr v-if="isPoiSelected">
+                          <td>图标大小</td>
+                          <td>
+                            <el-input-number
+                              size="small"
+                              @change="poiSizeChange"
+                              v-model="selectedElement.value.size"
+                              :min="1"
+                            ></el-input-number>
                           </td>
                         </tr>
                       </table>
@@ -476,26 +487,28 @@
 
     <!-- 新建样式 -->
     <el-dialog :visible.sync="createStyleModal" width="500px" title="新建样式">
-      <CreateStyle ref="createStyle"  @success="createStyleSuccess"
-        @cancel="createStyleModal=false"></CreateStyle>
+      <CreateStyle ref="createStyle" @success="createStyleSuccess" @cancel="createStyleModal=false"></CreateStyle>
     </el-dialog>
     <!-- 编辑样式 -->
     <el-dialog :visible.sync="editStyleModal" width="500px" title="编辑样式">
-      <EditStyle ref="editStyle"   @success="createStyleSuccess"
-        @cancel="editStyleModal=false"></EditStyle>
+      <EditStyle ref="editStyle" @success="createStyleSuccess" @cancel="editStyleModal=false"></EditStyle>
     </el-dialog>
     <!-- 编辑主题样式 -->
     <el-dialog :visible.sync="editElementStyleModal" width="500px" title="编辑主题样式">
       <table class="wd100">
         <tr>
           <td class="rightLebal">元素样式：</td>
-
           <td>
             <div class="center">
-              <el-input size="small" v-model="searchStyleWord" placeholder show-word-limit />
+              <el-input
+                size="small"
+                v-model="searchStyleWord"
+                @input="searchStyleWordChange"
+                placeholder
+                show-word-limit
+              />
               <i class="el-icon-plus lf10 cursor" @click="createStyleClick"></i>
               <i class="el-icon-edit lf10 cursor" @click="editStyleClick"></i>
-
               <i class="el-icon-delete lf10 cursor" @click="deleteStyleClick"></i>
             </div>
           </td>
@@ -505,10 +518,9 @@
         <Table
           @on-selection-change="styleTableSelectChange"
           :columns="elementStyleColumn"
-          :data="elementStyleList"
+          :data="elementStyleListCopy"
         >
-
-        <template slot="borderColor" slot-scope="{row}">
+          <template slot="borderColor" slot-scope="{row}">
             <div class="colorOutline center">
               <div :style="{ background: row.borderColor}"></div>
             </div>
@@ -525,21 +537,16 @@
     <!-- 数据图表信息 -->
     <el-dialog :visible.sync="dataChartInfoModal" width="700px" title="数据图表信息">
       <div class="center">
-        <el-select size="small" placeholder="图面层">
+        <el-select size="small" v-model="layerType" placeholder="图面层">
           <el-option value="1" label="图面层"></el-option>
+          <el-option value="2" label="POI层"></el-option>
         </el-select>
         <el-input class="lf10" size="small" placeholder="搜索" show-word-limit />
         <i class="el-icon-delete lf10"></i>
       </div>
 
       <div class="editElementStyle">
-        <Table :columns="dataChartColumn" :data="dataChartData">
-          <template slot="color" slot-scope="{row}">
-            <div class="colorOutline center">
-              <div :style="{ background: row.color}"></div>
-            </div>
-          </template>
-        </Table>
+        <Table :columns="dataChartColumn" :data="dataChartData"></Table>
       </div>
     </el-dialog>
 
