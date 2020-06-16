@@ -554,7 +554,14 @@
             <el-option value="1" label="图面层"></el-option>
             <el-option value="2" label="POI层"></el-option>
           </el-select>
-          <el-input class="lf10" size="small" placeholder="搜索" show-word-limit />
+          <el-input
+            @input="dataChartDataFilter"
+            v-model="dataChartDataSearch"
+            class="lf10"
+            size="small"
+            placeholder="搜索"
+            show-word-limit
+          />
           <i class="el-icon-delete lf10 cursor" @click="deleteSelectedElement"></i>
         </div>
         <div class="editElementStyle">

@@ -19,8 +19,12 @@
           <td class="rightLebal">任务类型：</td>
           <td>
             <el-form-item size="mini" label-width="0" prop="taskTypeId">
-              <el-select  clearable size="small" v-model="formValidate.taskTypeId" style="width:100%">
-                <el-option value>任务类型</el-option>
+              <el-select
+                clearable
+                size="small"
+                v-model="formValidate.taskTypeId"
+                style="width:100%"
+              >
                 <el-option
                   v-for="item in taskTypes"
                   :value="item.id"
@@ -39,10 +43,10 @@
                 <el-form-item size="mini" label-width="0" prop="provinceId">
                   <el-select
                     size="small"
-                     clearable
+                    clearable
                     v-model="formValidate.provinceId"
                     placeholder="省"
-                     @clear="provinceChange"
+                    @clear="provinceChange"
                     @change="provinceChange"
                   >
                     <el-option
@@ -58,10 +62,10 @@
                 <el-form-item size="mini" label-width="0" prop="cityId">
                   <el-select
                     size="small"
-                     clearable
+                    clearable
                     v-model="formValidate.cityId"
                     placeholder="市"
-                     @clear="cityChange"
+                    @clear="cityChange"
                     @change="cityChange"
                   >
                     <el-option
@@ -75,7 +79,12 @@
               </div>
               <div class="areaSelect">
                 <el-form-item size="mini" label-width="0" prop="districtId">
-                  <el-select  clearable size="small" v-model="formValidate.districtId" placeholder="区">
+                  <el-select
+                    clearable
+                    size="small"
+                    v-model="formValidate.districtId"
+                    placeholder="区"
+                  >
                     <el-option
                       v-for="item in districtList"
                       :value="item.id"

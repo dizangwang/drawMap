@@ -80,8 +80,8 @@ export default {
       },
       {
         title: "楼宇楼层",
-        slot: "floor",
-        width: 90
+        slot: "floor"
+
       },
       {
         title: "完成状态",
@@ -92,7 +92,7 @@ export default {
       {
         title: "楼宇操作",
         slot: "action",
-        width: 430,
+        width: 280,
         align: "center"
       }
       ],
@@ -181,9 +181,9 @@ export default {
 
     // 清空缓存中的楼宇信息
     that.utils.localstorageSet("buildObj", "");
-    that.tableHeight = window.innerHeight - 160;
+    that.tableHeight = window.innerHeight - 135;
     window.onresize = () => {
-      that.tableHeight = window.innerHeight - 160;
+      that.tableHeight = window.innerHeight - 135;
     };
   },
   methods: {

@@ -16,12 +16,18 @@
     <!--------------------------- 顶部操作栏--start----------------------------------- -->
     <div class="handler">
       <div class="left">
-        <el-select size="mini" class="leftSelect lf20" v-model="task" @change="taskChange">
+        <el-select
+          size="mini"
+          class="leftSelect lf20"
+          style="width:100px"
+          v-model="task"
+          @change="taskChange"
+        >
           <el-option value="1" label="任务"></el-option>
           <el-option value="2" label="楼宇"></el-option>
         </el-select>
-        <span class="lf5">任务类型</span>
-        <el-select clearable v-model="searchForm.taskTypeId" size="mini" class="leftSelect lf5">
+        <span class="lf15">任务类型</span>
+        <el-select clearable v-model="searchForm.taskTypeId" size="mini" class="leftSelect lf10">
           <el-option value>全部</el-option>
           <el-option
             v-for="item in taskTypes"
@@ -30,13 +36,13 @@
             :key="item.id"
           ></el-option>
         </el-select>
-        <span class="lf5">任务区域</span>
+        <span class="lf15">任务区域</span>
         <el-select
           size="mini"
           clearable
           v-model="searchForm.province"
           placeholder="省"
-          class="leftSelect lf5"
+          class="leftSelect lf10"
           @clear="provinceChange"
           @change="provinceChange"
         >
@@ -52,7 +58,7 @@
           clearable
           v-model="searchForm.city"
           placeholder="市"
-          class="leftSelect lf5"
+          class="leftSelect lf10"
           @clear="cityChange"
           @change="cityChange"
         >
@@ -63,7 +69,7 @@
           size="mini"
           v-model="searchForm.district"
           placeholder="区"
-          class="leftSelect lf5"
+          class="leftSelect lf10"
         >
           <el-option
             v-for="item in districtList"
@@ -76,25 +82,17 @@
           v-model="searchForm.taskName"
           size="mini"
           maxlength="20"
-          class="leftInput lf5"
+          class="leftInput lf15"
           placeholder="请输入任务名称"
         />
-        <el-button @click="searchClick" size="mini" class="lf20" type="primary">确定</el-button>
+        <el-button @click="searchClick" size="mini" class="lf15" type="primary">确定</el-button>
       </div>
       <div class="right">
-        <el-button size="mini" class="lf10" type="primary" @click="publishBatchClick">
-          <i class="iconCommon iconPublish"></i>发布
-        </el-button>
-        <el-button size="mini" class="lf10" type="primary" @click="underCarriageBatchClick">
-          <i class="iconCommon iconUndercarriage"></i>下架
-        </el-button>
-        <el-button size="mini" class="lf10" type="primary" @click="downBatchloadClick">
-          <i class="iconCommon iconDownload"></i>下载
-        </el-button>
-        <el-button size="mini" class="lf10" type="primary" @click="deleteBatchClick">
-          <i class="iconCommon iconDelete"></i>删除
-        </el-button>
-        <el-button class="lf10" size="mini" type="primary" @click="createTaskClick">
+        <el-button size="mini" class type="primary" @click="publishBatchClick">发布</el-button>
+        <el-button size="mini" class="lf10" type="primary" @click="underCarriageBatchClick">下架</el-button>
+        <el-button size="mini" class="lf10" type="primary" @click="downBatchloadClick">下载</el-button>
+        <el-button size="mini" class="lf10" @click="deleteBatchClick">删除</el-button>
+        <el-button class="lf15" size="mini" type="success" @click="createTaskClick">
           <i class="iconCommon iconAdd"></i>创建任务
         </el-button>
       </div>
@@ -137,21 +135,16 @@
         >{{row.provinceName}}{{row.cityName}}{{row.districtName}}</template>
         <!-- 列表的操作栏 -->
         <template slot="action" slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="publishClick(row)">
-            <i class="iconCommon iconPublish"></i>发布
-          </el-button>
-          <el-button size="mini" class="lf10" type="primary" @click="underCarriageClick(row)">
-            <i class="iconCommon iconUndercarriage"></i>下架
-          </el-button>
-          <el-button size="mini" class="lf10" type="primary" @click="downloadClick(row)">
-            <i class="iconCommon iconDownload"></i>下载
-          </el-button>
-          <el-button size="mini" class="lf10" type="primary" @click="editTaskClick(row)">
-            <i class="iconCommon iconEdit"></i>编辑
-          </el-button>
-          <el-button size="mini" class="lf10" type="primary" @click="deleteClick(row)">
-            <i class="iconCommon iconDelete"></i>删除
-          </el-button>
+          <el-button size="small" class="buttonHover" type="text" @click="publishClick(row)">发布</el-button>
+          <el-button
+            size="small"
+            class="buttonHover"
+            type="text"
+            @click="underCarriageClick(row)"
+          >下架</el-button>
+          <el-button size="small" class="buttonHover" type="text" @click="downloadClick(row)">下载</el-button>
+          <el-button size="small" class="buttonHover" type="text" @click="editTaskClick(row)">编辑</el-button>
+          <el-button size="small" class="buttonHover" type="text" @click="deleteClick(row)">删除</el-button>
           <!-- <el-link size="mini" type="primary" @click="publishClick">
             发布
           </el-link>

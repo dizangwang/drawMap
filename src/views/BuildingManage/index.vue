@@ -6,6 +6,7 @@
           v-if="!taskObj"
           size="mini"
           class="leftSelect lf20"
+          style="width:100px"
           v-model="task"
           @change="taskChange"
         >
@@ -39,7 +40,7 @@
             :key="item.id"
           ></el-option>
         </el-select>-->
-        <span v-if="!taskObj" class="lf20">楼宇区域</span>
+        <span v-if="!taskObj" class="lf15">楼宇区域</span>
         <el-select
           v-if="!taskObj"
           size="mini"
@@ -47,7 +48,7 @@
           v-model="searchForm.province"
           placeholder="省"
           class="leftSelect lf10"
-           @clear="provinceChange"
+          @clear="provinceChange"
           @change="provinceChange"
         >
           <el-option
@@ -64,7 +65,7 @@
           v-model="searchForm.city"
           placeholder="市"
           class="leftSelect lf10"
-           @clear="cityChange"
+          @clear="cityChange"
           @change="cityChange"
         >
           <el-option v-for="item in cityList" :value="item.id" :label="item.name" :key="item.id"></el-option>
@@ -88,29 +89,22 @@
         <el-input
           v-model="searchForm.buildingName"
           size="mini"
-          class="leftInput lf20"
+          class="leftInput lf10"
+          style="width:120px"
           placeholder="请输入楼宇名称"
         />
-        <el-button @click="searchClick" size="mini" class="lf20" type="primary">确定</el-button>
+        <el-button @click="searchClick" size="mini" class="lf15" type="primary">确定</el-button>
       </div>
       <div class="right">
-        <el-button size="mini" class="lf10" type="primary" @click="publishBatchClick">
-          <i class="iconCommon iconPublish"></i>发布
-        </el-button>
-        <el-button size="mini" class="lf10" type="primary" @click="underCarriageBatchClick">
-          <i class="iconCommon iconUndercarriage"></i>下架
-        </el-button>
-        <el-button size="mini" class="lf10" type="primary" @click="downBatchloadClick">
-          <i class="iconCommon iconDownload"></i>下载
-        </el-button>
-        <el-button size="mini" class="lf10" type="primary" @click="deleteBatchClick">
-          <i class="iconCommon iconDelete"></i>删除
-        </el-button>
+        <el-button size="mini" class="lf10" type="primary" @click="publishBatchClick">发布</el-button>
+        <el-button size="mini" class="lf10" type="primary" @click="underCarriageBatchClick">下架</el-button>
+        <el-button size="mini" class="lf10" type="primary" @click="downBatchloadClick">下载</el-button>
+        <el-button size="mini" class="lf10" @click="deleteBatchClick">删除</el-button>
         <el-button
           v-if="taskObj"
           class="lf10"
           size="mini"
-          type="primary"
+          type="success"
           @click="createBuildingClick"
         >
           <i class="iconCommon iconAdd"></i>创建楼宇
@@ -138,26 +132,22 @@
         <template slot="floor" slot-scope="{row}">{{+row.overGroundFloor-row.underGroundFloor}}</template>
 
         <template slot="action" slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="publishClick(row)">
-            <i class="iconCommon iconPublish"></i>发布
-          </el-button>
-          <el-button size="mini" class="lf10" type="primary" @click="underCarriageClick(row)">
-            <i class="iconCommon iconUndercarriage"></i>下架
-          </el-button>
-          <el-button size="mini" class="lf10" type="primary" @click="downloadClick(row)">
-            <i class="iconCommon iconDownload"></i>下载
-          </el-button>
-          <el-button size="mini" class="lf10" type="primary" @click="editTaskClick(row)">
-            <i class="iconCommon iconEdit"></i>编辑
-          </el-button>
-          <el-button size="mini" class="lf10" type="primary" @click="deleteClick(row)">
-            <i class="iconCommon iconDelete"></i>删除
-          </el-button>
+          <el-button size="small" class="buttonHover" type="text" @click="publishClick(row)">发布</el-button>
+          <el-button
+            size="small"
+            class="buttonHover"
+            type="text"
+            @click="underCarriageClick(row)"
+          >下架</el-button>
+          <el-button size="small" class="buttonHover" type="text" @click="downloadClick(row)">下载</el-button>
+          <el-button size="small" class="buttonHover" type="text" @click="editTaskClick(row)">编辑</el-button>
+          <el-button size="small" class="buttonHover" type="text" @click="deleteClick(row)">删除</el-button>
         </template>
       </Table>
       <div class="line10"></div>
       <div class="pageCon">
         <Page
+          :current="searchForm.current"
           :total="total"
           :page-size="searchForm.size"
           show-elevator

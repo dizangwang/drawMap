@@ -9,7 +9,7 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 body{
-  min-width: 1070px;
+  min-width: 1153px;
 }
 
 [hidden] {
@@ -34,6 +34,9 @@ body{
 
 .lf5 {
   margin-left: 5px;
+}
+.lf15 {
+  margin-left: 15px;
 }
 
 .line5 {

@@ -25,7 +25,6 @@
                 v-model="formValidate.taskTypeId"
                 style="width:100%"
               >
-                <el-option value>任务类型</el-option>
                 <el-option
                   v-for="item in taskTypes"
                   :value="item.id"

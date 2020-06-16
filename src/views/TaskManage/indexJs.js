@@ -63,8 +63,7 @@ export default {
       },
       {
         title: "任务类型",
-        key: "taskTypeName",
-        width: 90
+        key: "taskTypeName"
       },
       {
         title: "所属区域",
@@ -77,13 +76,12 @@ export default {
       },
       {
         title: "任务进度",
-        slot: "progress",
-        width: 150
+        slot: "progress"
       },
       {
         title: "任务操作",
         slot: "action",
-        width: 430,
+        width: 280,
         align: "center"
       }
       ],
@@ -141,9 +139,9 @@ export default {
     // 每次进入到任务列表，先清空缓存任务对象，防止跳转到楼宇管理的时候，数据混乱
     that.utils.localstorageSet("taskObj", "");
     // 动态调整容器长度
-    that.tableHeight = window.innerHeight - 160;
+    that.tableHeight = window.innerHeight - 135;
     window.onresize = () => {
-      that.tableHeight = window.innerHeight - 160;
+      that.tableHeight = window.innerHeight - 135;
     };
   },
   filters: {

@@ -245,7 +245,9 @@ export default {
       // 楼层完成状态
       floorFinishStatus: "完成",
       // 数据图表勾选的id
-      dataChartSelectedIds: []
+      dataChartSelectedIds: [],
+      // 数据图表搜索
+      dataChartDataSearch: ""
     };
   },
   mounted() {
@@ -389,6 +391,17 @@ export default {
             that.dataChartPOIData = that.mapEditor.getData("point");
           });
       }
+    },
+    // 搜索数据图表信息面元素
+    dataChartDataFilter(pName) {
+      const data = that.mapEditor.getData("polygon");
+      const arr = [];
+      data.forEach((item) => {
+        if (item.name.indexOf(pName) > -1) {
+          arr.push(item);
+        }
+      });
+      that.dataChartData = arr;
     },
     // 数据图表信息勾选监听
     dataChartInfoChange(ids) {
@@ -773,9 +786,7 @@ export default {
     // 路径-绘制元素-直梯
     verticalFloorClick() {
       var that = this;
-      if (!that.hasUnderPainting) {
-        return;
-      }
+
       if (that.drawActiveLine === 1) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -794,9 +805,7 @@ export default {
     // 路径-绘制元素-扶梯
     holdFloorClick() {
       var that = this;
-      if (!that.hasUnderPainting) {
-        return;
-      }
+
       if (that.drawActiveLine === 2) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -815,9 +824,7 @@ export default {
     // 路径-绘制元素-楼梯
     commonFloorClick() {
       var that = this;
-      if (!that.hasUnderPainting) {
-        return;
-      }
+
       if (that.drawActiveLine === 3) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -907,34 +914,26 @@ export default {
     // 地图放大
     mapBiggerClick() {
       var that = this;
-      if (!that.hasUnderPainting) {
-        return;
-      }
+
       that.mapEditor.zoomOut();
     },
     // 地图缩小
     mapLittleClick() {
       var that = this;
-      if (!that.hasUnderPainting) {
-        return;
-      }
+
       that.mapEditor.zoomIn();
     },
 
     // 绘制点元素
     drawPoint() {
       var that = this;
-      if (!that.hasUnderPainting) {
-        return;
-      }
+
       that.mapEditor.drawPoint();
     },
     // 绘制线元素
     drawLine() {
       var that = this;
-      if (!that.hasUnderPainting) {
-        return;
-      }
+
       if (that.isDrawLine) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -951,9 +950,7 @@ export default {
     // 绘制矩形
     drawRect() {
       var that = this;
-      if (!that.hasUnderPainting) {
-        return;
-      }
+
       if (that.drawActiveType === 1) {
         that.drawActiveType = "";
         that.iconActiveNum = "";
@@ -1003,9 +1000,7 @@ export default {
     // 绘制面元素
     drawpolygon() {
       var that = this;
-      if (!that.hasUnderPainting) {
-        return;
-      }
+
       if (that.drawActiveType === 3) {
         that.drawActiveType = "";
         that.iconActiveNum = "";
@@ -1041,9 +1036,7 @@ export default {
     // 绘制圆
     drawcircle() {
       var that = this;
-      if (!that.hasUnderPainting) {
-        return;
-      }
+
       if (that.drawActiveType === 2) {
         that.drawActiveType = "";
         that.iconActiveNum = "";
@@ -1078,9 +1071,6 @@ export default {
     // 取消绘制
     canceldraw() {
       var that = this;
-      if (!that.hasUnderPainting) {
-        return;
-      }
       that.mapEditor.cancelDraw();
       that.drawActiveType = "";
     },
