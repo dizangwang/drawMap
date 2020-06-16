@@ -119,14 +119,20 @@ export default {
       if (initObj.editOutLine) {
         that.isSave = true;
         that.editOutLine = initObj.editOutLine;
-
+        // console.log(initObj.editOutLine);
+        let lng = "";
+        let lat = "";
         // 把值赋值给floorData
         Object.keys(that.editOutLine).forEach((key, index) => {
           if (that.editOutLine[key]) {
             that.floorData[key] = JSON.parse(that.editOutLine[key]);
+            lng = that.floorData[key][0].lng;
+            lat = that.floorData[key][0].lat;
           }
         });
-
+        setTimeout(() => {
+          that.map.centerAndZoom(new BMap.Point(lng, lat), 18);
+        }, 500);
         // 默认渲染F1层
         if (that.editOutLine.F1) {
           that.createPolygon(JSON.parse(that.editOutLine.F1));
@@ -152,7 +158,7 @@ export default {
       };
 
       // 创建Map实例
-      var map = new BMap.Map("map");
+      var map = new BMap.Map("map", { enableMapClick: false });
       that.map = map;
 
       // 左上角，添加默认缩放平移控件

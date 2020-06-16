@@ -39,7 +39,6 @@
                 console.log(e);
             })
 
-
             ///绘制点
             document.getElementById("drawpoint").onclick = () => {
                 mapEditor.drawPoint({
@@ -82,7 +81,7 @@
                 });
             }
 
-            ///绘制圆形
+            ///绘制矩形
             document.getElementById("drawbox").onclick = () => {
                 mapEditor.drawBox({
                     name: "polygon1",
@@ -233,13 +232,22 @@
                         floors: 1, ///楼层
                         styleID: "样式ID 或者 空 给前端绑定样式管理器用",
                         width: 2, ///边线线宽
-                        fillColor: '#000000', ///填充颜色
+                        fillColor: 'rgba(247,254,255,0.6)', ///填充颜色
                         borderColor: 'rgba(217,237,253,1.0)', ///边线颜色
                         ///有需要补充的数据讨论好KEY 往下添加
                     }
                 });
             }
 
+            ///根据ID删除要素
+            document.getElementById("deleteFeatureById").onclick = () => {
+                mapEditor.deleteFeatureById("point", "要素ID （1_point 或者UUID）");
+            }
+
+            ///获取保存后端数据
+            document.getElementById("getSaveData").onclick = () => {
+                console.log(mapEditor.getSaveData());
+            }
 
         } 
     </script>
@@ -271,6 +279,8 @@
             <input type="button" value="设置数据" id="setData">
             <input type="button" value="设置底图数据" id="setImageData">
             <input type="button" value="设置建筑物轮廓数据" id="setBuildData">
+            <input type="button" value="根据ID删除要素" id="deleteFeatureById">
+            <input type="button" value="获取保存后端数据" id="getSaveData">
 
             <!-- 比例尺容器 样式可以改 ID写死 -->
             <div id="scaleLine" style="position:absolute; z-index: 999;top: 70px; "></div>

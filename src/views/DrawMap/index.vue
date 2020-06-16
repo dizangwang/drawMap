@@ -3,17 +3,22 @@
     <!-- 操作栏 -->
     <div class="handlerFor">
       <el-button size="mini" class="lf10" type="primary" @click="themeClick">主题</el-button>
-      <!-- <el-button size="mini" class="lf10" type="primary" @click="getAllData">获取数据</el-button> -->
+      <el-button size="mini" class="lf10" type="primary" @click="getAllData">查看属性数据</el-button>
       <!-- <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>-->
       <el-button size="mini" class="lf10" type="primary">调整平面图</el-button>
-      <el-button size="mini" class="lf10" type="primary">完成</el-button>
+      <el-button
+        size="mini"
+        class="lf10"
+        type="primary"
+        @click="floorFinishById"
+      >{{floorFinishStatus}}</el-button>
       <el-button size="mini" class="lf10" type="primary">
         <i class="iconCommon iconEye"></i>预览
       </el-button>
-      <el-button size="mini" class="lf10" type="primary">
+      <el-button size="mini" class="lf10" type="primary" @click="saveData">
         <i class="iconCommon iconSave"></i>保存
       </el-button>
-      <el-button size="mini" class="lf10" type="primary">
+      <el-button size="mini" class="lf10" type="primary" @click="floorMgrPublish">
         <i class="iconCommon iconPublish"></i>发布
       </el-button>
       <el-button size="mini" class="lf10" type="primary" @click="setFloorInfoClick">
@@ -122,6 +127,7 @@
                           <td>元素样式</td>
                           <td>
                             <el-select
+                              clearable
                               class="leftInputWid"
                               size="mini"
                               v-model="selectedElement.value.styleID"
@@ -261,6 +267,7 @@
                             <el-select
                               class="leftInputWid"
                               size="mini"
+                              clearable
                               v-model="preDrawStyle"
                               placeholder="请选择"
                             >
@@ -312,10 +319,15 @@
                   </template>
                   <div>
                     <el-card body-style="{border:0}" shadow="never">
-                      <div v-show="!facilityTypeTarget.id">
+                      <div v-show="!facilityTypeTarget.id&&!isLineLayerSeleced">
                         <div class="center">请在底图上选择元素</div>
                         <!-- <div class="center">（按住crtl键可以选择多个元素）</div> -->
                       </div>
+                      <div v-show="isLineLayerSeleced">
+                        <div class="center" style="color:red">右键菜单可删除选中线段</div>
+                        <!-- <div class="center">（按住crtl键可以选择多个元素）</div> -->
+                      </div>
+
                       <table class="formTable" v-show="facilityTypeTarget.id">
                         <tr>
                           <td>设施类型</td>
@@ -536,17 +548,43 @@
 
     <!-- 数据图表信息 -->
     <el-dialog :visible.sync="dataChartInfoModal" width="700px" title="数据图表信息">
-      <div class="center">
-        <el-select size="small" v-model="layerType" placeholder="图面层">
-          <el-option value="1" label="图面层"></el-option>
-          <el-option value="2" label="POI层"></el-option>
-        </el-select>
-        <el-input class="lf10" size="small" placeholder="搜索" show-word-limit />
-        <i class="el-icon-delete lf10"></i>
+      <div v-if="layerType==1">
+        <div class="center">
+          <el-select size="small" v-model="layerType" placeholder="图面层">
+            <el-option value="1" label="图面层"></el-option>
+            <el-option value="2" label="POI层"></el-option>
+          </el-select>
+          <el-input class="lf10" size="small" placeholder="搜索" show-word-limit />
+          <i class="el-icon-delete lf10 cursor" @click="deleteSelectedElement"></i>
+        </div>
+        <div class="editElementStyle">
+          <Table
+            @on-selection-change="dataChartInfoChange"
+            :columns="dataChartColumn"
+            :data="dataChartData"
+          ></Table>
+        </div>
       </div>
-
-      <div class="editElementStyle">
-        <Table :columns="dataChartColumn" :data="dataChartData"></Table>
+      <div v-if="layerType==2">
+        <div class="center">
+          <el-select size="small" v-model="layerType" placeholder="图面层">
+            <el-option value="1" label="图面层"></el-option>
+            <el-option value="2" label="POI层"></el-option>
+          </el-select>
+          <el-input class="lf10" size="small" placeholder="搜索" show-word-limit />
+          <i class="el-icon-delete lf10 cursor" @click="deleteSelectedElement"></i>
+        </div>
+        <div class="editElementStyle">
+          <Table
+            @on-selection-change="dataChartInfoChange"
+            :columns="dataChartPOIColumn"
+            :data="dataChartPOIData"
+          >
+            <template slot="img" slot-scope="{row}">
+              <img :src="row.img" width="25px" height="25px" />
+            </template>
+          </Table>
+        </div>
       </div>
     </el-dialog>
 

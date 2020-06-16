@@ -32,14 +32,41 @@ export default {
       allIconModal: false,
       // 编辑样式弹窗
       editStyleModal: false,
-
       // 创建样式弹窗
       createStyleModal: false,
-
       // 数据图表数据
       dataChartData: [],
+      // 数据图表POI数据
+      dataChartPOIData: [],
       // 图层的类型
-      layerType: "",
+      layerType: "1",
+      // 数据图表POI列值
+      dataChartPOIColumn: [{
+        title: "选择",
+        type: "selection",
+        width: 80
+      },
+      {
+        title: "序号",
+        type: "index",
+        width: 80
+      },
+      {
+        title: "FID",
+        key: "id"
+      },
+
+      {
+        title: "高度",
+        key: "size",
+        width: 80
+      },
+      {
+        title: "图标",
+        slot: "img",
+        width: 80
+      }
+      ],
       // 数据图表列值
       dataChartColumn: [{
         title: "选择",
@@ -48,7 +75,8 @@ export default {
       },
       {
         title: "序号",
-        type: "index"
+        type: "index",
+        width: 80
       },
       {
         title: "FID",
@@ -57,13 +85,12 @@ export default {
 
       {
         title: "名称",
-        key: "name"
+        key: "name",
+        width: 140
       }
       ],
-
       // 数据图表信息弹窗
       dataChartInfoModal: false,
-
       // 元素样式列数据
       elementStyleColumn: [{
         title: "选择",
@@ -87,13 +114,10 @@ export default {
         slot: "color"
       }
       ],
-
       // 编辑主题样式展示
       editElementStyleModal: false,
-
       // 楼层
       floor: "",
-
       // 表单字段
       formValidate: {
         taskId: "",
@@ -102,7 +126,6 @@ export default {
         underGroundFloor: "",
         lineData: ""
       },
-
       // 校验规则
       ruleValidate: {
         buildingName: [{
@@ -111,43 +134,30 @@ export default {
           trigger: "blur"
         }]
       },
-
       // 设置楼层信息
       setFloorInfoModal: false,
-
       // 左侧-顶部-tab栏
       tabNum: 1,
-
       // 元素高度
       elementHeight: 0,
-
       // 标注高度
       markHeight: 0,
-
       // 元素样式
       elementStyle: "",
-
       // 右侧地图高度
       height: "",
-
       // 楼宇信息
       buildObj: {},
-
       // 加载的楼层信息
       buildingFloorsObj: {},
-
       // 楼层信息数组
       floorArr: [],
-
       // 被选中的楼层
       activeFloor: "",
-
       // 选中楼层的数据
       activeFloorData: {},
-
       // 地图编辑器
       mapEditor: "",
-
       // 选中的元素
       selectedElement: {
         layername: "",
@@ -220,7 +230,6 @@ export default {
       goFloorArr: [],
       // 全选楼梯
       goFloorNumCheckAll: false,
-
       // 是否绘制楼梯
       isDrawfacibility: false,
       // 是否绘制路径
@@ -230,7 +239,13 @@ export default {
       // 图标名称
       iconName: "",
       // 被选中的图标
-      iconActiveNum: ""
+      iconActiveNum: "",
+      // 选中的是否是路径图层
+      isLineLayerSeleced: false,
+      // 楼层完成状态
+      floorFinishStatus: "完成",
+      // 数据图表勾选的id
+      dataChartSelectedIds: []
     };
   },
   mounted() {
@@ -276,6 +291,9 @@ export default {
 
       that.facilityToFloor = arr.join(",");
     },
+    layerType() {
+      this.dataChartSelectedIds = [];
+    },
     tabNum(num) {
       var that = this;
       if (num !== 2) {
@@ -289,12 +307,10 @@ export default {
     },
     activeFloorData(result) {
       var that = this;
-
-      // that.mapEditor.clearLayers();
       if (!result) {
         return;
       }
-
+      that.floorFinishStatus = "未完成";
       const val = JSON.parse(JSON.stringify(result));
 
       if (!val.imageData.extent) {
@@ -325,43 +341,158 @@ export default {
         val.imageData.data = `/files/img/${id}`;
       }
       // 如果没有经纬度
-      if (val.imageData.extent.length === 0) {
+      if (val.imageData.extent.length === 0 || !val.floorData.geometry) {
         that.$message({
           message: "没有经纬度无法定位底图",
           type: "warning"
         });
+        return;
       }
 
-      // （1）如果有对角线信息，则提示“楼层信息设置成功”，页面自动加载底图。
-      // if (hasRectLatLon) {
-      //   that.$message({
-      //     message: "楼层信息设置成功",
-      //     type: "success"
-      //   });
-      //   that.mapEditor.setData(val);
-      //   return;
-      // }
-
-      // //（2）如果没对角线信息，有轮廓信息，则提示“请点击调整底图按钮，根据轮廓进行缩放平移”，
-      // if (hasOutline) {
-      //   that.$message({
-      //     message: "请点击调整底图按钮，根据轮廓进行缩放平移",
-      //     type: "info"
-      //   });
-      //   that.mapEditor.setData(val);
-      //   return;
-      // }
-
-      // //（3）如果没对角线信息，没轮廓信息，则提示“当前楼层不具备经纬度信息，将不能发布”
-      // if (!hasOutline && !hasRectLatLon) {
-      //   that.$message({
-      //     message: "当前楼层不具备经纬度信息，将不能发布",
-      //     type: "warning"
-      //   });
-      // }
+      let i = 0;
+      Object.keys(val.layerData).forEach((key) => {
+        if (val.layerData[key].features.length > 0) {
+          i += 1;
+        }
+      });
+      if (i > 0) {
+        that.floorFinishStatus = "完成";
+      }
     }
   },
   methods: {
+    // 删除选中的图层
+    deleteSelectedElement() {
+      var that = this;
+      if (that.dataChartSelectedIds.length === 0) {
+        that.$message({
+          message: "请先勾选数据",
+          type: "warning"
+        });
+      } else {
+        that
+          .$confirm("是否删除选中的样式?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          })
+          .then(() => {
+            that.dataChartSelectedIds.forEach((item) => {
+              if (that.layerType === "1") {
+                that.mapEditor.deleteFeatureById("polygon", item.id);
+              }
+              if (that.layerType === "2") {
+                that.mapEditor.deleteFeatureById("point", item.id);
+              }
+            });
+            that.dataChartData = that.mapEditor.getData("polygon");
+            that.dataChartPOIData = that.mapEditor.getData("point");
+          });
+      }
+    },
+    // 数据图表信息勾选监听
+    dataChartInfoChange(ids) {
+      this.dataChartSelectedIds = ids;
+    },
+    // 发布楼层
+    floorMgrPublish() {
+      var that = this;
+      that
+        .ajax({
+          method: "post",
+          url: that.apis.floorMgrPublish,
+          data: {
+            id: that.activeFloorData.floorData.properties.id
+          }
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            that.$message({
+              message: "发布成功",
+              type: "success"
+            });
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+    // 设置楼层完成
+    floorFinishById() {
+      var that = this;
+      if (that.floorFinishStatus === "未完成") {
+        return;
+      }
+      that
+        .ajax({
+          method: "post",
+          url: that.apis.floorFinishById + that.activeFloorData.floorData.properties.id,
+          data: {}
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            that.$message({
+              message: "保存成功",
+              type: "success"
+            });
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
+    // 保存数据
+    saveData() {
+      var that = this;
+      const layerData = that.mapEditor.getSaveData();
+      // console.log(JSON.stringify(layerData,null,4))
+      // layerData.floorData.properties.styleID = 9;
+      // layerData.floorData.id = that.activeFloorData.floorData.properties.id;
+      // layerData.floorData.properties.id = that.activeFloorData.floorData.properties.id;
+      // layerData.floorData.properties.floors = that.activeFloorData.floorData.properties.floors;
+      // layerData.floorData.properties.name = that.activeFloorData.floorData.properties.name;
+      // var obj = {};
+      // obj.id = that.buildingFloorsObj.id;
+      // obj.name = that.buildingFloorsObj.name;
+      // obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
+      // obj.floors = {};
+      // obj.floors[that.activeFloorData.floorData.properties.floors] = layerData;
+      // console.log(JSON.stringify(layerData,null,4))
+      that
+        .ajax({
+          method: "post",
+          url: that.apis.saveFloor,
+          data: {
+            data: JSON.stringify(layerData)
+          }
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            that.$message({
+              message: "保存成功",
+              type: "success"
+            });
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
+    },
     // 监听样式搜索框变动-筛选样式列表
     searchStyleWordChange(styleWord) {
       var that = this;
@@ -636,12 +767,7 @@ export default {
       var that = this;
       that.dataChartInfoModal = true;
       that.dataChartData = that.mapEditor.getData("polygon");
-      // dataChartData
-      // console.log("polygon", JSON.stringify(that.mapEditor.getData("polygon"), null, 4));
-      // console.log("build", JSON.stringify(that.mapEditor.getData("build"), null, 4));
-      // console.log("point", JSON.stringify(that.mapEditor.getData("point"), null, 4));
-      // console.log("path", JSON.stringify(that.mapEditor.getData("path"), null, 4));
-      // console.log("all", JSON.stringify(that.mapEditor.getData("all"), null, 4));
+      that.dataChartPOIData = that.mapEditor.getData("point");
     },
 
     // 路径-绘制元素-直梯
@@ -722,6 +848,7 @@ export default {
         that.selectedElement = e;
         // console.log(that.selectedElement);
         that.isPoiSelected = false;
+        that.isLineLayerSeleced = false;
         if (e.layername === "POI图层") {
           that.isPoiSelected = true;
           if (that.tabNum === 2) {
@@ -739,6 +866,7 @@ export default {
           that.selectedElement = e;
         }
         if (e.layername === "路径图层") {
+          that.isLineLayerSeleced = true;
           that.selectedElement = e;
           that.selectedElement.value.fillColor = e.value.color;
         }
@@ -875,7 +1003,6 @@ export default {
     // 绘制面元素
     drawpolygon() {
       var that = this;
-      // that.setPolygonStyle("1_polygon");
       if (!that.hasUnderPainting) {
         return;
       }
@@ -979,7 +1106,6 @@ export default {
             message: "楼层信息设置成功",
             type: "success"
           });
-
           const left = that.mapEditor.transformTo3857(res.upperLeftCornerLongitude, res
             .upperLeftCornerLatitude);
           const right = that.mapEditor.transformTo3857(res.lowerRightCornerLongitude, res
@@ -1035,10 +1161,6 @@ export default {
 
             }
           });
-          // that.$message({
-          //   message: "请点击调整底图按钮，根据轮廓进行缩放平移",
-          //   type: "info"
-          // });
         } else {
           that.$message({
             message: "当前楼层不具备经纬度信息，将不能发布",
@@ -1173,30 +1295,6 @@ export default {
             } else {
               that.activeFloorData = that.buildingFloorsObj.floors[that.activeFloor];
             }
-          } else {
-            that.$message({
-              message: data.msg,
-              type: "warning"
-            });
-          }
-        });
-    },
-
-    // 设置楼层完成
-    floorFinishById(id) {
-      var that = this;
-      that
-        .ajax({
-          method: "get",
-          url: that.apis.floorFinishById + id,
-          data: ""
-        })
-        .then((res) => {
-          const {
-            data
-          } = res;
-          if (data.code === 200) {
-            // todo
           } else {
             that.$message({
               message: data.msg,

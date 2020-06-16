@@ -118,6 +118,10 @@ export class InterCtionManage {
         this._removeAllInteraction();
         this.mapEditor.ol.interactions.draw = new ol.interaction.Draw({
             source: this.mapEditor.ol.layers.pointLayer.getSource(),
+            condition: (e) => {
+                if (e.originalEvent.button == 0)
+                    return true;
+            },
             type: "Point",
         })
         this.mapEditor.ol.map.addInteraction(this.mapEditor.ol.interactions.draw);

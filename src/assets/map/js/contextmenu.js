@@ -49,8 +49,9 @@ export class ContextMenu {
         this.menu_overlay.setMap(this.mapEditor.ol.map);
 
         this.mapEditor.ol.map.getViewport().addEventListener("contextmenu", (e) => {
-
+            this.mapEditor.cancelDraw();
             e.preventDefault();
+
             if (this.mapEditor.interactionManage.getSelectFeatures().getLength() == 0)
                 return;
 
@@ -73,5 +74,5 @@ export class ContextMenu {
     }
 
 
-    
+
 }

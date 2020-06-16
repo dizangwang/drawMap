@@ -381,7 +381,9 @@ export default {
 
           let str = "";
           Object.keys(obj).forEach((item) => {
-            str += `${item}=${that.formValidate[item]}&`;
+            if (that.formValidate[item]) {
+              str += `${item}=${that.formValidate[item]}&`;
+            }
           });
           str += that.formValidate.lineData;
 

@@ -21,7 +21,7 @@
           <el-option value="2" label="楼宇"></el-option>
         </el-select>
         <span class="lf5">任务类型</span>
-        <el-select v-model="searchForm.taskTypeId" size="mini" class="leftSelect lf5">
+        <el-select clearable v-model="searchForm.taskTypeId" size="mini" class="leftSelect lf5">
           <el-option value>全部</el-option>
           <el-option
             v-for="item in taskTypes"
@@ -33,9 +33,11 @@
         <span class="lf5">任务区域</span>
         <el-select
           size="mini"
+          clearable
           v-model="searchForm.province"
           placeholder="省"
           class="leftSelect lf5"
+          @clear="provinceChange"
           @change="provinceChange"
         >
           <el-option
@@ -47,14 +49,22 @@
         </el-select>
         <el-select
           size="mini"
+          clearable
           v-model="searchForm.city"
           placeholder="市"
           class="leftSelect lf5"
+          @clear="cityChange"
           @change="cityChange"
         >
           <el-option v-for="item in cityList" :value="item.id" :label="item.name" :key="item.id"></el-option>
         </el-select>
-        <el-select size="mini" v-model="searchForm.district" placeholder="区" class="leftSelect lf5">
+        <el-select
+          clearable
+          size="mini"
+          v-model="searchForm.district"
+          placeholder="区"
+          class="leftSelect lf5"
+        >
           <el-option
             v-for="item in districtList"
             :value="item.id"
@@ -163,6 +173,7 @@
       <!-- 分页器 -->
       <div class="pageCon">
         <Page
+          :current="searchForm.current"
           :total="total"
           :page-size="searchForm.size"
           show-elevator

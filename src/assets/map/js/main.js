@@ -167,6 +167,7 @@ export default class MapEditor {
         });
         this.contextmenu.add("取消编辑", () => {
             this.interactionManage.chanelEdit();
+            this.interactionManage.clearSelectFeatures();
         });
         this.contextmenu.add("删除要素", () => {
             this.interactionManage.removeSelectFeature();
@@ -357,6 +358,8 @@ export default class MapEditor {
         return data;
     }
 
+
+
     ///设置图层显隐
     setLayerDisplay(layer, display) {
         if (layer == "image") {
@@ -405,9 +408,6 @@ export default class MapEditor {
     ///设置底图数据
     setBuildData(data) {
         this.map.floorData = data;
-
-
-
         this.ol.layers.buildLayer.getSource().clear();
 
         ///添加要素
@@ -425,6 +425,57 @@ export default class MapEditor {
             });
         }
 
+    }
+
+    ///根据id删除要素
+    deleteFeatureById(layer, id) {
+        let source;
+        if (layer == "build")
+            source = this.ol.layers.buildLayer.getSource();
+        if (layer == "point")
+            source = this.ol.layers.pointLayer.getSource();
+        if (layer == "path")
+            source = this.ol.layers.pathLayer.getSource();
+        if (layer == "polygon")
+            source = this.ol.layers.polygonLayer.getSource();
+        let f = source.getFeatureById(id);
+        source.removeFeature(f);
+    }
+
+    ///获取保存后端数据
+    getSaveData() {
+        let format = new ol.format.GeoJSON();
+        // console.log((new ol.format.GeoJSON()).writeFeatures([f]));
+
+        let d = {
+            floorData: {},
+            imageData: {},
+            layerData: {
+                point: {},
+                path: {},
+                polygon: {}
+            }
+        };
+
+        d.layerData.point = JSON.parse(format.writeFeatures(this.ol.layers.pointLayer.getSource().getFeatures()));
+        d.layerData.path = JSON.parse(format.writeFeatures(this.ol.layers.pathLayer.getSource().getFeatures()));
+        d.layerData.polygon = JSON.parse(format.writeFeatures(this.ol.layers.polygonLayer.getSource().getFeatures()));
+        d.floorData = JSON.parse(format.writeFeature(this.ol.layers.buildLayer.getSource().getFeatures()[0]));
+        d.imageData = this.map.imageData;
+
+        delete d.floorData.id;
+
+        d.layerData.point.features.forEach(f => {
+            delete f.id;
+        })
+        d.layerData.path.features.forEach(f => {
+            delete f.id;
+        })
+        d.layerData.polygon.features.forEach(f => {
+            delete f.id;
+        })
+
+        return d;
     }
 
     transformTo3857(lon, lat) {

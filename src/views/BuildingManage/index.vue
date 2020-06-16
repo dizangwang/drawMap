@@ -43,9 +43,11 @@
         <el-select
           v-if="!taskObj"
           size="mini"
+          clearable
           v-model="searchForm.province"
           placeholder="省"
           class="leftSelect lf10"
+           @clear="provinceChange"
           @change="provinceChange"
         >
           <el-option
@@ -57,10 +59,12 @@
         </el-select>
         <el-select
           v-if="!taskObj"
+          clearable
           size="mini"
           v-model="searchForm.city"
           placeholder="市"
           class="leftSelect lf10"
+           @clear="cityChange"
           @change="cityChange"
         >
           <el-option v-for="item in cityList" :value="item.id" :label="item.name" :key="item.id"></el-option>
@@ -68,6 +72,7 @@
         <el-select
           v-if="!taskObj"
           size="mini"
+          clearable
           v-model="searchForm.district"
           placeholder="区"
           class="leftSelect lf10"

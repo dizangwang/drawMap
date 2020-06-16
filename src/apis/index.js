@@ -69,7 +69,9 @@ const apis = {
   // 删除元素样式信息
   elementStyleMgrDelete: `${root}/elementStyleMgr/delete`,
   // 更新元素样式信息
-  elementStyleMgrUpdate: `${root}/elementStyleMgr/`
+  elementStyleMgrUpdate: `${root}/elementStyleMgr/`,
+  // 楼层发布接口
+  floorMgrPublish: `${root}/floorMgr/publish`
 
 };
 export default apis;

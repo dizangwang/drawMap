@@ -8,6 +8,9 @@ html {
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
 }
+body{
+  min-width: 1070px;
+}
 
 [hidden] {
   display: none;

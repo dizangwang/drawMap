@@ -92,7 +92,8 @@ export default {
       {
         title: "楼宇操作",
         slot: "action",
-        width: 430
+        width: 430,
+        align: "center"
       }
       ],
       // 表格的数据
@@ -219,6 +220,8 @@ export default {
           that.districtList = data;
         });
         that.searchForm.district = "";
+      } else {
+        that.searchForm.district = "";
       }
     },
 
@@ -229,6 +232,9 @@ export default {
         that.getAreasWithPid(id, (data) => {
           that.cityList = data;
         });
+        that.searchForm.city = "";
+        that.searchForm.district = "";
+      } else {
         that.searchForm.city = "";
         that.searchForm.district = "";
       }

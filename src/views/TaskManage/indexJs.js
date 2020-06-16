@@ -83,7 +83,8 @@ export default {
       {
         title: "任务操作",
         slot: "action",
-        width: 430
+        width: 430,
+        align: "center"
       }
       ],
       // 表格的数据
@@ -539,6 +540,8 @@ export default {
           that.districtList = data;
         });
         that.searchForm.district = "";
+      } else {
+        that.searchForm.district = "";
       }
     },
     // 监听省份变动
@@ -548,6 +551,9 @@ export default {
         that.getAreasWithPid(id, (data) => {
           that.cityList = data;
         });
+        that.searchForm.city = "";
+        that.searchForm.district = "";
+      } else {
         that.searchForm.city = "";
         that.searchForm.district = "";
       }

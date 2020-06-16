@@ -113,11 +113,11 @@ var TestData = {
                 } ///面要素表转换成geoJson
             }
         },
-        2: {
+        2:{
             floorData: {}, 
-            imageData: {extent:[]},
+            imageData: {data:"",extent:[]},
             layerData: {point: {},path: {},polygon: {},}
-        },
+},
         3: {
             ///同1
         }

@@ -19,7 +19,12 @@
           <td class="rightLebal">任务类型：</td>
           <td>
             <el-form-item size="mini" label-width="0" prop="taskTypeId">
-              <el-select size="small" v-model="formValidate.taskTypeId" style="width:100%">
+              <el-select
+                clearable
+                size="small"
+                v-model="formValidate.taskTypeId"
+                style="width:100%"
+              >
                 <el-option value>任务类型</el-option>
                 <el-option
                   v-for="item in taskTypes"
@@ -39,8 +44,10 @@
                 <el-form-item size="mini" label-width="0" prop="provinceId">
                   <el-select
                     size="small"
+                    clearable
                     v-model="formValidate.provinceId"
                     placeholder="省"
+                    @clear="provinceChange"
                     @change="provinceChange"
                   >
                     <el-option
@@ -56,8 +63,10 @@
                 <el-form-item size="mini" label-width="0" prop="cityId">
                   <el-select
                     size="small"
+                    clearable
                     v-model="formValidate.cityId"
                     placeholder="市"
+                    @clear="cityChange"
                     @change="cityChange"
                   >
                     <el-option
@@ -71,7 +80,12 @@
               </div>
               <div class="areaSelect">
                 <el-form-item size="mini" label-width="0" prop="districtId">
-                  <el-select size="small" v-model="formValidate.districtId" placeholder="区">
+                  <el-select
+                    clearable
+                    size="small"
+                    v-model="formValidate.districtId"
+                    placeholder="区"
+                  >
                     <el-option
                       v-for="item in districtList"
                       :value="item.id"
@@ -182,6 +196,8 @@ export default {
           that.districtList = data;
         });
         that.formValidate.districtId = "";
+      } else {
+        that.formValidate.districtId = "";
       }
     },
 
@@ -192,6 +208,9 @@ export default {
         that.getAreasWithPid(id, (data) => {
           that.cityList = data;
         });
+        that.formValidate.cityId = "";
+        that.formValidate.districtId = "";
+      } else {
         that.formValidate.cityId = "";
         that.formValidate.districtId = "";
       }
