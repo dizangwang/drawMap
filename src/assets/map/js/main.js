@@ -28,8 +28,8 @@ export default class MapEditor {
         ///地图
         this.ol.map = new ol.Map({
             target: option.container || "",
-            ///层级由低到高
-            layers: [new ol.layer.Tile({source:new ol.source.OSM()})],
+            ///层级由低到高new ol.layer.Tile({source:new ol.source.OSM()})
+            layers: [],
             view: new ol.View({
                 center: ol.proj.fromLonLat([118.783, 32.042]),
                 zoom: 17,
@@ -52,7 +52,7 @@ export default class MapEditor {
 
 
     _initFloor() {
-       // this.ol.map.getLayers().clear();
+        this.ol.map.getLayers().clear();
         ///定义图层
         this.ol.layers.imageLayer = new ol.layer.Image({
             source: new ol.source.ImageStatic({
