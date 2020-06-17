@@ -29,7 +29,7 @@ export default class MapEditor {
         this.ol.map = new ol.Map({
             target: option.container || "",
             ///层级由低到高
-            layers: [],
+            layers: [new ol.layer.Tile({source:new ol.source.OSM()})],
             view: new ol.View({
                 center: ol.proj.fromLonLat([118.783, 32.042]),
                 zoom: 17,
@@ -52,7 +52,7 @@ export default class MapEditor {
 
 
     _initFloor() {
-        this.ol.map.getLayers().clear();
+       // this.ol.map.getLayers().clear();
         ///定义图层
         this.ol.layers.imageLayer = new ol.layer.Image({
             source: new ol.source.ImageStatic({
@@ -460,10 +460,14 @@ export default class MapEditor {
         d.layerData.point = JSON.parse(format.writeFeatures(this.ol.layers.pointLayer.getSource().getFeatures()));
         d.layerData.path = JSON.parse(format.writeFeatures(this.ol.layers.pathLayer.getSource().getFeatures()));
         d.layerData.polygon = JSON.parse(format.writeFeatures(this.ol.layers.polygonLayer.getSource().getFeatures()));
-        d.floorData = JSON.parse(format.writeFeature(this.ol.layers.buildLayer.getSource().getFeatures()[0]));
+        if (this.ol.layers.buildLayer.getSource().getFeatures().length > 0)
+            d.floorData = JSON.parse(format.writeFeature(this.ol.layers.buildLayer.getSource().getFeatures()[0]));
+        else
+            d.floorData = {};
         d.imageData = this.map.imageData;
 
-        delete d.floorData.id;
+        if (d.floorData != {})
+            delete d.floorData.id;
 
         d.layerData.point.features.forEach(f => {
             delete f.id;

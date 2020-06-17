@@ -61,6 +61,9 @@ module.exports = {
     quotes: ["error", "double", { allowTemplateLiterals: true }],
     "no-unused-vars": 0,
     "no-undef": 0,
-    "vars-on-top": 0
+    "vars-on-top": 0,
+    "no-mixed-operators":0,
+    "no-unexpected-multiline":0,
+    "no-bitwise":0
   }
 };

@@ -113,26 +113,43 @@ export default {
       that.indoorManager = "";
       that.floorData = {};
       that.currentFloor = "";
+      that.editOutLine = "";
       that.init(initObj.address);
-
       // 判断是否传过来轮廓的经纬度
       if (initObj.editOutLine) {
         that.isSave = true;
+        const convert = new howso.CoordConvert();
         that.editOutLine = initObj.editOutLine;
-        // console.log(initObj.editOutLine);
+        Object.keys(that.editOutLine).forEach((key, index) => {
+          if (that.editOutLine[key]) {
+            that.floorData[key] = JSON.parse(that.editOutLine[key]);
+            that.floorData[key].forEach((kkk, num) => {
+              const gcj = convert.wgs84_To_gcj02(kkk.lng, kkk.lat);
+              that.floorData[key][num] = convert.gcj02_To_bd09(gcj.lng, gcj.lat);
+            });
+            that.editOutLine[key] = JSON.stringify(that.floorData[key]);
+          }
+        });
         let lng = "";
         let lat = "";
         // 把值赋值给floorData
         Object.keys(that.editOutLine).forEach((key, index) => {
           if (that.editOutLine[key]) {
-            that.floorData[key] = JSON.parse(that.editOutLine[key]);
+            // that.floorData[key] = JSON.parse(that.editOutLine[key]);
             lng = that.floorData[key][0].lng;
             lat = that.floorData[key][0].lat;
           }
         });
         setTimeout(() => {
           that.map.centerAndZoom(new BMap.Point(lng, lat), 18);
-        }, 500);
+        }, 1000);
+        if (Object.keys(that.editOutLine).length === 1) {
+          Object.keys(that.editOutLine).forEach((floorNum) => {
+            that.createPolygon(JSON.parse(that.editOutLine[floorNum]));
+          });
+          return;
+        }
+
         // 默认渲染F1层
         if (that.editOutLine.F1) {
           that.createPolygon(JSON.parse(that.editOutLine.F1));
@@ -160,7 +177,9 @@ export default {
       // 创建Map实例
       var map = new BMap.Map("map", { enableMapClick: false });
       that.map = map;
-
+      that.map.addEventListener("click", (e) => {
+        // console.log(e.point.lng + "," + e.point.lat);
+      });
       // 左上角，添加默认缩放平移控件
       var topLeftNavigation = new BMap.NavigationControl();
 
@@ -393,7 +412,7 @@ export default {
           currentFloor = that.currentFloor;
         }
         that.cacheOverlays[currentFloor] = e.overlay;
-        that.floorData[currentFloor] = e.overlay.Tn;
+        that.floorData[currentFloor] = e.overlay.ao;
         that.isSave = false;
       };
 
@@ -424,7 +443,8 @@ export default {
     // 保存事件
     saveClick() {
       var that = this;
-      var kes = Object.keys(that.floorData);
+      const floorDataCopy = JSON.parse(JSON.stringify(that.floorData));
+      var kes = Object.keys(floorDataCopy);
       if (kes.length === 0) {
         that.$message({
           message: "请先绘制轮廓",
@@ -437,8 +457,16 @@ export default {
         type: "success"
       });
       that.isSave = true;
+      const convert = new howso.CoordConvert();
+      kes.forEach((item) => {
+        floorDataCopy[item].push(floorDataCopy[item][0]);
+        floorDataCopy[item].forEach((floor, index) => {
+          const gcj = convert.bd09_To_gcj02(floor.lng, floor.lat);
+          floorDataCopy[item][index] = convert.gcj02_To_wgs84(gcj.lng, gcj.lat);
+        });
+      });
 
-      that.$emit("save", that.floorData);
+      that.$emit("save", floorDataCopy);
     },
 
     // 退出操作

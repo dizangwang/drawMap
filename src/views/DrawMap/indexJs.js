@@ -263,7 +263,7 @@ export default {
     that.getLabelStyles();
     // 初始化地图
     that.$nextTick(() => {
-      that.initMap(TestData.floors[2]);
+      that.initMap(TestData.floors[1]);
     });
   },
   watch: {
@@ -317,7 +317,10 @@ export default {
 
       if (!val.imageData.extent) {
         val.imageData.extent = [];
+      } else if (typeof val.imageData.extent === "string") {
+        val.imageData.extent = JSON.parse(val.imageData.extent);
       }
+
       if (!val.floorData.geometry) {
         delete val.floorData.geometry;
       }
@@ -363,6 +366,77 @@ export default {
     }
   },
   methods: {
+    // 对比geo数据判断数据是否保存 true:数据一致  false:数据有差异
+    compareData(data1, data2) {
+      var keys = Object.keys(data1);
+      var i = 0;
+      try {
+        keys.forEach((key) => {
+          if (key === "imageData") {
+            Object.keys(data1[key]).forEach((imgKey) => {
+              if (JSON.stringify(data1[key].data) !== JSON.stringify(data2[key].data)) {
+                i += 1;
+              }
+              if (typeof data1[key].extent === "string") {
+                if (data1[key].extent !== JSON.stringify(data2[key].extent)) {
+                  i += 1;
+                }
+              }
+              if (typeof data1[key].extent === "object") {
+                if (data2[key].extent !== JSON.stringify(data1[key].extent)) {
+                  i += 1;
+                }
+              }
+            });
+          }
+          if (key === "floorData") {
+            if (data1[key].geometry) {
+              if (JSON.stringify(data1[key].geometry.coordinates) !== JSON.stringify(
+                data2[
+                  key].geometry.coordinates
+              )) {
+                i += 1;
+              }
+            }
+
+            Object.keys(data1[key].properties).forEach((pro) => {
+              if (data1[key].properties[pro] !== data2[key].properties[pro]) {
+                i += 1;
+              }
+            });
+          }
+          if (key === "layerData") {
+            Object.keys(data1[key]).forEach((layer) => {
+              data1[key][layer].features.forEach((feature, index) => {
+                if (data1[key][layer].features
+                  [index].geometry.coordinates) {
+                  const geometry1 = JSON.stringify(data1[key][layer].features
+                    [index].geometry.coordinates);
+                  const geometry2 = JSON.stringify(data2[key][layer].features
+                    [index].geometry.coordinates);
+                  if (geometry1 !== geometry2) {
+                    i += 1;
+                  }
+                }
+                const properties1 = data1[key][layer].features
+                  [index].properties;
+                Object.keys(properties1).forEach((property) => {
+                  if (data1[key][layer].features[index].properties[property] !== data2[key][
+                    layer
+                  ].features[index].properties[property]) {
+                    i += 1;
+                  }
+                });
+              });
+            });
+          }
+        });
+      } catch (e) {
+        return false;
+      }
+      return i === 0;
+    },
+
     // 删除选中的图层
     deleteSelectedElement() {
       var that = this;
@@ -410,30 +484,55 @@ export default {
     // 发布楼层
     floorMgrPublish() {
       var that = this;
-      that
-        .ajax({
-          method: "post",
-          url: that.apis.floorMgrPublish,
-          data: {
-            id: that.activeFloorData.floorData.properties.id
-          }
-        })
-        .then((res) => {
-          const {
-            data
-          } = res;
-          if (data.code === 200) {
-            that.$message({
-              message: "发布成功",
-              type: "success"
-            });
-          } else {
-            that.$message({
-              message: data.msg,
-              type: "warning"
-            });
-          }
-        });
+      const layerData = that.mapEditor.getSaveData();
+      // 点击发布，判断地图是否已保存且状态为完成
+      if (that.compareData(that.activeFloorData, layerData) && that.compareData(layerData, that
+        .activeFloorData) && that.floorFinishStatus === "完成") {
+        that
+          .ajax({
+            method: "post",
+            url: that.apis.floorMgrPublish,
+            data: {
+              id: that.activeFloorData.floorData.properties.id
+            }
+          })
+          .then((res) => {
+            const {
+              data
+            } = res;
+            if (data.code === 200) {
+              that.$message({
+                message: "发布成功",
+                type: "success"
+              });
+            } else {
+              that.$message({
+                message: data.msg,
+                type: "warning"
+              });
+            }
+          });
+        return;
+      }
+
+      if (!that.compareData(that.activeFloorData, layerData) || !that.compareData(layerData, that
+        .activeFloorData)) {
+        that
+          .$confirm("是否保存并切换状态为完成后发布？", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          });
+        return;
+      }
+      if (that.floorFinishStatus !== "完成") {
+        that
+          .$confirm("是否切换状态为完成后发布？", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          });
+      }
     },
     // 设置楼层完成
     floorFinishById() {
@@ -468,25 +567,18 @@ export default {
     saveData() {
       var that = this;
       const layerData = that.mapEditor.getSaveData();
-      // console.log(JSON.stringify(layerData,null,4))
-      // layerData.floorData.properties.styleID = 9;
-      // layerData.floorData.id = that.activeFloorData.floorData.properties.id;
-      // layerData.floorData.properties.id = that.activeFloorData.floorData.properties.id;
-      // layerData.floorData.properties.floors = that.activeFloorData.floorData.properties.floors;
-      // layerData.floorData.properties.name = that.activeFloorData.floorData.properties.name;
-      // var obj = {};
-      // obj.id = that.buildingFloorsObj.id;
-      // obj.name = that.buildingFloorsObj.name;
-      // obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
-      // obj.floors = {};
-      // obj.floors[that.activeFloorData.floorData.properties.floors] = layerData;
-      // console.log(JSON.stringify(layerData,null,4))
+      var obj = {};
+      obj.id = that.buildingFloorsObj.id;
+      obj.name = that.buildingFloorsObj.name;
+      obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
+      obj.floors = {};
+      obj.floors[that.activeFloorData.floorData.properties.floors] = layerData;
       that
         .ajax({
           method: "post",
           url: that.apis.saveFloor,
           data: {
-            data: JSON.stringify(layerData)
+            data: JSON.stringify(obj)
           }
         })
         .then((res) => {
@@ -495,9 +587,11 @@ export default {
           } = res;
           if (data.code === 200) {
             that.$message({
-              message: "保存成功",
+              message: "操作成功",
               type: "success"
             });
+
+            that.loadFloor();
           } else {
             that.$message({
               message: data.msg,
@@ -679,6 +773,9 @@ export default {
     // 监听样式选择器变动
     styleSelectChange(styleIndex) {
       var that = this;
+      if (styleIndex === "") {
+        return;
+      }
       var style = that.elementStyleList[styleIndex];
       if (that.selectedElement.layername === "多边形图层") {
         that.mapEditor.setPolygonStyle(that.selectedElement.id, {
@@ -691,6 +788,9 @@ export default {
           fontFillColor: that.selectedElement.value.fontFillColor,
           fontBorderColor: that.selectedElement.value.fontBorderColor
         });
+        that.selectedElement.value.fillColor = style.fillColor;
+        that.selectedElement.value.borderColor = style.borderColor;
+        that.selectedElement.value.borderWidth = style.borderWidth;
       }
       if (that.selectedElement.layername === "建筑物图层") {
         that.mapEditor.setBuildStyle(that.selectedElement.id, {
@@ -699,6 +799,9 @@ export default {
           fillColor: style.fillColor,
           borderColor: style.borderColor
         });
+        that.selectedElement.value.width = style.borderWidth;
+        that.selectedElement.value.fillColor = style.fillColor;
+        that.selectedElement.value.borderColor = style.borderColor;
       }
       if (that.selectedElement.layername === "路径图层") {
         that.mapEditor.setPathStyle(that.selectedElement.id, {
@@ -706,6 +809,8 @@ export default {
           color: style.borderColor,
           name: that.selectedElement.value.name
         });
+        that.selectedElement.value.width = style.borderWidth;
+        that.selectedElement.value.color = style.borderColor;
       }
     },
     // 监听元素color变动
@@ -721,7 +826,9 @@ export default {
           fontFillColor: that.selectedElement.value.fontFillColor,
           fontBorderColor: that.selectedElement.value.fontBorderColor
         });
+        that.selectedElement.value.fillColor = color;
       }
+
       if (that.selectedElement.layername === "建筑物图层") {
         that.mapEditor.setBuildStyle(that.selectedElement.id, {
           name: that.selectedElement.value.name,
@@ -729,6 +836,7 @@ export default {
           fillColor: color,
           borderColor: that.selectedElement.value.borderColor
         });
+        that.selectedElement.value.fillColor = color;
       }
       if (that.selectedElement.layername === "路径图层") {
         that.mapEditor.setPathStyle(that.selectedElement.id, {
@@ -736,6 +844,7 @@ export default {
           color,
           name: that.selectedElement.value.name
         });
+        that.selectedElement.value.color = color;
       }
     },
     // 监听元素name变动
@@ -786,7 +895,6 @@ export default {
     // 路径-绘制元素-直梯
     verticalFloorClick() {
       var that = this;
-
       if (that.drawActiveLine === 1) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -805,7 +913,6 @@ export default {
     // 路径-绘制元素-扶梯
     holdFloorClick() {
       var that = this;
-
       if (that.drawActiveLine === 2) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -842,7 +949,6 @@ export default {
     },
     // 创建地图
     newMap(mapData) {
-      // console.log("创建地图");
       var that = this;
       that.mapEditor = "";
       // 实例化地图
@@ -853,8 +959,11 @@ export default {
       // /选择要素回调事件
       that.mapEditor.selectFeature((e) => {
         that.selectedElement = e;
-        // console.log(that.selectedElement);
         that.isPoiSelected = false;
+        that.drawActiveType = "";
+        that.iconActiveNum = "";
+        that.isDrawLine = "";
+        that.drawActiveLine = "";
         that.isLineLayerSeleced = false;
         if (e.layername === "POI图层") {
           that.isPoiSelected = true;
@@ -914,26 +1023,21 @@ export default {
     // 地图放大
     mapBiggerClick() {
       var that = this;
-
       that.mapEditor.zoomOut();
     },
     // 地图缩小
     mapLittleClick() {
       var that = this;
-
       that.mapEditor.zoomIn();
     },
-
     // 绘制点元素
     drawPoint() {
       var that = this;
-
       that.mapEditor.drawPoint();
     },
     // 绘制线元素
     drawLine() {
       var that = this;
-
       if (that.isDrawLine) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -1105,7 +1209,36 @@ export default {
             extent: [left[0], right[1], right[0], left[1]]
           });
           that.hasUnderPainting = true;
-          return;
+          const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+            var r = Math.random() * 16 | 0;
+            var v = c === "x" ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
+          that.mapEditor.setBuildData({
+            type: "Feature",
+            geometry: {
+              type: "Polygon",
+              coordinates: [
+                [
+                  [left[0], left[1]],
+                  [right[0], left[1]],
+                  [right[0], right[1]],
+                  [left[0], right[1]]
+                ]
+              ]
+            },
+            properties: {
+              id: uuid,
+              name: "",
+              floors: 1,
+              styleID: null,
+              width: 2,
+              fillColor: "rgba(217,237,253,.3)",
+              borderColor: "rgba(217,237,253,1.0)"
+
+            }
+          });
+          // return;
         }
         // 如果没有经纬度信息，判断有没有轮廓信息
         if (res.floorOutline) {
@@ -1118,6 +1251,11 @@ export default {
             latArr.push(+item.lat);
             coordinates.push(that.mapEditor.transformTo3857(item.lng, item
               .lat));
+          });
+          const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+            var r = Math.random() * 16 || 0;
+            var v = c === "x" ? r : (r && 0x3 || 0x8);
+            return v.toString(16);
           });
           // 获取最大经纬度   最小经纬度
           const bigLng = Math.max(...lngArr);
@@ -1141,14 +1279,13 @@ export default {
               ]
             },
             properties: {
-              id: "要素ID （1_floor 或者UUID）",
-              name: "A大楼",
+              id: uuid,
+              name: "",
               floors: 1,
-              styleID: "样式ID 或者 空 给前端绑定样式管理器用",
+              styleID: null,
               width: 2,
               fillColor: "rgba(217,237,253,.3)",
               borderColor: "rgba(217,237,253,1.0)"
-
             }
           });
         } else {

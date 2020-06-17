@@ -147,6 +147,8 @@ export default {
       callback();
     };
     return {
+      // 用于回显画轮廓
+      drawLineObj: "",
       // 楼宇所在的位置
       location: "",
       // 上传的url
@@ -274,6 +276,25 @@ export default {
           floorNum = -+item.replace("M", "");
         }
 
+        //   const lngArr = [];
+        //   const latArr = [];
+        //   lineData[item].forEach((item) => {
+        //     lngArr.push(+item.lng);
+        //     latArr.push(+item.lat);
+        //   });
+
+        //   // 获取最大经纬度   最小经纬度
+        //   const bigLng = Math.max(...lngArr);
+        //   const bigLat = Math.max(...latArr);
+        //   const smallLng = Math.min(...lngArr);
+        //   const smallLat = Math.min(...latArr);
+        //   console.log(bigLng,bigLat,smallLng,smallLat)
+
+        // that.formValidate.upperLeftCornerLongitude=smallLng;
+        // that.formValidate.upperLeftCornerLatitude=bigLat;
+        // that.formValidate.lowerRightCornerLongitude=bigLng;
+        // that.formValidate.lowerRightCornerLatitude=smallLat;
+
         str += `floorOutline=${JSON.stringify(lineData[item])}&`;
       });
       that.formValidate.lineData = str;
@@ -284,7 +305,16 @@ export default {
       var that = this;
       that.fullScreenModal = true;
       const address = that.location;
-      that.$refs.drawProfile.initData({ address });
+      if (that.drawLineObj) {
+        that.$refs.drawProfile.initData({
+          address,
+          editOutLine: that.drawLineObj
+        });
+      } else {
+        that.$refs.drawProfile.initData({
+          address
+        });
+      }
     },
 
     // 被外部调用时初始化方法
@@ -294,10 +324,21 @@ export default {
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
       });
+      that.drawLineObj = "";
       that.$refs.formValidate.resetFields();
       that.formValidate.id = obj.id;
       that.getFloorInfoById(obj.id).then((res) => {
         that.formValidate.lineData = res.floorOutline;
+        that.drawLineObj = "";
+        if (res.floorOutline) {
+          const newObj = {};
+          if (res.floorNum > 0) {
+            newObj[`F${res.floorNum}`] = res.floorOutline;
+          } else {
+            newObj[`B${-res.floorNum}`] = res.floorOutline;
+          }
+          that.drawLineObj = newObj;
+        }
         that.formValidate.planarGraph = res.planarGraph;
         that.formValidate.upperLeftCornerLongitude = res.upperLeftCornerLongitude === null
           ? ""

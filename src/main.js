@@ -20,6 +20,8 @@ import apis from "./apis/index";
 // 挂载上传下载接口
 import uploadapis from "./apis/uploadApis";
 
+import "./assets/map/js/CoordConvert";
+
 Vue.use(ElementUI);
 Vue.use(ViewUI);
 

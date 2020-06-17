@@ -12,7 +12,7 @@
         type="primary"
         @click="floorFinishById"
       >{{floorFinishStatus}}</el-button>
-      <el-button size="mini" class="lf10" type="primary">
+      <el-button size="mini" class="lf10" type="primary" @click="saveData">
         <i class="iconCommon iconEye"></i>预览
       </el-button>
       <el-button size="mini" class="lf10" type="primary" @click="saveData">
@@ -24,9 +24,9 @@
       <el-button size="mini" class="lf10" type="primary" @click="setFloorInfoClick">
         <i class="iconCommon iconBuilding"></i>设置楼层信息
       </el-button>
-      <el-input size="mini" class="lf10 searchInput" placeholder="请输入内容">
+      <!-- <el-input size="mini" class="lf10 searchInput" placeholder="请输入内容">
         <el-button class="searchButton" slot="append" icon="el-icon-search"></el-button>
-      </el-input>
+      </el-input>-->
     </div>
 
     <!-- 主体内容 -->

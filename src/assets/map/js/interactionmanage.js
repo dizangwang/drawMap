@@ -177,7 +177,7 @@ export class InterCtionManage {
         this._startSnap(true);
         this.mapEditor.ol.interactions.draw.on("drawend", (o) => {
             let f = o.feature;
-            this._drawEnd(f, "polygon", style);
+            this._drawEnd(f, "circle", style);
             // console.log(this.mapEditor.ol.layers.polygonLayer.getStyle())
         })
     }
@@ -246,6 +246,40 @@ export class InterCtionManage {
             f.setStyle(style);
         }
         if (layer == "polygon") {
+            let style = this.mapEditor.ol.layers.polygonLayer.getStyle();
+            if (s != null)
+                style = Style.objToPolygonStyle(s);
+
+            f.set("name", s.name);
+            f.set("borderColor", style.getStroke().getColor());
+            f.set("width", style.getStroke().getWidth());
+            f.set("fillColor", style.getFill().getColor());
+            f.set("font", style.getText().getFont());
+            f.set("fontFillColor", style.getText().getFill().getColor());
+            f.set("fontBorderColor", style.getText().getStroke().getColor());
+            layername = "多边形图层";
+            f.setStyle(style);
+        }
+
+        if (layer == "circle") {
+            let c = f.getGeometry().flatCoordinates;
+            let p1 = [c[0], c[1]];
+            let p2 = [c[2], c[3]];
+            // g
+            let dx = Math.abs(p2[0] - p1[0]);
+            let dy = Math.abs(p2[1] - p1[1]);
+            var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+
+            let arr = [];
+
+            for (let i = 0; i <= 36; i++) {
+                var x = p1[0] + r * Math.sin(2 * Math.PI * i / 36),
+                    y = p1[1] + r * Math.cos(2 * Math.PI * i / 36);
+                arr.push([x, y]);
+            }
+
+            let polygon = new ol.geom.Polygon([arr]);
+            f.setGeometry(polygon);
             let style = this.mapEditor.ol.layers.polygonLayer.getStyle();
             if (s != null)
                 style = Style.objToPolygonStyle(s);
