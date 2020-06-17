@@ -1200,10 +1200,14 @@ export default {
             message: "楼层信息设置成功",
             type: "success"
           });
-          const left = that.mapEditor.transformTo3857(res.upperLeftCornerLongitude, res
-            .upperLeftCornerLatitude);
-          const right = that.mapEditor.transformTo3857(res.lowerRightCornerLongitude, res
-            .lowerRightCornerLatitude);
+          // const left = that.mapEditor.transformTo3857(res.upperLeftCornerLongitude, res
+          //   .upperLeftCornerLatitude);
+          // const right = that.mapEditor.transformTo3857(res.lowerRightCornerLongitude, res
+          //   .lowerRightCornerLatitude);
+          const left = [res.upperLeftCornerLongitude, res
+            .upperLeftCornerLatitude];
+          const right = [res.lowerRightCornerLongitude, res
+            .lowerRightCornerLatitude];
           that.mapEditor.setImageData({
             data: imgUrl,
             extent: [left[0], right[1], right[0], left[1]]
@@ -1223,7 +1227,8 @@ export default {
                   [left[0], left[1]],
                   [right[0], left[1]],
                   [right[0], right[1]],
-                  [left[0], right[1]]
+                  [left[0], right[1]],
+                  [left[0], left[1]]
                 ]
               ]
             },
@@ -1262,8 +1267,10 @@ export default {
           const bigLat = Math.max(...latArr);
           const smallLng = Math.min(...lngArr);
           const smallLat = Math.min(...latArr);
-          const small = that.mapEditor.transformTo3857(smallLng, smallLat);
-          const big = that.mapEditor.transformTo3857(bigLng, bigLat);
+          // const small = that.mapEditor.transformTo3857(smallLng, smallLat);
+          // const big = that.mapEditor.transformTo3857(bigLng, bigLat);
+          const small = [smallLng, smallLat];
+          const big = [bigLng, bigLat];
           that.mapEditor.setImageData({
             data: imgUrl,
             extent: small.concat(big)
@@ -1289,10 +1296,10 @@ export default {
             }
           });
         } else {
-          that.$message({
-            message: "当前楼层不具备经纬度信息，将不能发布",
-            type: "warning"
-          });
+          // that.$message({
+          //   message: "当前楼层不具备经纬度信息，将不能发布",
+          //   type: "warning"
+          // });
         }
       });
       that.setFloorInfoModal = false;

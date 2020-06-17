@@ -28,7 +28,7 @@ export default class MapEditor {
         ///地图
         this.ol.map = new ol.Map({
             target: option.container || "",
-            ///层级由低到高new ol.layer.Tile({source:new ol.source.OSM()})
+            ///层级由低到高
             layers: [],
             view: new ol.View({
                 center: ol.proj.fromLonLat([118.783, 32.042]),
@@ -54,18 +54,26 @@ export default class MapEditor {
     _initFloor() {
         this.ol.map.getLayers().clear();
         ///定义图层
+
+        let extent = [];
+        if (this.map.imageData.extent.length != 0) {
+            let p0 = this.transformTo3857(this.map.imageData.extent[0], this.map.imageData.extent[1]);
+            let p1 = this.transformTo3857(this.map.imageData.extent[2], this.map.imageData.extent[3]);
+            extent = [p0[0], p0[1], p1[0], p1[1]]
+        }
+
         this.ol.layers.imageLayer = new ol.layer.Image({
             source: new ol.source.ImageStatic({
                 url: this.map.imageData.data,
                 projection: new ol.proj.Projection({
                     code: "EPSG:3857"
                 }),
-                imageExtent: this.map.imageData.extent
+                imageExtent: extent
             })
         });
 
         if (this.map.imageData.extent.length != 0)
-            this.ol.map.getView().fit(this.map.imageData.extent, {
+            this.ol.map.getView().fit(extent, {
                 padding: [100, 100, 100, 100],
             });
         this.ol.layers.buildLayer = new ol.layer.Vector({
@@ -98,7 +106,7 @@ export default class MapEditor {
         if (typeof (this.map.floorData.geometry) != "undefined") {
             let v = (new ol.format.GeoJSON()).readFeatures(this.map.floorData);
             v.forEach(f => {
-                // f.getGeometry().transform("EPSG:4326", "EPSG:3857");
+                f.getGeometry().transform("EPSG:4326", "EPSG:3857");
                 // console.log((new ol.format.GeoJSON()).writeFeatures([f]));
                 this.ol.layers.buildLayer.getSource().addFeature(f);
                 this.ol.map.getView().fit(f.getGeometry().getExtent(), {
@@ -114,6 +122,7 @@ export default class MapEditor {
             let fs = (new ol.format.GeoJSON()).readFeatures(this.map.layerData.point);
             if (fs.length > 0)
                 fs.forEach(f => {
+                    f.getGeometry().transform("EPSG:4326", "EPSG:3857");
                     this.ol.layers.pointLayer.getSource().addFeature(f);
                     // f.setStyle(Style.featureToPointStyle(f));
                     let img = new Image();
@@ -128,7 +137,6 @@ export default class MapEditor {
                             src: this.getBase64Image(img)
                         }));
                     }
-
                     f.setId(f.get("id"));
 
                 });
@@ -137,15 +145,18 @@ export default class MapEditor {
             let fs = (new ol.format.GeoJSON()).readFeatures(this.map.layerData.path);
             if (fs.length > 0)
                 fs.forEach(f => {
+                    f.getGeometry().transform("EPSG:4326", "EPSG:3857");
                     this.ol.layers.pathLayer.getSource().addFeature(f);
                     f.setStyle(Style.featureToPathStyle(f));
                     f.setId(f.get("id"));
                 });
         }
         if (JSON.stringify(this.map.layerData.polygon) !== '{}') {
+
             let fs = (new ol.format.GeoJSON()).readFeatures(this.map.layerData.polygon);
             if (fs.length > 0)
                 fs.forEach(f => {
+                    f.getGeometry().transform("EPSG:4326", "EPSG:3857");
                     this.ol.layers.polygonLayer.getSource().addFeature(f);
                     f.setStyle(Style.featureToPolygonStyle(f));
                     f.setId(f.get("id"));
@@ -388,17 +399,22 @@ export default class MapEditor {
     setImageData(data) {
         this.map.imageData = data;
 
-        // this.ol.layers.imageLayer.getSource().clear();
+
+        // [13222863.074897416, 3768562.394749727, 13223197.033369796, 3768825.0433383826]
+
+        let p0 = this.transformTo3857(this.map.imageData.extent[0], this.map.imageData.extent[1]);
+        let p1 = this.transformTo3857(this.map.imageData.extent[2], this.map.imageData.extent[3]);
+        let extent = [p0[0], p0[1], p1[0], p1[1]]
         if (this.map.imageData.extent.length != 0) {
             this.ol.layers.imageLayer.setSource(new ol.source.ImageStatic({
                 url: this.map.imageData.data,
                 projection: new ol.proj.Projection({
                     code: "EPSG:3857"
                 }),
-                imageExtent: this.map.imageData.extent
+                imageExtent: extent
             }));
             if (this.map.imageData.extent.length != 0)
-                this.ol.map.getView().fit(this.map.imageData.extent, {
+                this.ol.map.getView().fit(extent, {
                     padding: [100, 100, 100, 100],
                 });
 
@@ -414,7 +430,7 @@ export default class MapEditor {
         if (typeof (this.map.floorData.geometry) != "undefined") {
             let v = (new ol.format.GeoJSON()).readFeatures(this.map.floorData);
             v.forEach(f => {
-                // f.getGeometry().transform("EPSG:4326", "EPSG:3857");
+                f.getGeometry().transform("EPSG:4326", "EPSG:3857");
                 // console.log((new ol.format.GeoJSON()).writeFeatures([f]));
                 this.ol.layers.buildLayer.getSource().addFeature(f);
                 this.ol.map.getView().fit(f.getGeometry().getExtent(), {
@@ -457,12 +473,40 @@ export default class MapEditor {
             }
         };
 
-        d.layerData.point = JSON.parse(format.writeFeatures(this.ol.layers.pointLayer.getSource().getFeatures()));
-        d.layerData.path = JSON.parse(format.writeFeatures(this.ol.layers.pathLayer.getSource().getFeatures()));
-        d.layerData.polygon = JSON.parse(format.writeFeatures(this.ol.layers.polygonLayer.getSource().getFeatures()));
-        if (this.ol.layers.buildLayer.getSource().getFeatures().length > 0)
-            d.floorData = JSON.parse(format.writeFeature(this.ol.layers.buildLayer.getSource().getFeatures()[0]));
-        else
+        let fs = [];
+        let ffs = [];
+        fs = this.ol.layers.pointLayer.getSource().getFeatures();
+        fs.forEach(o => {
+            let f = o.clone();
+            f.getGeometry().transform("EPSG:3857", "EPSG:4326");
+            ffs.push(f);
+        })
+        d.layerData.point = JSON.parse(format.writeFeatures(ffs));
+
+        ffs = [];
+        fs = this.ol.layers.pathLayer.getSource().getFeatures();
+        fs.forEach(o => {
+            let f = o.clone();
+            f.getGeometry().transform("EPSG:3857", "EPSG:4326");
+            ffs.push(f);
+        })
+        d.layerData.path = JSON.parse(format.writeFeatures(ffs));
+
+        ffs = [];
+        fs = this.ol.layers.polygonLayer.getSource().getFeatures();
+        fs.forEach(o => {
+            let f = o.clone();
+            f.getGeometry().transform("EPSG:3857", "EPSG:4326");
+            ffs.push(f);
+        })
+        d.layerData.polygon = JSON.parse(format.writeFeatures(ffs));
+
+
+        if (this.ol.layers.buildLayer.getSource().getFeatures().length > 0) {
+            let f = this.ol.layers.buildLayer.getSource().getFeatures()[0].clone();
+            f.getGeometry().transform("EPSG:3857", "EPSG:4326");
+            d.floorData = JSON.parse(format.writeFeature(f));
+        } else
             d.floorData = {};
         d.imageData = this.map.imageData;
 

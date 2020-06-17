@@ -125,7 +125,10 @@ export default {
             that.floorData[key] = JSON.parse(that.editOutLine[key]);
             that.floorData[key].forEach((kkk, num) => {
               const gcj = convert.wgs84_To_gcj02(kkk.lng, kkk.lat);
-              that.floorData[key][num] = convert.gcj02_To_bd09(gcj.lng, gcj.lat);
+              that.floorData[key][num] = convert.gcj02_To_bd09(
+                gcj.lng,
+                gcj.lat
+              );
             });
             that.editOutLine[key] = JSON.stringify(that.floorData[key]);
           }
@@ -178,7 +181,10 @@ export default {
       var map = new BMap.Map("map", { enableMapClick: false });
       that.map = map;
       that.map.addEventListener("click", (e) => {
-        // console.log(e.point.lng + "," + e.point.lat);
+        // console.log("百度坐标",e.point.lng + "," + e.point.lat);
+        const convert = new howso.CoordConvert();
+        const gcj = convert.bd09_To_gcj02(e.point.lng, e.point.lat);
+        // console.log("wgs坐标",convert.gcj02_To_wgs84(gcj.lng,gcj.lat));
       });
       // 左上角，添加默认缩放平移控件
       var topLeftNavigation = new BMap.NavigationControl();
@@ -412,7 +418,8 @@ export default {
           currentFloor = that.currentFloor;
         }
         that.cacheOverlays[currentFloor] = e.overlay;
-        that.floorData[currentFloor] = e.overlay.ao;
+        that.floorData[currentFloor] = e.overlay.Tn || e.overlay.la;
+        // console.log(e.overlay)
         that.isSave = false;
       };
 

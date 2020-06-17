@@ -49,11 +49,13 @@ export class ContextMenu {
         this.menu_overlay.setMap(this.mapEditor.ol.map);
 
         this.mapEditor.ol.map.getViewport().addEventListener("contextmenu", (e) => {
-            this.mapEditor.cancelDraw();
+
             e.preventDefault();
 
-            if (this.mapEditor.interactionManage.getSelectFeatures().getLength() == 0)
+            if (this.mapEditor.interactionManage.getSelectFeatures().getLength() == 0) {
+                this.mapEditor.cancelDraw();
                 return;
+            }
 
             let coordinate = this.mapEditor.ol.map.getEventCoordinate(e);
             this.menu_overlay.setPosition(coordinate);

@@ -428,6 +428,8 @@ export default {
           });
           str += that.formValidate.lineData;
 
+          // console.log("999",str)
+
           that
             .ajax({
               method: "post",
