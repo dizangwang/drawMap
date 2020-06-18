@@ -2,31 +2,34 @@
   <div class="app">
     <!-- 操作栏 -->
     <div class="handlerFor">
-      <el-button size="mini" class="lf10" type="primary" @click="themeClick">主题</el-button>
-      <el-button size="mini" class="lf10" type="primary" @click="getAllData">查看属性数据</el-button>
+      <span class="titleName">矢量地图编辑器</span>
+      <span>
+      <el-button size="mini" class="handlerButton"  type="primary" @click="themeClick">主题</el-button>
+      <el-button size="mini" class="lf10 handlerButton" type="primary" @click="getAllData">查看属性数据</el-button>
       <!-- <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>-->
-      <el-button size="mini" class="lf10" type="primary">调整平面图</el-button>
+      <el-button size="mini" class="lf10 handlerButton" type="primary">调整平面图</el-button>
       <el-button
         size="mini"
-        class="lf10"
+        class="lf10 handlerButton"
         type="primary"
         @click="floorFinishById"
       >{{floorFinishStatus}}</el-button>
-      <el-button size="mini" class="lf10" type="primary" @click="saveData">
+      <el-button size="mini" class="lf10 handlerButton" type="primary"  @click="saveData">
         <i class="iconCommon iconEye"></i>预览
       </el-button>
-      <el-button size="mini" class="lf10" type="primary" @click="saveData">
+      <el-button size="mini" class="lf10 handlerButton" type="primary" @click="saveData">
         <i class="iconCommon iconSave"></i>保存
       </el-button>
-      <el-button size="mini" class="lf10" type="primary" @click="floorMgrPublish">
+      <el-button size="mini" class="lf10 handlerButton" type="primary" @click="floorMgrPublish">
         <i class="iconCommon iconPublish"></i>发布
       </el-button>
-      <el-button size="mini" class="lf10" type="primary" @click="setFloorInfoClick">
+      <el-button size="mini" class="lf10 handlerButton" type="primary" @click="setFloorInfoClick">
         <i class="iconCommon iconBuilding"></i>设置楼层信息
       </el-button>
       <!-- <el-input size="mini" class="lf10 searchInput" placeholder="请输入内容">
         <el-button class="searchButton" slot="append" icon="el-icon-search"></el-button>
-      </el-input>-->
+      </el-input> -->
+      </span>
     </div>
 
     <!-- 主体内容 -->
@@ -150,7 +153,9 @@
                             <el-color-picker
                               v-model="selectedElement.value.fillColor"
                               class="colorWidth"
-                              @active-change="drawSelectedColorChange"
+                              show-alpha
+                              @change="drawSelectedColorChange"
+                               @active-change="drawSelectedColorChange"
                             ></el-color-picker>
                           </td>
                         </tr>

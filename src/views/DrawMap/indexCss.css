@@ -40,16 +40,19 @@
   width: 100%;
   position: relative;
   display: flex;
+  padding: 10px;
 }
 
 .leftHandlerCon {
-  width: 330px;
+  margin-right: 10px;
+  width: 300px;
+  border-radius: 5px;
+  box-shadow: -2px 0px 10px 1px rgba(106, 112, 105, 0.2), 0px -2px 10px 1px rgba(106, 112, 105, 0.2), 2px 0px 10px 1px rgba(106, 112, 105, 0.2), 0px 2px 10px 1px rgba(106, 112, 105, 0.2);
 }
 
 .rightHandlerCon {
   flex: 1;
   overflow: auto;
-  background: #f8f8f8;
   position: relative;
 }
 
@@ -66,12 +69,34 @@
 
 .handlerFor {
   display: block;
-  min-height: 60px;
+  min-height: 50px;
   padding: 10px 10px;
-
+  background: #00a6fb;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom:5px;
+}
+
+.titleName {
+  font-size: 18px;
+  font-weight: bolder;
+  color: white;
+}
+
+.handlerButton {
+  background: #3486ce;
+  background-color: #3486ce;
+}
+
+.handlerButton:hover {
+  background: #3486ce;
+  background-color: #3486ce;
+}
+
+.handlerButton:focus {
+  background: #3486ce;
+  background-color: #3486ce;
 }
 
 .searchInput {
@@ -80,9 +105,19 @@
 
 .tabCon {
   display: flex;
-  background: #081e33;
+  background: #00a6fb;
   height: 80px;
   color: white;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.tabCon .tabItem:first-child {
+  border-top-left-radius: 5px;
+}
+
+.tabCon .tabItem:last-child {
+  border-top-right-radius: 5px;
 }
 
 .tabItem {
@@ -101,7 +136,7 @@
 }
 
 .tabItemActive {
-  background: #223f5c;
+  background: #3486ce;
 }
 
 .menuItem {
@@ -122,16 +157,17 @@
 }
 
 .formTable td {
-  padding: 10px;
+  padding: 4px;
 }
 
 .formTable tr td:first-child {
   text-align: right;
 }
 
-.colorWidth {
+.colorWidth .el-color-picker__trigger {
   width: 80px;
 }
+
 
 .iconMgrCon {
   overflow: hidden;
@@ -214,4 +250,8 @@
 .iconMgrItemActive {
   border-color: hsl(210, 100%, 63%);
   border-width: 2px;
+}
+
+.app {
+  background: hsl(0, 0%, 97%)
 }

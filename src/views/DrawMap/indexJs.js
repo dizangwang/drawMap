@@ -408,22 +408,21 @@ export default {
           if (key === "layerData") {
             Object.keys(data1[key]).forEach((layer) => {
               data1[key][layer].features.forEach((feature, index) => {
-                if (data1[key][layer].features
-                  [index].geometry.coordinates) {
-                  const geometry1 = JSON.stringify(data1[key][layer].features
-                    [index].geometry.coordinates);
-                  const geometry2 = JSON.stringify(data2[key][layer].features
-                    [index].geometry.coordinates);
+                if (data1[key][layer].features[index].geometry.coordinates) {
+                  const geometry1 = JSON.stringify(data1[key][layer].features[index]
+                    .geometry.coordinates);
+                  const geometry2 = JSON.stringify(data2[key][layer].features[index]
+                    .geometry.coordinates);
                   if (geometry1 !== geometry2) {
                     i += 1;
                   }
                 }
-                const properties1 = data1[key][layer].features
-                  [index].properties;
+                const properties1 = data1[key][layer].features[index].properties;
                 Object.keys(properties1).forEach((property) => {
-                  if (data1[key][layer].features[index].properties[property] !== data2[key][
-                    layer
-                  ].features[index].properties[property]) {
+                  if (data1[key][layer].features[index].properties[property]
+                    !== data2[key][
+                      layer
+                    ].features[index].properties[property]) {
                     i += 1;
                   }
                 });
@@ -774,6 +773,7 @@ export default {
     styleSelectChange(styleIndex) {
       var that = this;
       if (styleIndex === "") {
+        that.selectedElement.value.fillColor = "";
         return;
       }
       var style = that.elementStyleList[styleIndex];
@@ -814,8 +814,13 @@ export default {
       }
     },
     // 监听元素color变动
-    drawSelectedColorChange(color) {
+    drawSelectedColorChange(col) {
       var that = this;
+      var color = col;
+      if (!color) {
+        color = "rgba(252, 246, 246, 0.75)";
+      }
+      that.selectedElement.value.fillColor = color;
       if (that.selectedElement.layername === "多边形图层") {
         that.mapEditor.setPolygonStyle(that.selectedElement.id, {
           name: that.selectedElement.value.name,
@@ -1205,9 +1210,11 @@ export default {
           // const right = that.mapEditor.transformTo3857(res.lowerRightCornerLongitude, res
           //   .lowerRightCornerLatitude);
           const left = [res.upperLeftCornerLongitude, res
-            .upperLeftCornerLatitude];
+            .upperLeftCornerLatitude
+          ];
           const right = [res.lowerRightCornerLongitude, res
-            .lowerRightCornerLatitude];
+            .lowerRightCornerLatitude
+          ];
           that.mapEditor.setImageData({
             data: imgUrl,
             extent: [left[0], right[1], right[0], left[1]]
@@ -1243,7 +1250,6 @@ export default {
 
             }
           });
-          // return;
         }
         // 如果没有经纬度信息，判断有没有轮廓信息
         if (res.floorOutline) {
@@ -1254,8 +1260,9 @@ export default {
           floorOutline.forEach((item) => {
             lngArr.push(+item.lng);
             latArr.push(+item.lat);
-            coordinates.push(that.mapEditor.transformTo3857(item.lng, item
-              .lat));
+            // coordinates.push(that.mapEditor.transformTo3857(item.lng, item
+            //   .lat));
+            coordinates.push([item.lng, item.lat]);
           });
           const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
             var r = Math.random() * 16 || 0;
@@ -1276,7 +1283,6 @@ export default {
             extent: small.concat(big)
           });
           that.hasUnderPainting = true;
-          // toto
           that.mapEditor.setBuildData({
             type: "Feature",
             geometry: {

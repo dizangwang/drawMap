@@ -148,19 +148,25 @@ export default {
         }, 1000);
         if (Object.keys(that.editOutLine).length === 1) {
           Object.keys(that.editOutLine).forEach((floorNum) => {
-            that.createPolygon(JSON.parse(that.editOutLine[floorNum]));
+            if (that.editOutLine[floorNum]) {
+              that.createPolygon(JSON.parse(that.editOutLine[floorNum]));
+            }
           });
           return;
         }
 
         // 默认渲染F1层
         if (that.editOutLine.F1) {
-          that.createPolygon(JSON.parse(that.editOutLine.F1));
+          if (that.editOutLine.F1) {
+            that.createPolygon(JSON.parse(that.editOutLine.F1));
+          }
         }
 
         // 如果没有F1层有B1层，就渲染B1层
         if (!that.editOutLine.F1 && that.editOutLine.B1) {
-          that.createPolygon(JSON.parse(that.editOutLine.B1));
+          if (that.editOutLine.B1) {
+            that.createPolygon(JSON.parse(that.editOutLine.B1));
+          }
         }
       }
     },
@@ -184,7 +190,7 @@ export default {
         // console.log("百度坐标",e.point.lng + "," + e.point.lat);
         const convert = new howso.CoordConvert();
         const gcj = convert.bd09_To_gcj02(e.point.lng, e.point.lat);
-        // console.log("wgs坐标",convert.gcj02_To_wgs84(gcj.lng,gcj.lat));
+        // console.log("wgs坐标", convert.gcj02_To_wgs84(gcj.lng, gcj.lat));
       });
       // 左上角，添加默认缩放平移控件
       var topLeftNavigation = new BMap.NavigationControl();
@@ -363,7 +369,6 @@ export default {
     // 画折现的方法
     drawClick() {
       var that = this;
-
       // 判断右侧楼层控件有没有出现
       var floorShow = document.querySelector(".floor-select-container");
       if (floorShow) {
@@ -381,7 +386,6 @@ export default {
         });
         return;
       }
-
       that.clearAll();
       that.map.clearOverlays();
 
@@ -466,13 +470,13 @@ export default {
       that.isSave = true;
       const convert = new howso.CoordConvert();
       kes.forEach((item) => {
+        const { length } = floorDataCopy[item];
         floorDataCopy[item].push(floorDataCopy[item][0]);
         floorDataCopy[item].forEach((floor, index) => {
           const gcj = convert.bd09_To_gcj02(floor.lng, floor.lat);
           floorDataCopy[item][index] = convert.gcj02_To_wgs84(gcj.lng, gcj.lat);
         });
       });
-
       that.$emit("save", floorDataCopy);
     },
 

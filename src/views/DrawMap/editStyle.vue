@@ -22,7 +22,7 @@
           <td class="required rightLebal">边框颜色：</td>
           <td>
             <el-form-item size="mini" label-width="0" prop="borderColor">
-              <el-color-picker size="medium " v-model="formValidate.borderColor"></el-color-picker>
+              <el-color-picker  show-alpha size="medium " v-model="formValidate.borderColor"></el-color-picker>
             </el-form-item>
           </td>
         </tr>
@@ -31,7 +31,7 @@
           <td class="required rightLebal">填充颜色：</td>
           <td>
             <el-form-item size="mini" label-width="0" prop="fillColor">
-              <el-color-picker size="medium " v-model="formValidate.fillColor"></el-color-picker>
+              <el-color-picker  show-alpha size="medium " v-model="formValidate.fillColor"></el-color-picker>
             </el-form-item>
           </td>
         </tr>

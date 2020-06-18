@@ -56,7 +56,7 @@
           <td class="rightLebal">左上角经纬度：</td>
           <td>
             <div class="centerStart">
-              <el-form-item size="mini" label-width="0">
+              <el-form-item size="mini" label-width="0" prop="upperLeftCornerLongitude">
                 <el-input
                   class="inputWidth"
                   size="small"
@@ -65,11 +65,11 @@
                   show-word-limit
                 />
               </el-form-item>
-              <el-form-item size="mini" label-width="0">
+              <el-form-item class=" lf20" size="mini" label-width="0" prop="upperLeftCornerLatitude">
                 <el-input
                   size="small"
                   placeholder="左上角纬度"
-                  class="inputWidth lf20"
+                  class="inputWidth"
                   v-model="formValidate.upperLeftCornerLatitude"
                   show-word-limit
                 />
@@ -81,7 +81,7 @@
           <td class="rightLebal">右下角经纬度：</td>
           <td>
             <div class="centerStart">
-              <el-form-item size="mini" label-width="0">
+              <el-form-item size="mini" label-width="0" prop="lowerRightCornerLongitude">
                 <el-input
                   class="inputWidth"
                   size="small"
@@ -90,10 +90,10 @@
                   show-word-limit
                 />
               </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
-              <el-form-item size="mini" label-width="0">
+              <el-form-item  class=" lf20" size="mini" label-width="0" prop="lowerRightCornerLatitude">
                 <el-input
                   size="small"
-                  class="inputWidth lf20"
+                  class="inputWidth "
                   placeholder="右下角纬度"
                   v-model="formValidate.lowerRightCornerLatitude"
                   show-word-limit
@@ -141,8 +141,72 @@ export default {
     // 校验轮廓数据
     var validateUnderPicId = (rule, value, callback) => {
       var that = this;
-      if (that.formValidate.planarGraph === "") {
+      if (!that.formValidate.planarGraph) {
         callback(new Error("请上传平面图"));
+      }
+      callback();
+    };
+    var validateLngLat1 = (rule, value, callback) => {
+      var that = this;
+      if (
+        that.formValidate.upperLeftCornerLongitude
+        || that.formValidate.upperLeftCornerLatitude
+        || that.formValidate.lowerRightCornerLongitude
+        || that.formValidate.lowerRightCornerLatitude
+      ) {
+        if (
+          !that.formValidate.upperLeftCornerLongitude
+        ) {
+          callback(new Error("请补全对角线经纬度"));
+        }
+      }
+      callback();
+    };
+    var validateLngLat2 = (rule, value, callback) => {
+      var that = this;
+      if (
+        that.formValidate.upperLeftCornerLongitude
+        || that.formValidate.upperLeftCornerLatitude
+        || that.formValidate.lowerRightCornerLongitude
+        || that.formValidate.lowerRightCornerLatitude
+      ) {
+        if (
+          !that.formValidate.upperLeftCornerLatitude
+        ) {
+          callback(new Error("请补全对角线经纬度"));
+        }
+      }
+      callback();
+    };
+    var validateLngLat3 = (rule, value, callback) => {
+      var that = this;
+      if (
+        that.formValidate.upperLeftCornerLongitude
+        || that.formValidate.upperLeftCornerLatitude
+        || that.formValidate.lowerRightCornerLongitude
+        || that.formValidate.lowerRightCornerLatitude
+      ) {
+        if (
+          !that.formValidate.lowerRightCornerLongitude
+        ) {
+          callback(new Error("请补全对角线经纬度"));
+        }
+      }
+      callback();
+    };
+    var validateLngLat4 = (rule, value, callback) => {
+      var that = this;
+      if (
+        that.formValidate.upperLeftCornerLongitude
+        || that.formValidate.upperLeftCornerLatitude
+        || that.formValidate.lowerRightCornerLongitude
+        || that.formValidate.lowerRightCornerLatitude
+      ) {
+        if (
+          !that.formValidate.lowerRightCornerLatitude
+        ) {
+          callback(new Error("请补全对角线经纬度"));
+        }
       }
       callback();
     };
@@ -173,6 +237,34 @@ export default {
           {
             validator: validateUnderPicId,
             message: "请上传平面图",
+            trigger: "change"
+          }
+        ],
+        upperLeftCornerLongitude: [
+          {
+            validator: validateLngLat1,
+            message: "请补全左上角经度",
+            trigger: "change"
+          }
+        ],
+        upperLeftCornerLatitude: [
+          {
+            validator: validateLngLat2,
+            message: "请补全左上角纬度",
+            trigger: "change"
+          }
+        ],
+        lowerRightCornerLongitude: [
+          {
+            validator: validateLngLat3,
+            message: "请补全右下角经度",
+            trigger: "change"
+          }
+        ],
+        lowerRightCornerLatitude: [
+          {
+            validator: validateLngLat4,
+            message: "请补全右下角纬度",
             trigger: "change"
           }
         ]
@@ -339,6 +431,7 @@ export default {
           }
           that.drawLineObj = newObj;
         }
+        // console.log(" res.planarGraph", res.planarGraph);
         that.formValidate.planarGraph = res.planarGraph;
         that.formValidate.upperLeftCornerLongitude = res.upperLeftCornerLongitude === null
           ? ""
