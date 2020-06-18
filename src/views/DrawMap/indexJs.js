@@ -782,6 +782,7 @@ export default {
           name: that.selectedElement.value.name,
           width: that.selectedElement.value.width,
           fillColor: style.fillColor,
+          styleID: style.id,
           borderColor: style.borderColor,
           borderWidth: style.borderWidth,
           fontSize: that.selectedElement.value.fontSize,
@@ -796,6 +797,7 @@ export default {
         that.mapEditor.setBuildStyle(that.selectedElement.id, {
           name: that.selectedElement.value.name,
           width: style.borderWidth,
+          styleID: style.id,
           fillColor: style.fillColor,
           borderColor: style.borderColor
         });
@@ -806,6 +808,7 @@ export default {
       if (that.selectedElement.layername === "路径图层") {
         that.mapEditor.setPathStyle(that.selectedElement.id, {
           width: style.borderWidth,
+          styleID: style.id,
           color: style.borderColor,
           name: that.selectedElement.value.name
         });
@@ -826,6 +829,7 @@ export default {
           name: that.selectedElement.value.name,
           width: that.selectedElement.value.width,
           fillColor: color,
+          styleID: that.selectedElement.value.styleID,
           borderColor: that.selectedElement.value.borderColor,
           fontSize: 12,
           fontFillColor: that.selectedElement.value.fontFillColor,
@@ -839,6 +843,7 @@ export default {
           name: that.selectedElement.value.name,
           width: that.selectedElement.value.width,
           fillColor: color,
+          styleID: that.selectedElement.value.styleID,
           borderColor: that.selectedElement.value.borderColor
         });
         that.selectedElement.value.fillColor = color;
@@ -847,6 +852,7 @@ export default {
         that.mapEditor.setPathStyle(that.selectedElement.id, {
           width: that.selectedElement.value.width,
           color,
+          styleID: that.selectedElement.value.styleID,
           name: that.selectedElement.value.name
         });
         that.selectedElement.value.color = color;
@@ -862,6 +868,7 @@ export default {
           fillColor: that.selectedElement.value.fillColor,
           borderColor: that.selectedElement.value.borderColor,
           fontSize: 12,
+          styleID: that.selectedElement.value.styleID,
           fontFillColor: that.selectedElement.value.fontFillColor,
           fontBorderColor: that.selectedElement.value.fontBorderColor
         });
@@ -870,6 +877,7 @@ export default {
         that.mapEditor.setBuildStyle(that.selectedElement.id, {
           name,
           width: that.selectedElement.value.width,
+          styleID: that.selectedElement.value.styleID,
           fillColor: that.selectedElement.value.fillColor,
           borderColor: that.selectedElement.value.borderColor
         });
@@ -877,6 +885,7 @@ export default {
       if (that.selectedElement.layername === "路径图层") {
         that.mapEditor.setPathStyle(that.selectedElement.id, {
           width: that.selectedElement.value.width,
+          styleID: that.selectedElement.value.styleID,
           color: that.selectedElement.value.color,
           name
         });
@@ -884,6 +893,7 @@ export default {
       if (that.selectedElement.layername === "POI图层") {
         that.mapEditor.setPointStyle(that.selectedElement.id, {
           img: that.selectedElement.value.img,
+          styleID: that.selectedElement.value.styleID,
           size: that.selectedElement.value.size,
           name
         });
@@ -964,6 +974,7 @@ export default {
       // /选择要素回调事件
       that.mapEditor.selectFeature((e) => {
         that.selectedElement = e;
+        // console.log("被选中的元素",e);
         that.isPoiSelected = false;
         that.drawActiveType = "";
         that.iconActiveNum = "";
@@ -1073,7 +1084,7 @@ export default {
       if (style) {
         obj = {
           name: "",
-          typeID: style.id,
+          styleID: style.id,
           fillColor: style.fillColor,
           borderColor: style.borderColor,
           borderWidth: style.borderWidth
@@ -1124,7 +1135,7 @@ export default {
       if (style) {
         obj = {
           name: "",
-          typeID: style.id,
+          styleID: style.id,
           fillColor: style.fillColor,
           borderColor: style.borderColor,
           borderWidth: style.borderWidth
@@ -1159,7 +1170,7 @@ export default {
       if (style) {
         obj = {
           name: "",
-          typeID: style.id,
+          styleID: style.id,
           fillColor: style.fillColor,
           borderColor: style.borderColor,
           borderWidth: style.borderWidth

@@ -66,7 +66,7 @@
                   <template slot="title">
                     <div class="taskDownInfoCon" @click="selectElementClick">
                       <span>
-                        <i class="iconCommon iconSelectElement bigSize"></i>选择元素
+                        <i class="iconCommon iconSelectElement bigSize" style="width:12px"></i>选择元素
                       </span>
                       <span></span>
                     </div>
@@ -316,7 +316,7 @@
                   <template slot="title">
                     <div class="taskDownInfoCon">
                       <span>
-                        <i class="iconCommon iconSelectElement bigSize"></i>
+                        <i class="iconCommon iconSelectElement bigSize"  style="width:12px"></i>
                         选择元素
                       </span>
                       <span></span>
