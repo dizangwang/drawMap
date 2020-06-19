@@ -103,8 +103,9 @@ export default {
     },
 
     // 被其他页面调用时，清空数据
-    initData(initObj) {
+    initData(initParam) {
       var that = this;
+      var initObj = JSON.parse(JSON.stringify(initParam));
       that.searchValue = "";
       that.searchResult = [];
       that.searchResultShow = false;

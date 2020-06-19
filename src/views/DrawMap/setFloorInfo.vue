@@ -65,7 +65,7 @@
                   show-word-limit
                 />
               </el-form-item>
-              <el-form-item class=" lf20" size="mini" label-width="0" prop="upperLeftCornerLatitude">
+              <el-form-item class="lf20" size="mini" label-width="0" prop="upperLeftCornerLatitude">
                 <el-input
                   size="small"
                   placeholder="左上角纬度"
@@ -90,10 +90,15 @@
                   show-word-limit
                 />
               </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
-              <el-form-item  class=" lf20" size="mini" label-width="0" prop="lowerRightCornerLatitude">
+              <el-form-item
+                class="lf20"
+                size="mini"
+                label-width="0"
+                prop="lowerRightCornerLatitude"
+              >
                 <el-input
                   size="small"
-                  class="inputWidth "
+                  class="inputWidth"
                   placeholder="右下角纬度"
                   v-model="formValidate.lowerRightCornerLatitude"
                   show-word-limit
@@ -154,9 +159,7 @@ export default {
         || that.formValidate.lowerRightCornerLongitude
         || that.formValidate.lowerRightCornerLatitude
       ) {
-        if (
-          !that.formValidate.upperLeftCornerLongitude
-        ) {
+        if (!that.formValidate.upperLeftCornerLongitude) {
           callback(new Error("请补全对角线经纬度"));
         }
       }
@@ -170,9 +173,7 @@ export default {
         || that.formValidate.lowerRightCornerLongitude
         || that.formValidate.lowerRightCornerLatitude
       ) {
-        if (
-          !that.formValidate.upperLeftCornerLatitude
-        ) {
+        if (!that.formValidate.upperLeftCornerLatitude) {
           callback(new Error("请补全对角线经纬度"));
         }
       }
@@ -186,9 +187,7 @@ export default {
         || that.formValidate.lowerRightCornerLongitude
         || that.formValidate.lowerRightCornerLatitude
       ) {
-        if (
-          !that.formValidate.lowerRightCornerLongitude
-        ) {
+        if (!that.formValidate.lowerRightCornerLongitude) {
           callback(new Error("请补全对角线经纬度"));
         }
       }
@@ -202,9 +201,7 @@ export default {
         || that.formValidate.lowerRightCornerLongitude
         || that.formValidate.lowerRightCornerLatitude
       ) {
-        if (
-          !that.formValidate.lowerRightCornerLatitude
-        ) {
+        if (!that.formValidate.lowerRightCornerLatitude) {
           callback(new Error("请补全对角线经纬度"));
         }
       }
@@ -356,7 +353,10 @@ export default {
     lineSave(lineData) {
       var that = this;
       var str = "";
+      //  console.log(lineData)
+      that.drawLineObj = {};
       Object.keys(lineData).forEach((item, index) => {
+        that.drawLineObj[item] = JSON.stringify(lineData[item]);
         var floorNum = "";
         if (item.indexOf("F") > -1) {
           floorNum = +item.replace("F", "");

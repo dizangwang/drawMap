@@ -527,7 +527,7 @@ export default {
       var that = this;
       that.utils.localstorageSet("taskObj", row);
       that.$router.push({
-        path: `/buildingManage`
+        path: `/buildingManage/${row.id}`
       });
     },
     // 监听城市变动

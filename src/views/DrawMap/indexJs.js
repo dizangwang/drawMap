@@ -360,12 +360,49 @@ export default {
           i += 1;
         }
       });
-      if (i > 0) {
-        that.floorFinishStatus = "完成";
-      }
+      // 判断有没有对角线经纬度
+      that.getFloorInfoById(val.floorData.properties.id).then((floorInfo) => {
+        // 如果包含对角线经纬度信息
+        if (floorInfo.lowerRightCornerLatitude && floorInfo.lowerRightCornerLongitude
+          && floorInfo.upperLeftCornerLatitude && floorInfo.upperLeftCornerLongitude) {
+          if (i > 0) {
+            that.floorFinishStatus = "完成";
+          }
+        } else {
+          that.$message({
+            message: "当前楼层缺少对角线经纬度信息",
+            type: "warning"
+          });
+        }
+      });
     }
   },
   methods: {
+    // 根据楼层id获取楼层信息
+    getFloorInfoById(id) {
+      var that = this;
+      return new Promise((resolve) => {
+        that
+          .ajax({
+            method: "get",
+            url: that.apis.getFloorInfoById + id,
+            data: ""
+          })
+          .then((res) => {
+            const {
+              data
+            } = res;
+            if (data.code === 200) {
+              resolve(data.data);
+            } else {
+              that.$message({
+                message: data.msg,
+                type: "warning"
+              });
+            }
+          });
+      });
+    },
     // 对比geo数据判断数据是否保存 true:数据一致  false:数据有差异
     compareData(data1, data2) {
       var keys = Object.keys(data1);
@@ -1454,33 +1491,6 @@ export default {
           }
         });
     },
-
-    // 根据楼层id获取楼层信息
-    getFloorInfoById(id) {
-      var that = this;
-      return new Promise((resolve) => {
-        that
-          .ajax({
-            method: "get",
-            url: that.apis.getFloorInfoById + id,
-            data: ""
-          })
-          .then((res) => {
-            const {
-              data
-            } = res;
-            if (data.code === 200) {
-              resolve(data.data);
-            } else {
-              that.$message({
-                message: data.msg,
-                type: "warning"
-              });
-            }
-          });
-      });
-    },
-
     // 根据楼宇id获取整个楼层的信息
     getFloorOutlineByBuildingId() {
       var that = this;

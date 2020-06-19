@@ -160,12 +160,14 @@ export default {
       // 需要下载的楼宇
       buildingForDownloadArr: [],
       // 下载标记
-      downloadFlag: ""
+      downloadFlag: "",
+      // 任务id
+      taskId: ""
     };
   },
   mounted() {
     var that = this;
-
+    that.taskId = that.$route.params.id;
     /** 从缓存中获取任务对象，如果缓存中有这个对象，
      * 说明是点击某个任务进来的，如果没有就说明是查询所有的楼宇* */
     var taskObj = that.utils.localstorageGet("taskObj");

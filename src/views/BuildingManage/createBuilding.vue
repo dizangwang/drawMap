@@ -114,6 +114,8 @@ export default {
     };
 
     return {
+      // 用于回显的轮廓
+      editOutLine: "",
       // 上传文件id
       uploadFileId: "",
 
@@ -222,7 +224,9 @@ export default {
     lineSave(lineData) {
       var that = this;
       var str = "";
+      that.editOutLine = {};
       Object.keys(lineData).forEach((item, index) => {
+        that.editOutLine[item] = JSON.stringify(lineData[item]);
         var floorNum = "";
         if (item.indexOf("F") > -1) {
           floorNum = +item.replace("F", "");
@@ -248,7 +252,7 @@ export default {
       const address = that.taskObj.provinceName
         + that.taskObj.cityName
         + that.taskObj.districtName;
-      that.$refs.drawProfile.initData({ address });
+      that.$refs.drawProfile.initData({ address, editOutLine: that.editOutLine });
     },
 
     // 被外部调用时初始化方法

@@ -25,6 +25,13 @@ const routes = [
     component: () => import("../views/BuildingManage/index.vue")
   },
 
+  // 任务下的楼宇管理页
+  {
+    path: "/buildingManage/:id",
+    name: "buildingManage",
+    component: () => import("../views/BuildingManage/index.vue")
+  },
+
   // 绘制页面
   {
     path: "/drawMap",
