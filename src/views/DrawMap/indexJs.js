@@ -1326,10 +1326,15 @@ export default {
           // const big = that.mapEditor.transformTo3857(bigLng, bigLat);
           const small = [smallLng, smallLat];
           const big = [bigLng, bigLat];
-          that.mapEditor.setImageData({
-            data: imgUrl,
-            extent: small.concat(big)
-          });
+
+          if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res
+            .lowerRightCornerLongitude && !res.lowerRightCornerLatitude) {
+            that.mapEditor.setImageData({
+              data: imgUrl,
+              extent: small.concat(big)
+            });
+          }
+
           that.hasUnderPainting = true;
           that.mapEditor.setBuildData({
             type: "Feature",
