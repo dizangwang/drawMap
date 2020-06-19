@@ -304,7 +304,7 @@ export default {
     searchValueChange(val) {
       var that = this;
       that.searchValue = val.target.value;
-
+      // console.log(val);
       // 如果选中的值和搜索框中的值是一样的，就不进行搜索
       if (that.clickedTitle === that.searchValue) {
         return;
@@ -333,9 +333,13 @@ export default {
       map.clearOverlays();
       function myFun() {
         var result = local.getResults();
+        // console.log("result",result)
         if (result) {
-          if (Object.prototype.hasOwnProperty.call(result, "Qq")) {
-            that.searchResult = result.Qq;
+          if (
+            Object.prototype.hasOwnProperty.call(result, "Qq")
+            || Object.prototype.hasOwnProperty.call(result, "Yq")
+          ) {
+            that.searchResult = result.Qq || result.Yq;
           } else {
             that.searchResult = [];
           }
@@ -424,7 +428,6 @@ export default {
         }
         that.cacheOverlays[currentFloor] = e.overlay;
         that.floorData[currentFloor] = e.overlay.Tn || e.overlay.la;
-        // console.log(e.overlay)
         that.isSave = false;
       };
 
