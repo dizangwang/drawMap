@@ -252,9 +252,9 @@ export default {
   },
   mounted() {
     var that = this;
-    that.height = `${window.innerHeight - 80}px`;
+    that.height = `${window.innerHeight - 75}px`;
     window.onresize = () => {
-      that.height = `${window.innerHeight - 80}px`;
+      that.height = `${window.innerHeight - 75}px`;
     };
     that.buildObj = that.utils.localstorageGet("buildObj");
 
