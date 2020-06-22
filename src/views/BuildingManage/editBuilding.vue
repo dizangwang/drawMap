@@ -125,8 +125,8 @@ export default {
         underGroundFloor: "",
         lineData: ""
       },
-      // 上级传过来的任务对象
 
+      // 上级传过来的任务对象
       taskObj: {},
 
       // 全屏展示
@@ -186,6 +186,7 @@ export default {
     uploadFile() {
       document.querySelector("#file").click();
     },
+
     // 清除轮廓信息
     clearOutLineData() {
       var that = this;
@@ -300,7 +301,6 @@ export default {
     // 被外部调用时初始化方法
     init(row) {
       var that = this;
-
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
       });

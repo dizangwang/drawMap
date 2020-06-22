@@ -271,9 +271,6 @@ export default {
   mounted() {
     var that = this;
     that.uploadUrl = that.uploadApis.uploadFiles;
-    // 获取楼宇详情
-    var { taskId } = that.utils.localstorageGet("buildObj");
-    that.getTaskById(taskId);
     // 上传geojson文件
     that.utils.parseGeson(that, "file").then((res) => {
       if (res.code === 200) {
@@ -420,6 +417,7 @@ export default {
       that.$refs.formValidate.resetFields();
       that.formValidate.id = obj.id;
       that.getFloorInfoById(obj.id).then((res) => {
+        that.getTaskById(res.taskId);
         that.formValidate.lineData = res.floorOutline;
         that.drawLineObj = "";
         if (res.floorOutline) {
@@ -520,9 +518,7 @@ export default {
             }
           });
           str += that.formValidate.lineData;
-
           // console.log("999",str)
-
           that
             .ajax({
               method: "post",

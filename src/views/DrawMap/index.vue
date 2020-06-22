@@ -7,24 +7,27 @@
       <el-button size="mini" class="handlerButton"  type="primary" @click="themeClick">主题</el-button>
       <el-button size="mini" class="lf10 handlerButton" type="primary" @click="getAllData">查看属性数据</el-button>
       <!-- <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>-->
-      <el-button size="mini" class="lf10 handlerButton" type="primary">调整平面图</el-button>
+      <el-button size="mini" class="lf10 handlerButton" type="primary">
+
+        <i class="iconCommon adjust iconSize"></i>调整平面图
+        </el-button>
       <el-button
         size="mini"
         class="lf10 handlerButton"
         type="primary"
         @click="floorFinishById"
-      >{{floorFinishStatus}}</el-button>
+      ><i class="iconCommon complete iconSize" v-if="floorFinishStatus=='完成'"></i>{{floorFinishStatus}}</el-button>
       <el-button size="mini" class="lf10 handlerButton" type="primary"  @click="saveData">
-        <i class="iconCommon iconEye"></i>预览
+        <i class="iconCommon iconEye iconSize"></i>预览
       </el-button>
       <el-button size="mini" class="lf10 handlerButton" type="primary" @click="saveData">
-        <i class="iconCommon iconSave"></i>保存
+        <i class="iconCommon iconSave iconSize"></i>保存
       </el-button>
       <el-button size="mini" class="lf10 handlerButton" type="primary" @click="floorMgrPublish">
-        <i class="iconCommon iconPublish"></i>发布
+        <i class="iconCommon iconPublish iconSize"></i>发布
       </el-button>
       <el-button size="mini" class="lf10 handlerButton" type="primary" @click="setFloorInfoClick">
-        <i class="iconCommon iconBuilding"></i>设置楼层信息
+        <i class="iconCommon iconBuilding iconSize"></i>设置楼层信息
       </el-button>
       <!-- <el-input size="mini" class="lf10 searchInput" placeholder="请输入内容">
         <el-button class="searchButton" slot="append" icon="el-icon-search"></el-button>
@@ -78,7 +81,7 @@
                         <!-- <div class="center">（按住crtl键可以选择多个元素）</div> -->
                       </div>
                       <table class="formTable" v-show="selectedElement.id">
-                        <tr>
+                        <!-- <tr>
                           <td>元素类型</td>
                           <td>
                             <el-input
@@ -89,7 +92,7 @@
                               placeholder="请输入内容"
                             ></el-input>
                           </td>
-                        </tr>
+                        </tr> -->
                         <tr>
                           <td>元素ID</td>
                           <td>

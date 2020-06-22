@@ -104,6 +104,7 @@ export default {
 
     // 被其他页面调用时，清空数据
     initData(initParam) {
+      // console.log(initParam)
       var that = this;
       var initObj = JSON.parse(JSON.stringify(initParam));
       that.searchValue = "";
@@ -204,12 +205,12 @@ export default {
       map.addControl(topLeftNavigation);
 
       // 如果有这个参数，就进行定位
-      if (area) {
-        map.centerAndZoom(area, 15);
-      } else {
-        // 初始化地图,设置中心点坐标和地图级别
-        map.centerAndZoom(new BMap.Point(116.340739, 40.03592), 19);
-      }
+      // if (area) {
+      map.centerAndZoom(area, 15);
+      // } else {
+      //   // 初始化地图,设置中心点坐标和地图级别
+      //   map.centerAndZoom(new BMap.Point(116.340739, 40.03592), 19);
+      // }
 
       // 开启鼠标滚轮缩放
       map.enableScrollWheelZoom(true);
@@ -231,10 +232,16 @@ export default {
             lis.forEach((item) => {
               const button = item.querySelector("button");
               const floor = button.getAttribute("data-floor");
+              if (keys.length === 1) {
+                button.setAttribute("class", " btn-select-floor");
+              }
 
               // 楼层比对
               if (floor === key) {
                 button.style.color = "red";
+                if (keys.length === 1) {
+                  button.setAttribute("class", " btn-select-floor selected");
+                }
               }
             });
           });
@@ -283,6 +290,7 @@ export default {
               // 循环地图右侧楼层
               lis.forEach((item) => {
                 const button = item.querySelector("button");
+
                 const floor = button.getAttribute("data-floor");
                 // 楼层比对
                 if (floor === key) {
@@ -421,13 +429,15 @@ export default {
 
       // 绘制结束回调方法
       var overlaycomplete = (e) => {
-        that.activeLonLatData = e.overlay.Tn;
+        that.activeLonLatData = e.overlay.Tn || e.overlay.la || e.overlay.ka || e.overlay.ao;
+        // console.log(that.activeLonLatData, that.indoorManager.getFloor());
         var currentFloor = that.indoorManager.getFloor();
         if (!currentFloor) {
+          // console.log(that.currentFloor);
           currentFloor = that.currentFloor;
         }
         that.cacheOverlays[currentFloor] = e.overlay;
-        that.floorData[currentFloor] = e.overlay.Tn || e.overlay.la;
+        that.floorData[currentFloor] = that.activeLonLatData;
         that.isSave = false;
       };
 
@@ -458,6 +468,7 @@ export default {
     // 保存事件
     saveClick() {
       var that = this;
+      // console.log(that.floorData);
       const floorDataCopy = JSON.parse(JSON.stringify(that.floorData));
       var kes = Object.keys(floorDataCopy);
       if (kes.length === 0) {

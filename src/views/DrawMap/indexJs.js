@@ -7,6 +7,8 @@ import CreateStyle from "./createStyle.vue";
 import EditStyle from "./editStyle.vue";
 import MapEditor from "../../assets/map/js/main";
 import TestData from "../../assets/map/data/data";
+import Data from "./indexJsData";
+import Watch from "./indexJsWatch";
 
 export default {
   name: "ChartShowControl",
@@ -19,245 +21,18 @@ export default {
     EditStyle
   },
   data() {
-    return {
-      // 选中的要素是不是图标
-      isPoiSelected: false,
-      // 查询样式列表关键字
-      searchStyleWord: "",
-      // 列表中被选中的样式
-      styleTableSelectedArr: [],
-      // 图标预览
-      iconPreview: "",
-      // 所有图标
-      allIconModal: false,
-      // 编辑样式弹窗
-      editStyleModal: false,
-      // 创建样式弹窗
-      createStyleModal: false,
-      // 数据图表数据
-      dataChartData: [],
-      // 数据图表POI数据
-      dataChartPOIData: [],
-      // 图层的类型
-      layerType: "1",
-      // 数据图表POI列值
-      dataChartPOIColumn: [{
-        title: "选择",
-        type: "selection",
-        width: 80
-      },
-      {
-        title: "序号",
-        type: "index",
-        width: 80
-      },
-      {
-        title: "FID",
-        key: "id"
-      },
-
-      {
-        title: "高度",
-        key: "size",
-        width: 80
-      },
-      {
-        title: "图标",
-        slot: "img",
-        width: 80
-      }
-      ],
-      // 数据图表列值
-      dataChartColumn: [{
-        title: "选择",
-        type: "selection",
-        width: 80
-      },
-      {
-        title: "序号",
-        type: "index",
-        width: 80
-      },
-      {
-        title: "FID",
-        key: "id"
-      },
-
-      {
-        title: "名称",
-        key: "name",
-        width: 140
-      }
-      ],
-      // 数据图表信息弹窗
-      dataChartInfoModal: false,
-      // 元素样式列数据
-      elementStyleColumn: [{
-        title: "选择",
-        type: "selection",
-        width: 80
-      },
-      {
-        title: "样式名称",
-        key: "name"
-      },
-      {
-        title: "边框宽度",
-        key: "borderWidth"
-      },
-      {
-        title: "边框颜色",
-        slot: "borderColor"
-      },
-      {
-        title: "填充颜色",
-        slot: "color"
-      }
-      ],
-      // 编辑主题样式展示
-      editElementStyleModal: false,
-      // 楼层
-      floor: "",
-      // 表单字段
-      formValidate: {
-        taskId: "",
-        buildingName: "",
-        overGroundFloor: "",
-        underGroundFloor: "",
-        lineData: ""
-      },
-      // 校验规则
-      ruleValidate: {
-        buildingName: [{
-          required: true,
-          message: "请填写楼宇名称",
-          trigger: "blur"
-        }]
-      },
-      // 设置楼层信息
-      setFloorInfoModal: false,
-      // 左侧-顶部-tab栏
-      tabNum: 1,
-      // 元素高度
-      elementHeight: 0,
-      // 标注高度
-      markHeight: 0,
-      // 元素样式
-      elementStyle: "",
-      // 右侧地图高度
-      height: "",
-      // 楼宇信息
-      buildObj: {},
-      // 加载的楼层信息
-      buildingFloorsObj: {},
-      // 楼层信息数组
-      floorArr: [],
-      // 被选中的楼层
-      activeFloor: "",
-      // 选中楼层的数据
-      activeFloorData: {},
-      // 地图编辑器
-      mapEditor: "",
-      // 选中的元素
-      selectedElement: {
-        layername: "",
-        id: "",
-        value: {
-          id: "0",
-          typeID: "",
-          name: "0",
-          height: 0,
-          styleID: "",
-          width: 5,
-          fillColor: ""
-        }
-      },
-      // 当前选中的要绘制的要素
-      drawActiveType: "",
-      // 绘制完元素后获得的元素信息
-      targetDrawedElement: "",
-      // 路径-绘制元素-楼梯类型
-      drawActiveLine: "",
-      // 是否有底图
-      hasUnderPainting: true,
-      // 被选中的poi图层
-      facilityTypeTarget: {
-        layername: "",
-        id: "",
-        value: {
-          id: "",
-          img: "",
-          size: 0
-        }
-      },
-      // 样式绘制前选择的样式id
-      preDrawStyle: "",
-      // 元素样式列表数据
-      elementStyleListCopy: [],
-      // 元素样式列表
-      elementStyleList: [{
-        id: "1",
-        name: "red",
-        height: 2,
-        width: 5,
-        fillColor: "#CD5C5C",
-        borderColor: "#F4A460",
-        fontSize: "16px",
-        fontFillColor: "#7FFF00",
-        fontBorderColor: "#48D1CC"
-      },
-      {
-        id: "2",
-        name: "blue",
-        height: 2,
-        width: 5,
-        fillColor: "#CD5C5C",
-        borderColor: "#FF00FF",
-        fontSize: "16px",
-        fontFillColor: "#FF00FF",
-        fontBorderColor: "#6495ED"
-      }
-      ],
-      // 需要到达的楼层
-      facilityToFloor: "",
-      // 分组名称
-      facilityGroup: "",
-      // 选择要到达的楼层
-      goFloorNumModal: false,
-      // 选择要到达的楼层title
-      floorNumTitle: "",
-      // 选择的要到达的楼层
-      goFloorArr: [],
-      // 全选楼梯
-      goFloorNumCheckAll: false,
-      // 是否绘制楼梯
-      isDrawfacibility: false,
-      // 是否绘制路径
-      isDrawLine: false,
-      // 图标列表
-      allIconsArr: [],
-      // 图标名称
-      iconName: "",
-      // 被选中的图标
-      iconActiveNum: "",
-      // 选中的是否是路径图层
-      isLineLayerSeleced: false,
-      // 楼层完成状态
-      floorFinishStatus: "完成",
-      // 数据图表勾选的id
-      dataChartSelectedIds: [],
-      // 数据图表搜索
-      dataChartDataSearch: ""
-    };
+    return Data;
   },
   mounted() {
     var that = this;
+    that.buildingId = that.$route.params.id;
     that.height = `${window.innerHeight - 75}px`;
     window.onresize = () => {
       that.height = `${window.innerHeight - 75}px`;
     };
-    that.buildObj = that.utils.localstorageGet("buildObj");
-
+    that.buildObj = {
+      id: that.buildingId
+    };
     that.getIcons();
     that.getElementStyles();
     that.getLabelStyles();
@@ -266,118 +41,40 @@ export default {
       that.initMap(TestData.floors[1]);
     });
   },
-  watch: {
-    preDrawStyle() {
+  watch: Watch,
+  methods: {
+    isComplete() {
       var that = this;
-      switch (that.drawActiveType) {
-        case 1:
-          that.drawRect();
-          break;
-        case 2:
-          that.drawcircle();
-          break;
-        case 3:
-          that.drawpolygon();
-          break;
-        default:
+      var i = 0;
+      const layerData = that.mapEditor.getSaveData();
+      // console.log(layerData.imageData.data);
+      // 判断是否有底图
+      if (layerData.imageData.data) {
+        i += 1;
       }
-    },
-    goFloorArr(flrArr) {
-      var that = this;
-      const arr = [];
-      that.floorArr.forEach((item) => {
-        if (flrArr.includes(item.value)) {
-          arr.push(item.label);
+      // 判断有没有元素数据
+      let y = 0;
+      Object.keys(layerData.layerData).forEach((key) => {
+        if (layerData.layerData[key].features.length > 0) {
+          y += 1;
         }
       });
-
-      that.facilityToFloor = arr.join(",");
-    },
-    layerType() {
-      this.dataChartSelectedIds = [];
-    },
-    tabNum(num) {
-      var that = this;
-      if (num !== 2) {
-        that.isDrawfacibility = false;
-        that.isDrawLine = false;
+      if (y > 0) {
+        i += 1;
       }
-      if (num !== 1) {
-        that.iconActiveNum = "";
-      }
-      that.mapEditor.cancelDraw();
-    },
-    activeFloorData(result) {
-      var that = this;
-      if (!result) {
-        return;
-      }
-      that.floorFinishStatus = "未完成";
-      const val = JSON.parse(JSON.stringify(result));
-
-      if (!val.imageData.extent) {
-        val.imageData.extent = [];
-      } else if (typeof val.imageData.extent === "string") {
-        val.imageData.extent = JSON.parse(val.imageData.extent);
-      }
-
-      if (!val.floorData.geometry) {
-        delete val.floorData.geometry;
-      }
-      document.querySelector("#mapInDoor").innerHTML = "";
-      that.newMap(val);
-
-      // 是否有底图经纬度
-      if (!val.imageData.data && !val.imageData.id) {
-        that.hasUnderPainting = false;
-        that.$message({
-          message: "没有底图无法进行任何绘制操作",
-          type: "warning"
-        });
-        return;
-      }
-      that.hasUnderPainting = true;
-
-      // 处理图片
-      if (!val.imageData.data && val.imageData.id) {
-        const {
-          id
-        } = val.imageData;
-        val.imageData.data = `/files/img/${id}`;
-      }
-      // 如果没有经纬度
-      if (val.imageData.extent.length === 0 || !val.floorData.geometry) {
-        that.$message({
-          message: "没有经纬度无法定位底图",
-          type: "warning"
-        });
-        return;
-      }
-
-      let i = 0;
-      Object.keys(val.layerData).forEach((key) => {
-        if (val.layerData[key].features.length > 0) {
-          i += 1;
-        }
-      });
-      // 判断有没有对角线经纬度
-      that.getFloorInfoById(val.floorData.properties.id).then((floorInfo) => {
+      // 判断是否有对角线经纬度
+      that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((floorInfo) => {
         // 如果包含对角线经纬度信息
         if (floorInfo.lowerRightCornerLatitude && floorInfo.lowerRightCornerLongitude
           && floorInfo.upperLeftCornerLatitude && floorInfo.upperLeftCornerLongitude) {
-          if (i > 0) {
-            that.floorFinishStatus = "完成";
-          }
-        } else {
-          that.$message({
-            message: "当前楼层缺少对角线经纬度信息",
-            type: "warning"
-          });
+          i += 1;
+        }
+        // console.log(i);
+        if (i >= 3) {
+          that.floorFinishStatus = "完成";
         }
       });
-    }
-  },
-  methods: {
+    },
     // 根据楼层id获取楼层信息
     getFloorInfoById(id) {
       var that = this;
@@ -576,21 +273,57 @@ export default {
       if (that.floorFinishStatus === "未完成") {
         return;
       }
+      that.saveDataCallBack(() => {
+        that
+          .ajax({
+            method: "post",
+            url: that.apis.floorFinishById + that.activeFloorData.floorData.properties.id,
+            data: {}
+          })
+          .then((res) => {
+            const {
+              data
+            } = res;
+            if (data.code === 200) {
+              that.$message({
+                message: "操作成功",
+                type: "success"
+              });
+            } else {
+              that.$message({
+                message: data.msg,
+                type: "warning"
+              });
+            }
+          });
+      });
+    },
+    // 保存数据后的回调
+    saveDataCallBack(fn) {
+      var that = this;
+      const layerData = that.mapEditor.getSaveData();
+      var obj = {};
+      obj.id = that.buildingFloorsObj.id;
+      obj.name = that.buildingFloorsObj.name;
+      obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
+      obj.floors = {};
+      obj.floors[that.activeFloorData.floorData.properties.floors] = layerData;
       that
         .ajax({
           method: "post",
-          url: that.apis.floorFinishById + that.activeFloorData.floorData.properties.id,
-          data: {}
+          url: that.apis.saveFloor,
+          data: {
+            data: JSON.stringify(obj)
+          }
         })
         .then((res) => {
           const {
             data
           } = res;
           if (data.code === 200) {
-            that.$message({
-              message: "保存成功",
-              type: "success"
-            });
+            fn();
+
+            that.loadFloor();
           } else {
             that.$message({
               message: data.msg,
@@ -936,7 +669,7 @@ export default {
         });
       }
     },
-    // 获取数据
+    // 获取地图相关数据
     getAllData() {
       var that = this;
       that.dataChartInfoModal = true;
@@ -983,7 +716,6 @@ export default {
     // 路径-绘制元素-楼梯
     commonFloorClick() {
       var that = this;
-
       if (that.drawActiveLine === 3) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -1011,7 +743,6 @@ export default {
       // /选择要素回调事件
       that.mapEditor.selectFeature((e) => {
         that.selectedElement = e;
-        // console.log("被选中的元素",e);
         that.isPoiSelected = false;
         that.drawActiveType = "";
         that.iconActiveNum = "";
@@ -1042,6 +773,9 @@ export default {
       });
       // 绘制要素回调事件
       that.mapEditor.drawFeature((e) => {
+        setTimeout(() => {
+          that.isComplete();
+        }, 1000);
         that.targetDrawedElement = e;
         // 绘制多边形的时候
         if (that.drawActiveType === 3) {
@@ -1058,11 +792,6 @@ export default {
             that.goFloorArr = [];
             that.goFloorNumCheckAll = false;
           }
-        } else {
-          // setTimeout(()=>{
-          //   that.canceldraw();
-          // },500)
-
         }
       });
     },
@@ -1070,7 +799,6 @@ export default {
     initMap(mapData) {
       var that = this;
       that.newMap(mapData);
-      that.getFloorOutlineByBuildingId();
       that.loadFloor();
     },
     // 地图放大
@@ -1107,7 +835,6 @@ export default {
     // 绘制矩形
     drawRect() {
       var that = this;
-
       if (that.drawActiveType === 1) {
         that.drawActiveType = "";
         that.iconActiveNum = "";
@@ -1157,7 +884,6 @@ export default {
     // 绘制面元素
     drawpolygon() {
       var that = this;
-
       if (that.drawActiveType === 3) {
         that.drawActiveType = "";
         that.iconActiveNum = "";
@@ -1193,7 +919,6 @@ export default {
     // 绘制圆
     drawcircle() {
       var that = this;
-
       if (that.drawActiveType === 2) {
         that.drawActiveType = "";
         that.iconActiveNum = "";
@@ -1354,11 +1079,13 @@ export default {
               borderColor: "rgba(217,237,253,1.0)"
             }
           });
-        } else {
-          // that.$message({
-          //   message: "当前楼层不具备经纬度信息，将不能发布",
-          //   type: "warning"
-          // });
+        }
+
+        if ((res.upperLeftCornerLongitude && res.upperLeftCornerLatitude && res
+          .lowerRightCornerLongitude && res.lowerRightCornerLatitude && res.planarGraph) || (
+          res
+            .floorOutline && res.planarGraph)) {
+          that.saveDataCallBack(() => {});
         }
       });
       that.setFloorInfoModal = false;
@@ -1440,7 +1167,6 @@ export default {
     // 监听楼层变动
     floorChange(e) {
       var that = this;
-
       setTimeout(() => {
         that.activeFloorData = that.buildingFloorsObj.floors[e];
       });
@@ -1488,29 +1214,6 @@ export default {
             } else {
               that.activeFloorData = that.buildingFloorsObj.floors[that.activeFloor];
             }
-          } else {
-            that.$message({
-              message: data.msg,
-              type: "warning"
-            });
-          }
-        });
-    },
-    // 根据楼宇id获取整个楼层的信息
-    getFloorOutlineByBuildingId() {
-      var that = this;
-      that
-        .ajax({
-          method: "get",
-          url: that.apis.getFloorOutlineByBuildingId + that.buildObj.id,
-          data: ""
-        })
-        .then((res) => {
-          const {
-            data
-          } = res;
-          if (data.code === 200) {
-            // todo
           } else {
             that.$message({
               message: data.msg,

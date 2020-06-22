@@ -96,6 +96,7 @@ export default {
         align: "center"
       }
       ],
+
       // 表格的数据
       Taskdata: [],
 
@@ -157,10 +158,13 @@ export default {
 
       // 发布id
       publishId: "",
+
       // 需要下载的楼宇
       buildingForDownloadArr: [],
+
       // 下载标记
       downloadFlag: "",
+
       // 任务id
       taskId: ""
     };
@@ -168,15 +172,17 @@ export default {
   mounted() {
     var that = this;
     that.taskId = that.$route.params.id;
-    /** 从缓存中获取任务对象，如果缓存中有这个对象，
-     * 说明是点击某个任务进来的，如果没有就说明是查询所有的楼宇* */
-    var taskObj = that.utils.localstorageGet("taskObj");
-    that.taskObj = taskObj;
-    if (taskObj) {
+    if (that.taskId) {
       that.Taskcolumns.splice(1, 1);
+      that.getTaskById(that.taskId, (taskObj) => {
+        that.taskObj = taskObj;
+        that.getAllTypes();
+        that.searchClick();
+      });
+    } else {
+      that.getAllTypes();
+      that.searchClick();
     }
-    that.getAllTypes();
-    that.searchClick();
     that.getAreasWithPid("", (data) => {
       that.provinceList = data;
     });
@@ -190,6 +196,27 @@ export default {
   },
   methods: {
     ...mapActions(["setTaskTypes"]),
+
+    // 根据任务id获取详情
+    getTaskById(id, fn) {
+      var that = this;
+      var param = {};
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.getTaskById + id,
+          data: param
+        })
+        .then((res) => {
+          const {
+            data
+          } = res;
+          if (data.code === 200) {
+            const detailData = data.data;
+            fn(detailData);
+          }
+        });
+    },
 
     // 处理进度数据
     progressHandler(row) {
@@ -210,7 +237,7 @@ export default {
       var that = this;
       that.utils.localstorageSet("buildObj", row);
       that.$router.push({
-        path: `/drawMap`
+        path: `/drawMap/${row.id}`
       });
     },
 
@@ -481,6 +508,7 @@ export default {
         that.floorMgrGetDownloadFlag();
       });
     },
+
     // 单楼层下载准备接口
     floorMgrGetDownloadFlag() {
       var that = this;
@@ -557,6 +585,7 @@ export default {
           }
         });
     },
+
     // 下载点击事件
     downFloorClick() {
       var that = this;
@@ -574,6 +603,7 @@ export default {
         }
       });
     },
+
     // 根据楼宇id获取整个楼层的信息
     getFloorOutlineByBuildingId(id, fn) {
       var that = this;
@@ -679,6 +709,7 @@ export default {
           });
         });
     },
+
     // 发布
     publishBuilding(id, type) {
       var that = this;
@@ -710,6 +741,7 @@ export default {
           }
         });
     },
+
     // 下架
     buildingMgrUnPublish(id) {
       var that = this;

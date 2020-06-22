@@ -172,7 +172,7 @@
 
     <el-dialog title="请选择数据类型" :visible.sync="dataTypeBatchModal" width="30%">
       <el-radio v-model="radioBatchPublish" label="geojson">geojson</el-radio>
-      <el-radio v-model="radioBatchPublish" label="shp" >shp</el-radio>
+      <el-radio v-model="radioBatchPublish" label="shp">shp</el-radio>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dataTypeBatchModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="publishBatchOkClick">确 定</el-button>
@@ -180,7 +180,7 @@
     </el-dialog>
     <el-dialog title="请选择数据类型" :visible.sync="dataTypeModal" width="30%">
       <el-radio v-model="radioPublish" label="geojson">geojson</el-radio>
-      <el-radio v-model="radioPublish" label="shp" >shp</el-radio>
+      <el-radio v-model="radioPublish" label="shp">shp</el-radio>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dataTypeModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="publishOkClick">确 定</el-button>
@@ -188,7 +188,7 @@
     </el-dialog>
     <el-dialog title="请选择下载格式" :visible.sync="formatModal" width="30%">
       <el-radio v-model="radioDown" label="geojson">geojson</el-radio>
-      <el-radio v-model="radioDown" label="shp" >shp</el-radio>
+      <el-radio v-model="radioDown" label="shp">shp</el-radio>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="formatModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="downOkClick">确 定</el-button>
@@ -196,7 +196,7 @@
     </el-dialog>
     <el-dialog title="请选择下载格式" :visible.sync="formatBatchModal" width="30%">
       <el-radio v-model="radioBatchDown" label="geojson">geojson</el-radio>
-      <el-radio v-model="radioBatchDown" label="shp" >shp</el-radio>
+      <el-radio v-model="radioBatchDown" label="shp">shp</el-radio>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="formatBatchModal=false">取 消</el-button>
         <el-button size="mini" type="primary" @click="downBatchOkClick">确 定</el-button>

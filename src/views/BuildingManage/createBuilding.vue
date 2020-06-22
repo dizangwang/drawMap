@@ -116,6 +116,7 @@ export default {
     return {
       // 用于回显的轮廓
       editOutLine: "",
+
       // 上传文件id
       uploadFileId: "",
 
@@ -252,7 +253,10 @@ export default {
       const address = that.taskObj.provinceName
         + that.taskObj.cityName
         + that.taskObj.districtName;
-      that.$refs.drawProfile.initData({ address, editOutLine: that.editOutLine });
+      that.$refs.drawProfile.initData({
+        address,
+        editOutLine: that.editOutLine
+      });
     },
 
     // 被外部调用时初始化方法
@@ -282,6 +286,8 @@ export default {
         });
       }
     },
+
+    // 上传文件失败回调
     uploadError(res) {
       this.$message({
         message: "上传文件失败",

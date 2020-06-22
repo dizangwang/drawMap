@@ -238,6 +238,15 @@ body{
   background-size: 100% 100%;
 }
 
+.adjust{
+  background: url('../images/icons/adjust.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.complete{
+  background: url('../images/icons/complete.png') no-repeat center;
+  background-size: 100% 100%;
+}
+
 
 
 .el-message {

@@ -135,9 +135,9 @@ export default {
     that.getAreasWithPid("", (data) => {
       that.provinceList = data;
     });
-
     // 每次进入到任务列表，先清空缓存任务对象，防止跳转到楼宇管理的时候，数据混乱
     that.utils.localstorageSet("taskObj", "");
+    that.utils.localstorageSet("buildObj", "");
     // 动态调整容器长度
     that.tableHeight = window.innerHeight - 135;
     window.onresize = () => {
@@ -438,7 +438,7 @@ export default {
         });
     },
     // 根据任务id查询楼宇列表；
-    getBuildingByTaskId() {
+    getBuildingByTaskId1() {
       var that = this;
       that.downloadLoading = true;
       that.collapseActiveName = "1";
@@ -461,29 +461,38 @@ export default {
               const {
                 records
               } = data.data;
+              // console.log(itm.id,records)
               if (records.length !== 0) {
                 const promiseArr = [];
+                // 循环任务下的楼宇
                 records.forEach((item, index) => {
                   const promise = new Promise((resolve) => {
+                    // 根据楼宇id获取
                     that.getFloorOutlineByBuildingId(item.id, (resultData) => {
+                      // console.log("####",resultData);
                       records[index].floors = resultData;
                       that.downloadTaskObjArr[indexNum].downloadBuildingArrs = records;
-                      const obj = {};
-                      obj.index = indexNum;
-                      obj.data = resultData;
-                      resolve(obj);
+                      // const obj = {};
+                      // obj.index = indexNum;
+                      // obj.data = resultData;
+                      // resolve(obj);
+                      resolve();
                     });
                   });
                   promiseArr.push(promise);
                 });
+                // console.log(indexNum + 1, that.downloadTaskObjArr.length)
                 // 执行所有promise
                 Promise.all(promiseArr).then((result) => {
                   // 当执行到最后一个时执行floorMgrGetDownloadFlag方法
+
                   if ((indexNum + 1) === that.downloadTaskObjArr.length) {
+                    // console.log("&&&&", indexNum + 1)
                     that.floorMgrGetDownloadFlag();
                   }
                 }).catch((error) => {
                   // todo
+                  // console.log(error)
                 });
               } else if (that.downloadTaskObjArr.length === 1) {
                 // 如果没有楼层且任务数量为一个时，直接进行展示
@@ -499,6 +508,81 @@ export default {
               });
             }
           });
+      });
+    },
+    // 根据任务id查询楼宇列表；
+    getBuildingByTaskId() {
+      var that = this;
+      that.downloadLoading = true;
+      that.collapseActiveName = "1";
+      that.downloadTaskObjArrCopy = [];
+      var promiseObjArr = [];
+      that.downloadTaskObjArr.forEach((itm, indexNum) => {
+        const promiseObj = new Promise(((relve) => {
+          const param = {};
+          param.taskId = itm.id;
+          that
+            .ajax({
+              method: "get",
+              url: that.apis.buildingMgrList,
+              data: param
+            })
+            .then((res) => {
+              const {
+                data
+              } = res;
+              if (data.code === 200) {
+                // 组装数据 给任务挂载楼宇列表 给楼宇挂载楼层列表
+                const {
+                  records
+                } = data.data;
+                if (records.length !== 0) {
+                  const promiseArr = [];
+                  // 循环任务下的楼宇
+                  records.forEach((item, index) => {
+                    const promise = new Promise((resolve) => {
+                      // 根据楼宇id获取
+                      that.getFloorOutlineByBuildingId(item.id, (resultData) => {
+                        records[index].floors = resultData;
+                        that.downloadTaskObjArr[indexNum]
+                          .downloadBuildingArrs = records;
+                        resolve();
+                      });
+                    });
+                    promiseArr.push(promise);
+                  });
+
+                  // 执行所有promise
+                  Promise.all(promiseArr).then((result) => {
+                    // 当执行到最后一个时执行floorMgrGetDownloadFlag方法
+                    relve(11);
+                  }).catch((error) => {
+                    // console.log(error)
+                  });
+                }
+                if (records.length === 0 && that.downloadTaskObjArr.length === 1) {
+                  // 如果没有楼层且任务数量为一个时，直接进行展示
+                  that.downloadLoading = false;
+                  that.floorForDownloadArr = [];
+                  that.downloadTaskObjArrCopy = JSON.parse(JSON.stringify(that
+                    .downloadTaskObjArr));
+                  relve(11);
+                }
+                if (records.length === 0 && that.downloadTaskObjArr.length !== 1) {
+                  relve(11);
+                }
+              } else {
+                that.$message({
+                  message: data.msg,
+                  type: "warning"
+                });
+              }
+            });
+        }));
+        promiseObjArr.push(promiseObj);
+      });
+      Promise.all(promiseObjArr).then((result) => {
+        that.floorMgrGetDownloadFlag();
       });
     },
     // 处理进度数据

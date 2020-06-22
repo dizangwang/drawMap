@@ -34,7 +34,7 @@ const routes = [
 
   // 绘制页面
   {
-    path: "/drawMap",
+    path: "/drawMap/:id",
     name: "drawMap",
     component: () => import("../views/DrawMap/index.vue")
   }
