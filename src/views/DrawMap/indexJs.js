@@ -1096,7 +1096,15 @@ export default {
             .floorOutline && res.planarGraph)) {
           that.saveDataCallBack(() => {});
         }
+        if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res
+          .lowerRightCornerLongitude && !res.lowerRightCornerLatitude && !res.floorOutline) {
+          that.$message({
+            message: "没有经纬度无法定位底图",
+            type: "warning"
+          });
+        }
       });
+
       that.setFloorInfoModal = false;
     },
 

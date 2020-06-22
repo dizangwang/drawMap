@@ -65,7 +65,7 @@ export default {
     that.newMap(val);
 
     // 是否有底图经纬度
-    if (!val.imageData.data && !val.imageData.id) {
+    if (!val.imageData.data) {
       that.hasUnderPainting = false;
       that.$message({
         message: "没有底图无法进行任何绘制操作",
