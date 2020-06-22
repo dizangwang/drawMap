@@ -373,6 +373,8 @@ export default {
     searchStyleWordChange(styleWord) {
       var that = this;
       var data = JSON.parse(JSON.stringify(that.elementStyleList));
+      that.iconActiveNum = "";
+      that.drawActiveType = "";
       const arr = [];
       data.forEach((item) => {
         if (item.name.indexOf(styleWord) > -1) {
@@ -384,6 +386,8 @@ export default {
     // poi图标size大小变动
     poiSizeChange(size) {
       var that = this;
+      that.iconActiveNum = "";
+      that.drawActiveType = "";
       that.mapEditor.setPointStyle(that.selectedElement.id, {
         img: that.selectedElement.value.img,
         size
@@ -542,6 +546,8 @@ export default {
     // 监听样式选择器变动
     styleSelectChange(styleIndex) {
       var that = this;
+      that.iconActiveNum = "";
+      that.drawActiveType = "";
       if (styleIndex === "") {
         that.selectedElement.value.fillColor = "";
         return;
@@ -590,6 +596,8 @@ export default {
     drawSelectedColorChange(col) {
       var that = this;
       var color = col;
+      that.iconActiveNum = "";
+      that.drawActiveType = "";
       if (!color) {
         color = "rgba(252, 246, 246, 0.75)";
       }
@@ -631,6 +639,8 @@ export default {
     // 监听元素name变动
     drawSelectedNameInput(name) {
       var that = this;
+      that.iconActiveNum = "";
+      that.drawActiveType = "";
       if (that.selectedElement.layername === "多边形图层") {
         that.mapEditor.setPolygonStyle(that.selectedElement.id, {
           name,
@@ -1018,9 +1028,8 @@ export default {
               floors: 1,
               styleID: null,
               width: 2,
-              fillColor: "rgba(217,237,253,.3)",
-              borderColor: "rgba(217,237,253,1.0)"
-
+              fillColor: "rgba(217,237,253,.1)",
+              borderColor: "rgba(0,153,255,.5)"
             }
           });
         }
@@ -1075,8 +1084,8 @@ export default {
               floors: 1,
               styleID: null,
               width: 2,
-              fillColor: "rgba(217,237,253,.3)",
-              borderColor: "rgba(217,237,253,1.0)"
+              fillColor: "rgba(217,237,253,.1)",
+              borderColor: "rgba(0,153,255,.5)"
             }
           });
         }
