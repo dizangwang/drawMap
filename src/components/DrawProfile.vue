@@ -211,6 +211,7 @@ export default {
         const convert = new howso.CoordConvert();
         const gcj = convert.bd09_To_gcj02(e.point.lng, e.point.lat);
         // console.log("wgs坐标", convert.gcj02_To_wgs84(gcj.lng, gcj.lat));
+        // console.log(that.map.getZoom());
       });
       // 左上角，添加默认缩放平移控件
       var topLeftNavigation = new BMap.NavigationControl();
@@ -221,7 +222,7 @@ export default {
       });
       that.map.addControl(topLeftLontrol);
       that.map.addControl(topLeftNavigation);
-
+      that.map.setMinZoom(17);
       // 如果有这个参数，就进行定位
       // if (area) {
       that.map.centerAndZoom(area, 15);
