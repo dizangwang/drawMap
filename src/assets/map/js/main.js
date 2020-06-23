@@ -264,6 +264,43 @@ export default class MapEditor {
         this.interactionManage.drawBox(style);
     }
 
+    editImage(img) {
+        this.temImg = img;
+        this.ol.layers.temLayer = new ol.layer.Vector({
+            source: new ol.source.Vector(),
+            style: Style.buildStyle()
+        });
+        this.ol.map.addLayer(this.ol.layers.temLayer);
+        if (this.ol.layers.buildLayer.getSource().getFeatures().length > 0) {
+            let f = this.ol.layers.buildLayer.getSource().getFeatures()[0].clone();
+            this.ol.layers.temLayer.getSource().addFeature(f);
+        }
+        this.interactionManage._filter.editImage = true;
+        this.interactionManage.editImage(img);
+    }
+
+    cancelEditImage() {
+        this.interactionManage._filter.editImage = false;
+
+        if (this.ol.layers.temLayer.getSource().getFeatures().length > 0) {
+            let f = this.ol.layers.temLayer.getSource().getFeatures()[0].clone();
+            let e = f.getGeometry().getExtent();
+            let p0 = this.transformTo4326(e[0], e[1]);
+            let p1 = this.transformTo4326(e[2], e[3]);
+            let extent = [p0[0], p0[1], p1[0], p1[1]]
+            this.setImageData({
+                data: this.temImg,
+                extent: extent
+            });
+        }
+
+        this.ol.map.removeLayer(this.ol.layers.temLayer);
+        this.interactionManage.cancelEditImage();
+
+
+
+    }
+
     ///取消绘制
     cancelDraw() {
         this.interactionManage.cancelDraw();
@@ -457,6 +494,46 @@ export default class MapEditor {
         let f = source.getFeatureById(id);
         source.removeFeature(f);
     }
+
+
+
+    ///根据ID添加要素信息
+    addFeatureById(layer, id, k, v) {
+        let source;
+        if (layer == "build")
+            source = this.ol.layers.buildLayer.getSource();
+        if (layer == "point")
+            source = this.ol.layers.pointLayer.getSource();
+        if (layer == "path")
+            source = this.ol.layers.pathLayer.getSource();
+        if (layer == "polygon")
+            source = this.ol.layers.polygonLayer.getSource();
+        let f = source.getFeatureById(id);
+        f.set(k, v);
+        // source.removeFeature(f);
+    }
+
+    getCenter() {
+        var mapExtent = this.ol.map.getView().calculateExtent(this.ol.map.getSize());
+        var p = ol.extent.getCenter(mapExtent);
+        return this.transformTo4326(p[0], p[1])
+    }
+
+    setCenter(p) {
+        let point = this.transformTo3857(p[0], p[1])
+        this.ol.map.getView().setCenter(point);
+    }
+
+
+    getZoom() {
+        return this.ol.map.getView().getZoom();
+    }
+
+    setZoom(z) {
+        this.ol.map.getView().setZoom(z);
+    }
+
+
 
     ///获取保存后端数据
     getSaveData() {

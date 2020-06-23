@@ -1,7 +1,6 @@
 export class ContextMenu {
     constructor(mapedit) {
         this.mapEditor = mapedit;
-
         this.init()
     }
     init() {
@@ -50,7 +49,10 @@ export class ContextMenu {
 
         this.mapEditor.ol.map.getViewport().addEventListener("contextmenu", (e) => {
 
+
+
             e.preventDefault();
+
 
             if (this.mapEditor.interactionManage.getSelectFeatures().getLength() == 0) {
                 this.mapEditor.cancelDraw();
@@ -74,7 +76,6 @@ export class ContextMenu {
         li.onclick = fun;
         this.contextmenuUl.appendChild(li);
     }
-
 
 
 }

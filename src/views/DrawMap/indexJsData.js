@@ -44,8 +44,14 @@ export default {
     title: "图标",
     slot: "img",
     width: 80
+  },
+  {
+    title: "名称",
+    key: "name"
   }
   ],
+  // poi搜索
+  dataChartDataPoiSearch: "",
   // 数据图表列值
   dataChartColumn: [{
     title: "选择",

@@ -256,3 +256,8 @@
 .app {
   background: hsl(0, 0%, 97%)
 }
+.allIconCon{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

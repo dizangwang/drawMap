@@ -44,6 +44,7 @@
                 mapEditor.drawPoint({
                     img: "../img/poi.png",
                     size: 50,
+                    styleID:"testID"
                 });
             }
 
@@ -244,11 +245,41 @@
                 mapEditor.deleteFeatureById("point", "要素ID （1_point 或者UUID）");
             }
 
+
+            ///根据ID添加要素信息
+            document.getElementById("addFeatureById").onclick = () => {
+                mapEditor.addFeatureById("point","要素ID （1_point 或者UUID）","111111","11111");
+            }
+
             ///获取保存后端数据
             document.getElementById("getSaveData").onclick = () => {
                 console.log(mapEditor.getSaveData());
             }
 
+            ///获取中心点坐标
+            document.getElementById("getCenter").onclick = () => {
+                console.log(mapEditor.getCenter());
+            }
+            ///设置中心点坐标
+            document.getElementById("setCenter").onclick = () => {
+               mapEditor.setCenter([118.7845,32.041]);
+            }
+            ///获取缩放层级
+            document.getElementById("getZoom").onclick = () => {
+                console.log(mapEditor.getZoom());
+            }
+            ///设置缩放层级
+            document.getElementById("setZoom").onclick = () => {
+                mapEditor.setZoom(17);/////图层的缩放等级 16-22
+            }
+            ///编辑图片轮廓
+            document.getElementById("editImage").onclick = () => {
+                mapEditor.editImage("../img/poi.png");
+            }
+            ///编辑图片轮廓
+            document.getElementById("cancelEditImage").onclick = () => {
+                mapEditor.cancelEditImage();
+            }
         } 
     </script>
 
@@ -280,7 +311,15 @@
             <input type="button" value="设置底图数据" id="setImageData">
             <input type="button" value="设置建筑物轮廓数据" id="setBuildData">
             <input type="button" value="根据ID删除要素" id="deleteFeatureById">
+            <input type="button" value="根据ID添加要素信息" id="addFeatureById">
             <input type="button" value="获取保存后端数据" id="getSaveData">
+            <input type="button" value="获取中心点" id="getCenter">
+            <input type="button" value="设置中心点" id="setCenter">
+            <input type="button" value="获取缩放级别" id="getZoom">
+            <input type="button" value="设置缩放级别" id="setZoom">
+            <input type="button" value="编辑图片位置" id="editImage">
+            <input type="button" value="取消编辑图片位置" id="cancelEditImage">
+            
 
             <!-- 比例尺容器 样式可以改 ID写死 -->
             <div id="scaleLine" style="position:absolute; z-index: 999;top: 70px; "></div>

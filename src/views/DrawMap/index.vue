@@ -4,34 +4,31 @@
     <div class="handlerFor">
       <span class="titleName">矢量地图编辑器</span>
       <span>
-      <el-button size="mini" class="handlerButton"  type="primary" @click="themeClick">主题</el-button>
-      <el-button size="mini" class="lf10 handlerButton" type="primary" @click="getAllData">查看属性数据</el-button>
-      <!-- <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>-->
-      <el-button size="mini" class="lf10 handlerButton" type="primary">
-
-        <i class="iconCommon adjust iconSize"></i>调整平面图
+        <el-button size="mini" class="handlerButton" type="primary" @click="themeClick">主题</el-button>
+        <el-button size="mini" class="lf10 handlerButton" type="primary" @click="getAllData">查看属性数据</el-button>
+        <!-- <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>-->
+        <el-button size="mini" class="lf10 handlerButton" type="primary">
+          <i class="iconCommon adjust iconSize"></i>调整平面图
         </el-button>
-      <el-button
-        size="mini"
-        class="lf10 handlerButton"
-        type="primary"
-        @click="floorFinishById"
-      ><i class="iconCommon complete iconSize" v-if="floorFinishStatus=='完成'"></i>{{floorFinishStatus}}</el-button>
-      <el-button size="mini" class="lf10 handlerButton" type="primary"  @click="saveData">
-        <i class="iconCommon iconEye iconSize"></i>预览
-      </el-button>
-      <el-button size="mini" class="lf10 handlerButton" type="primary" @click="saveData">
-        <i class="iconCommon iconSave iconSize"></i>保存
-      </el-button>
-      <el-button size="mini" class="lf10 handlerButton" type="primary" @click="floorMgrPublish">
-        <i class="iconCommon iconPublish iconSize"></i>发布
-      </el-button>
-      <el-button size="mini" class="lf10 handlerButton" type="primary" @click="setFloorInfoClick">
-        <i class="iconCommon iconBuilding iconSize"></i>设置楼层信息
-      </el-button>
-      <!-- <el-input size="mini" class="lf10 searchInput" placeholder="请输入内容">
+        <el-button size="mini" class="lf10 handlerButton" type="primary" @click="floorFinishById">
+          <i class="iconCommon complete iconSize" v-if="floorFinishStatus=='完成'"></i>
+          {{floorFinishStatus}}
+        </el-button>
+        <el-button size="mini" class="lf10 handlerButton" type="primary" @click="saveData">
+          <i class="iconCommon iconEye iconSize"></i>预览
+        </el-button>
+        <el-button size="mini" class="lf10 handlerButton" type="primary" @click="saveData">
+          <i class="iconCommon iconSave iconSize"></i>保存
+        </el-button>
+        <el-button size="mini" class="lf10 handlerButton" type="primary" @click="floorMgrPublish">
+          <i class="iconCommon iconPublish iconSize"></i>发布
+        </el-button>
+        <el-button size="mini" class="lf10 handlerButton" type="primary" @click="setFloorInfoClick">
+          <i class="iconCommon iconBuilding iconSize"></i>设置楼层信息
+        </el-button>
+        <!-- <el-input size="mini" class="lf10 searchInput" placeholder="请输入内容">
         <el-button class="searchButton" slot="append" icon="el-icon-search"></el-button>
-      </el-input> -->
+        </el-input>-->
       </span>
     </div>
 
@@ -92,7 +89,7 @@
                               placeholder="请输入内容"
                             ></el-input>
                           </td>
-                        </tr> -->
+                        </tr>-->
                         <tr>
                           <td>元素ID</td>
                           <td>
@@ -141,16 +138,16 @@
                               @change="styleSelectChange"
                             >
                               <el-option
-                                v-for="(item,index) in elementStyleList"
-                                :key="index"
+                                v-for="(item) in elementStyleList"
+                                :key="item.id"
                                 :label="item.name"
-                                :value="index"
+                                :value="item.id"
                               ></el-option>
                             </el-select>
                             <!-- <i class="el-icon-delete lf10"></i> -->
                           </td>
                         </tr>
-                        <tr>
+                        <tr v-if="!isPoiSelected">
                           <td>填充颜色</td>
                           <td>
                             <el-color-picker
@@ -158,7 +155,7 @@
                               class="colorWidth"
                               show-alpha
                               @change="drawSelectedColorChange"
-                               @active-change="drawSelectedColorChange"
+                              @active-change="drawSelectedColorChange"
                             ></el-color-picker>
                           </td>
                         </tr>
@@ -169,6 +166,17 @@
                               size="small"
                               @change="poiSizeChange"
                               v-model="selectedElement.value.size"
+                              :min="1"
+                            ></el-input-number>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>元素高度</td>
+                          <td>
+                            <el-input-number
+                              size="small"
+                              @change="elementHeightChange"
+                              v-model="selectedElement.value.height"
                               :min="1"
                             ></el-input-number>
                           </td>
@@ -280,10 +288,10 @@
                               placeholder="请选择"
                             >
                               <el-option
-                                v-for="(item,index) in elementStyleList"
-                                :key="index"
+                                v-for="(item) in elementStyleList"
+                                :key="item.id"
                                 :label="item.name"
-                                :value="index"
+                                :value="item.id"
                               ></el-option>
                             </el-select>
                           </td>
@@ -319,7 +327,7 @@
                   <template slot="title">
                     <div class="taskDownInfoCon">
                       <span>
-                        <i class="iconCommon iconSelectElement bigSize"  style="width:12px"></i>
+                        <i class="iconCommon iconSelectElement bigSize" style="width:12px"></i>
                         选择元素
                       </span>
                       <span></span>
@@ -467,7 +475,7 @@
     </el-dialog>
 
     <!-- 到达楼层信息 -->
-    <el-dialog :visible.sync="goFloorNumModal" width="500px" :title="floorNumTitle">
+    <el-dialog :visible.sync="goFloorNumModal" width="600px" :title="floorNumTitle">
       <el-checkbox v-model="goFloorNumCheckAll" @change="goFloorNumAllChange">全选</el-checkbox>
       <el-checkbox-group v-model="goFloorArr" size="medium">
         <el-checkbox-button
@@ -479,15 +487,16 @@
     </el-dialog>
 
     <!-- 所有图标 -->
-    <el-dialog :visible.sync="allIconModal" width="500px" title="所有图标">
-      <div style="overflow:hidden" v-if="iconPreview">
-        <div class="iconMgrItem" style="width:70px;height:70px;float:right">
+    <el-dialog :visible.sync="allIconModal" width="510px" title="所有图标">
+      <!-- v-if="iconPreview" -->
+      <div style="overflow:hidden">
+        <div class="iconMgrItem" style="width:60px;height:60px;float:right;margin-right:15px">
           <img
             :alt="iconPreview.name"
             :title="iconPreview.name"
             :src="iconPreview.imgPath"
-            width="60px"
-            height="60px"
+            width="50px"
+            height="50px"
           />
         </div>
       </div>
@@ -586,7 +595,14 @@
             <el-option value="1" label="图面层"></el-option>
             <el-option value="2" label="POI层"></el-option>
           </el-select>
-          <el-input class="lf10" size="small" placeholder="搜索" show-word-limit />
+          <el-input
+            class="lf10"
+            size="small"
+            v-model="dataChartDataPoiSearch"
+            @input="dataChartDataPoiFilter"
+            placeholder="搜索"
+            show-word-limit
+          />
           <i class="el-icon-delete lf10 cursor" @click="deleteSelectedElement"></i>
         </div>
         <div class="editElementStyle">

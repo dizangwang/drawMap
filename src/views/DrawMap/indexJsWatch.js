@@ -17,6 +17,7 @@ export default {
   goFloorArr(flrArr) {
     var that = this;
     const arr = [];
+
     that.floorArr.forEach((item) => {
       if (flrArr.includes(item.value)) {
         arr.push(item.label);
@@ -29,6 +30,16 @@ export default {
     }
 
     that.facilityToFloor = arr.join(",");
+    that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "floor", that
+      .facilityToFloor);
+  },
+  facilityGroup(group) {
+    var that = this;
+    that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "group", group);
+  },
+  facilityToFloor(floor) {
+    var that = this;
+    that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "floor", floor);
   },
   layerType() {
     this.dataChartSelectedIds = [];
@@ -101,7 +112,7 @@ export default {
     that.getFloorInfoById(val.floorData.properties.id).then((floorInfo) => {
       // 如果包含对角线经纬度信息
       if (floorInfo.lowerRightCornerLatitude && floorInfo.lowerRightCornerLongitude
-         && floorInfo.upperLeftCornerLatitude && floorInfo.upperLeftCornerLongitude) {
+        && floorInfo.upperLeftCornerLatitude && floorInfo.upperLeftCornerLongitude) {
         if (i > 0) {
           that.floorFinishStatus = "完成";
         }

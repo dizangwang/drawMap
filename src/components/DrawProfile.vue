@@ -124,7 +124,10 @@ export default {
         that.editOutLine = initObj.editOutLine;
         Object.keys(that.editOutLine).forEach((key, index) => {
           if (that.editOutLine[key]) {
-            that.floorData[key] = JSON.parse(that.editOutLine[key]);
+            if (typeof that.editOutLine[key] === "string") {
+              that.floorData[key] = JSON.parse(that.editOutLine[key]);
+            }
+
             that.floorData[key].forEach((kkk, num) => {
               const gcj = convert.wgs84_To_gcj02(kkk.lng, kkk.lat);
               that.floorData[key][num] = convert.gcj02_To_bd09(
@@ -135,39 +138,50 @@ export default {
             that.editOutLine[key] = JSON.stringify(that.floorData[key]);
           }
         });
-        let lng = "";
-        let lat = "";
+
+        const lngArr = [];
+        const latArr = [];
         // 把值赋值给floorData
-        Object.keys(that.editOutLine).forEach((key, index) => {
-          if (that.editOutLine[key]) {
+        Object.keys(that.floorData).forEach((key, index) => {
+          if (that.floorData[key]) {
             // that.floorData[key] = JSON.parse(that.editOutLine[key]);
-            lng = that.floorData[key][0].lng;
-            lat = that.floorData[key][0].lat;
+            that.floorData[key].forEach((item) => {
+              lngArr.push(item.lng);
+              latArr.push(item.lat);
+            });
           }
         });
+
         setTimeout(() => {
-          that.map.centerAndZoom(new BMap.Point(lng, lat), 18);
-        }, 1000);
-        if (Object.keys(that.editOutLine).length === 1) {
-          Object.keys(that.editOutLine).forEach((floorNum) => {
-            if (that.editOutLine[floorNum]) {
-              that.createPolygon(JSON.parse(that.editOutLine[floorNum]));
+          const bigLng = Math.max(...lngArr);
+          const bigLat = Math.max(...latArr);
+          const smallLng = Math.min(...lngArr);
+          const smallLat = Math.min(...latArr);
+          that.map.centerAndZoom(
+            new BMap.Point((bigLng + smallLng) / 2, (bigLat + smallLat) / 2),
+            18
+          );
+        }, 1500);
+        if (Object.keys(that.floorData).length === 1) {
+          Object.keys(that.floorData).forEach((floorNum) => {
+            if (that.floorData[floorNum]) {
+              that.createPolygon(that.floorData[floorNum]);
             }
           });
           return;
         }
 
         // 默认渲染F1层
-        if (that.editOutLine.F1) {
-          if (that.editOutLine.F1) {
-            that.createPolygon(JSON.parse(that.editOutLine.F1));
+        if (that.floorData.F1) {
+          if (that.floorData.F1) {
+            that.createPolygon(that.floorData.F1);
           }
         }
 
         // 如果没有F1层有B1层，就渲染B1层
-        if (!that.editOutLine.F1 && that.editOutLine.B1) {
-          if (that.editOutLine.B1) {
-            that.createPolygon(JSON.parse(that.editOutLine.B1));
+        if (!that.floorData.F1 && that.floorData.B1) {
+          if (that.floorData.B1) {
+            that.createPolygon(that.floorData.B1);
           }
         }
       }
@@ -201,19 +215,19 @@ export default {
       var topLeftLontrol = new BMap.ScaleControl({
         anchor: BMAP_ANCHOR_TOP_LEFT
       });
-      map.addControl(topLeftLontrol);
-      map.addControl(topLeftNavigation);
+      that.map.addControl(topLeftLontrol);
+      that.map.addControl(topLeftNavigation);
 
       // 如果有这个参数，就进行定位
       // if (area) {
-      map.centerAndZoom(area, 15);
+      that.map.centerAndZoom(area, 15);
       // } else {
       //   // 初始化地图,设置中心点坐标和地图级别
       //   map.centerAndZoom(new BMap.Point(116.340739, 40.03592), 19);
       // }
 
       // 开启鼠标滚轮缩放
-      map.enableScrollWheelZoom(true);
+      that.map.enableScrollWheelZoom(true);
 
       // 创建室内图实例
       that.indoorManager = new BMapLib.IndoorManager(map, {
@@ -251,7 +265,7 @@ export default {
         afterChangeFloor(e) {
           // 切换时清除所有覆盖物
           that.clearAll();
-          map.clearOverlays();
+          that.map.clearOverlays();
 
           // 指定当前楼层
           that.currentFloor = e.currentFloor;
@@ -559,6 +573,6 @@ export default {
 .rightTopButtonCon {
   position: absolute;
   top: 30px;
-  right: 30px;
+  right: 60px;
 }
 </style>

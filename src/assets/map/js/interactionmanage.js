@@ -13,7 +13,8 @@ export class InterCtionManage {
             build: true,
             point: true,
             path: true,
-            polygon: true
+            polygon: true,
+            editImage: false
         }
 
         ///定义组件
@@ -21,13 +22,17 @@ export class InterCtionManage {
         this.mapEditor.ol.interactions.select = new ol.interaction.Select({
             ///选择控件筛选器
             filter: (f, l) => {
-                if (l == this.mapEditor.ol.layers.buildLayer && this._filter.build)
-                    return true;
-                if (l == this.mapEditor.ol.layers.pointLayer && this._filter.point)
-                    return true;
-                if (l == this.mapEditor.ol.layers.pathLayer && this._filter.path)
-                    return true;
-                if (l == this.mapEditor.ol.layers.polygonLayer && this._filter.polygon)
+                if (!this._filter.editImage) {
+                    if (l == this.mapEditor.ol.layers.buildLayer && this._filter.build)
+                        return true;
+                    if (l == this.mapEditor.ol.layers.pointLayer && this._filter.point)
+                        return true;
+                    if (l == this.mapEditor.ol.layers.pathLayer && this._filter.path)
+                        return true;
+                    if (l == this.mapEditor.ol.layers.polygonLayer && this._filter.polygon)
+                        return true;
+                } else
+                if (l == this.mapEditor.ol.layers.temLayer)
                     return true;
                 return false;
             }
@@ -85,6 +90,8 @@ export class InterCtionManage {
                         value: f,
                     })
                 }
+            } else {
+                this.mapEditor.event.selectFeature(null)
             }
         })
     }
@@ -198,6 +205,8 @@ export class InterCtionManage {
         })
     }
 
+
+
     _drawEnd(f, layer, s = null) {
         let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             var r = Math.random() * 16 | 0,
@@ -206,6 +215,8 @@ export class InterCtionManage {
         });
         f.setId(uuid);
         f.set("id", uuid)
+
+
 
         let layername = "";
         if (layer == "point") {
@@ -260,7 +271,6 @@ export class InterCtionManage {
             layername = "多边形图层";
             f.setStyle(style);
         }
-
         if (layer == "circle") {
             let c = f.getGeometry().flatCoordinates;
             let p1 = [c[0], c[1]];
@@ -345,6 +355,20 @@ export class InterCtionManage {
         this.chanelEdit();
         this.mapEditor.ol.interactions.modify.setActive(true);
         this._startSnap(true);
+    }
+
+    editImage(img) {
+        this.clearSelectFeatures()
+        this.chanelEdit();
+        this.mapEditor.ol.interactions.translate.setActive(true);
+        this.mapEditor.ol.interactions.modify.setActive(true);
+        this._startSnap(true);
+    }
+
+
+    cancelEditImage() {
+        this.clearSelectFeatures()
+        this.chanelEdit();
     }
 
     ///选择要素回调
