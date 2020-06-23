@@ -120,6 +120,7 @@ export default {
       // 判断是否传过来轮廓的经纬度
       if (initObj.editOutLine) {
         that.isSave = true;
+        let i = 0;
         const convert = new howso.CoordConvert();
         that.editOutLine = initObj.editOutLine;
         Object.keys(that.editOutLine).forEach((key, index) => {
@@ -127,7 +128,7 @@ export default {
             if (typeof that.editOutLine[key] === "string") {
               that.floorData[key] = JSON.parse(that.editOutLine[key]);
             }
-
+            i += 1;
             that.floorData[key].forEach((kkk, num) => {
               const gcj = convert.wgs84_To_gcj02(kkk.lng, kkk.lat);
               that.floorData[key][num] = convert.gcj02_To_bd09(
@@ -138,6 +139,9 @@ export default {
             that.editOutLine[key] = JSON.stringify(that.floorData[key]);
           }
         });
+        if (i === 0) {
+          return;
+        }
 
         const lngArr = [];
         const latArr = [];
