@@ -234,5 +234,7 @@ export default {
   // 数据图表搜索
   dataChartDataSearch: "",
   // 从参数中获取的楼宇id
-  buildingId: ""
+  buildingId: "",
+  // 调整平面图
+  adjustImageWord: "调整平面图"
 };

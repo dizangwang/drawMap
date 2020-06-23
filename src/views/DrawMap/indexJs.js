@@ -43,6 +43,24 @@ export default {
   },
   watch: Watch,
   methods: {
+    adjustImage() {
+      var that = this;
+      const layerData = that.mapEditor.getSaveData();
+      if (layerData.imageData.data) {
+        if (that.adjustImageWord === "调整平面图") {
+          that.mapEditor.editImage(layerData.imageData.data);
+          that.adjustImageWord = "完成调整";
+        } else {
+          that.mapEditor.cancelEditImage();
+          that.adjustImageWord = "调整平面图";
+        }
+      } else {
+        that.$message({
+          message: "请先上传底图",
+          type: "warning"
+        });
+      }
+    },
     isComplete() {
       var that = this;
       var i = 0;

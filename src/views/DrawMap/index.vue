@@ -7,8 +7,11 @@
         <el-button size="mini" class="handlerButton" type="primary" @click="themeClick">主题</el-button>
         <el-button size="mini" class="lf10 handlerButton" type="primary" @click="getAllData">查看属性数据</el-button>
         <!-- <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>-->
-        <el-button size="mini" class="lf10 handlerButton" type="primary">
-          <i class="iconCommon adjust iconSize"></i>调整平面图
+         <!-- <el-button size="mini" @click="adjustImageCancel" class="lf10 handlerButton" type="primary">
+          <i class="iconCommon adjust iconSize"></i>结束调整平面图
+        </el-button> -->
+        <el-button size="mini" @click="adjustImage" class="lf10 handlerButton" type="primary">
+          <i class="iconCommon adjust iconSize"></i>{{adjustImageWord}}
         </el-button>
         <el-button size="mini" class="lf10 handlerButton" type="primary" @click="floorFinishById">
           <i class="iconCommon complete iconSize" v-if="floorFinishStatus=='完成'"></i>
@@ -66,7 +69,7 @@
                   <template slot="title">
                     <div class="taskDownInfoCon" @click="selectElementClick">
                       <span>
-                        <i class="iconCommon iconSelectElement bigSize" style="width:12px"></i>选择元素
+                        <i class="iconCommon iconSelectElement bigSize" style="width:12px;margin-right:10px"></i>选择元素
                       </span>
                       <span></span>
                     </div>
