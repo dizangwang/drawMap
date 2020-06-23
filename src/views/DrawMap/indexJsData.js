@@ -236,5 +236,7 @@ export default {
   // 从参数中获取的楼宇id
   buildingId: "",
   // 调整平面图
-  adjustImageWord: "调整平面图"
+  adjustImageWord: "调整平面图",
+  // 完成状态
+  finishStatus: ""
 };

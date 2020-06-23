@@ -15,6 +15,8 @@
         </el-button>
         <el-button size="mini" class="lf10 handlerButton" type="primary" @click="floorFinishById">
           <i class="iconCommon complete iconSize" v-if="floorFinishStatus=='完成'"></i>
+          <i class="iconCommon uncomplete iconSize" v-if="floorFinishStatus=='未完成'"></i>
+
           {{floorFinishStatus}}
         </el-button>
         <el-button size="mini" class="lf10 handlerButton" type="primary" @click="saveData">

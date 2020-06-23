@@ -60,9 +60,16 @@ export default {
     if (!result) {
       return;
     }
-    that.floorFinishStatus = "未完成";
-    const val = JSON.parse(JSON.stringify(result));
 
+    const val = JSON.parse(JSON.stringify(result));
+    that.getFloorInfoById(val.floorData.properties.id).then((floorInfo) => {
+      that.finishStatus = floorInfo.finishStatus;
+      if (that.finishStatus) {
+        that.floorFinishStatus = "未完成";
+      } else {
+        that.floorFinishStatus = "完成";
+      }
+    });
     if (!val.imageData.extent) {
       val.imageData.extent = [];
     } else if (typeof val.imageData.extent === "string") {
@@ -109,19 +116,19 @@ export default {
       }
     });
     // 判断有没有对角线经纬度
-    that.getFloorInfoById(val.floorData.properties.id).then((floorInfo) => {
-      // 如果包含对角线经纬度信息
-      if (floorInfo.lowerRightCornerLatitude && floorInfo.lowerRightCornerLongitude
-        && floorInfo.upperLeftCornerLatitude && floorInfo.upperLeftCornerLongitude) {
-        if (i > 0) {
-          that.floorFinishStatus = "完成";
-        }
-      } else {
-        that.$message({
-          message: "当前楼层缺少对角线经纬度信息",
-          type: "warning"
-        });
-      }
-    });
+    // that.getFloorInfoById(val.floorData.properties.id).then((floorInfo) => {
+    //   // 如果包含对角线经纬度信息
+    //   if (floorInfo.lowerRightCornerLatitude && floorInfo.lowerRightCornerLongitude
+    //     && floorInfo.upperLeftCornerLatitude && floorInfo.upperLeftCornerLongitude) {
+    //     if (i > 0) {
+    //      // that.floorFinishStatus = "完成";
+    //     }
+    //   } else {
+    //     that.$message({
+    //       message: "当前楼层缺少对角线经纬度信息",
+    //       type: "warning"
+    //     });
+    //   }
+    // });
   }
 };

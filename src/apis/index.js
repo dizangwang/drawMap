@@ -38,6 +38,8 @@ const apis = {
   getFloorInfoByBuildingId: `${root}/floorMgr`,
   // 设置楼层完成
   floorFinishById: `${root}/floorMgr/finish/`,
+  // 设置楼层未完成
+  floorUnFinishById: `${root}/floorMgr/unfinish/`,
   // 保存楼层信息
   saveFloor: `${root}/floorMgr/save`,
   // 设置楼层信息

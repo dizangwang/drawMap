@@ -61,7 +61,7 @@ export default {
         });
       }
     },
-    isComplete() {
+    isComplete(fn) {
       var that = this;
       var i = 0;
       const layerData = that.mapEditor.getSaveData();
@@ -69,6 +69,12 @@ export default {
       // 判断是否有底图
       if (layerData.imageData.data) {
         i += 1;
+      } else {
+        that.$message({
+          message: "楼层缺少底图",
+          type: "warning"
+        });
+        return;
       }
       // 判断有没有元素数据
       let y = 0;
@@ -79,6 +85,12 @@ export default {
       });
       if (y > 0) {
         i += 1;
+      } else {
+        that.$message({
+          message: "楼层至少存在一条元素数据",
+          type: "warning"
+        });
+        return;
       }
       // 判断是否有对角线经纬度
       that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((floorInfo) => {
@@ -86,10 +98,16 @@ export default {
         if (floorInfo.lowerRightCornerLatitude && floorInfo.lowerRightCornerLongitude
           && floorInfo.upperLeftCornerLatitude && floorInfo.upperLeftCornerLongitude) {
           i += 1;
+        } else {
+          that.$message({
+            message: "楼层缺少对角线经纬度信息",
+            type: "warning"
+          });
+          return;
         }
         // console.log(i);
         if (i >= 3) {
-          that.floorFinishStatus = "完成";
+          fn();
         }
       });
     },
@@ -251,7 +269,7 @@ export default {
       const layerData = that.mapEditor.getSaveData();
       // 点击发布，判断地图是否已保存且状态为完成
       if (that.compareData(that.activeFloorData, layerData) && that.compareData(layerData, that
-        .activeFloorData) && that.floorFinishStatus === "完成") {
+        .activeFloorData) && that.floorFinishStatus === "未完成") {
         that
           .ajax({
             method: "post",
@@ -289,7 +307,7 @@ export default {
           });
         return;
       }
-      if (that.floorFinishStatus !== "完成") {
+      if (that.floorFinishStatus === "完成") {
         that
           .$confirm("是否切换状态为完成后发布？", "提示", {
             confirmButtonText: "确定",
@@ -301,32 +319,63 @@ export default {
     // 设置楼层完成
     floorFinishById() {
       var that = this;
-      if (that.floorFinishStatus === "未完成") {
-        return;
-      }
-      that.saveDataCallBack(() => {
-        that
-          .ajax({
-            method: "post",
-            url: that.apis.floorFinishById + that.activeFloorData.floorData.properties.id,
-            data: {}
-          })
-          .then((res) => {
-            const {
-              data
-            } = res;
-            if (data.code === 200) {
-              that.$message({
-                message: "操作成功",
-                type: "success"
+      that.isComplete(() => {
+        if (that.floorFinishStatus === "完成") {
+          that.saveDataCallBack(() => {
+            that
+              .ajax({
+                method: "post",
+                url: that.apis.floorFinishById + that.activeFloorData.floorData.properties
+                  .id,
+                data: {}
+              })
+              .then((res) => {
+                const {
+                  data
+                } = res;
+                if (data.code === 200) {
+                  that.$message({
+                    message: "操作成功",
+                    type: "success"
+                  });
+                  that.loadFloor();
+                } else {
+                  that.$message({
+                    message: data.msg,
+                    type: "warning"
+                  });
+                }
               });
-            } else {
-              that.$message({
-                message: data.msg,
-                type: "warning"
-              });
-            }
           });
+        } else {
+          that.saveDataCallBack(() => {
+            that
+              .ajax({
+                method: "post",
+                url: that.apis.floorUnFinishById + that.activeFloorData.floorData
+                  .properties
+                  .id,
+                data: {}
+              })
+              .then((res) => {
+                const {
+                  data
+                } = res;
+                if (data.code === 200) {
+                  that.$message({
+                    message: "操作成功",
+                    type: "success"
+                  });
+                  that.loadFloor();
+                } else {
+                  that.$message({
+                    message: data.msg,
+                    type: "warning"
+                  });
+                }
+              });
+          });
+        }
       });
     },
     // 保存数据后的回调
@@ -353,7 +402,6 @@ export default {
           } = res;
           if (data.code === 200) {
             fn();
-
             that.loadFloor();
           } else {
             that.$message({
@@ -896,9 +944,7 @@ export default {
       // 绘制要素回调事件
       that.mapEditor.drawFeature((e) => {
         // console.log(e)
-        setTimeout(() => {
-          that.isComplete();
-        }, 1000);
+
         that.targetDrawedElement = e;
 
         // 绘制多边形的时候
