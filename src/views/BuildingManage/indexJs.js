@@ -489,8 +489,8 @@ export default {
     // 表格操作栏-按钮-下载-弹窗-确定--点击事件
     downOkClick() {
       var that = this;
-      that.formatModal = false;
       var promiseArr = [];
+      that.formatModal = false;
       that.buildingForDownloadArr.forEach((item, index) => {
         const promise = new Promise(((resolve) => {
           that.getFloorOutlineByBuildingId(item.id, (data) => {

@@ -228,7 +228,7 @@ export default {
       that.editOutLine = {};
       Object.keys(lineData).forEach((item, index) => {
         that.editOutLine[item] = JSON.stringify(lineData[item]);
-        var floorNum = "";
+        let floorNum = "";
         if (item.indexOf("F") > -1) {
           floorNum = +item.replace("F", "");
         }

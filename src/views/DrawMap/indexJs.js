@@ -574,7 +574,8 @@ export default {
     addIconClick() {
       var that = this;
       that.allIconModal = true;
-      that.iconPreview = that.allIconsArr[0];
+      const [obj] = that.allIconsArr[0];
+      that.iconPreview = obj;
     },
     // 图标管理
     commonIconClick(item, index) {
@@ -647,13 +648,14 @@ export default {
     // 监听样式选择器变动
     styleSelectChange(styleIndex) {
       var that = this;
+      var style = "";
       that.iconActiveNum = "";
       that.drawActiveType = "";
       if (styleIndex === "") {
         that.selectedElement.value.fillColor = "";
         return;
       }
-      var style = "";
+
       if (styleIndex) {
         that.elementStyleList.forEach((item) => {
           if (item.id === styleIndex) {
@@ -1059,6 +1061,8 @@ export default {
     // 绘制矩形
     drawRect() {
       var that = this;
+      var obj = {};
+      var style = "";
       if (that.drawActiveType === 1) {
         that.drawActiveType = "";
         that.iconActiveNum = "";
@@ -1067,8 +1071,6 @@ export default {
       }
       that.drawActiveType = 1;
       that.iconActiveNum = "";
-      var obj = {};
-      var style = "";
       that.elementStyleList.forEach((item) => {
         if (item.id === that.preDrawStyle) {
           style = item;
@@ -1113,6 +1115,8 @@ export default {
     // 绘制面要素
     drawpolygon() {
       var that = this;
+      var obj = {};
+      var style = "";
       if (that.drawActiveType === 3) {
         that.drawActiveType = "";
         that.iconActiveNum = "";
@@ -1122,8 +1126,6 @@ export default {
       that.iconActiveNum = "";
       that.selectedElement.id = "";
       that.drawActiveType = 3;
-      var obj = {};
-      var style = "";
       that.elementStyleList.forEach((item) => {
         if (item.id === that.preDrawStyle) {
           style = item;
@@ -1153,6 +1155,8 @@ export default {
     // 绘制圆
     drawcircle() {
       var that = this;
+      var obj = {};
+      var style = "";
       if (that.drawActiveType === 2) {
         that.drawActiveType = "";
         that.iconActiveNum = "";
@@ -1161,8 +1165,6 @@ export default {
       }
       that.iconActiveNum = "";
       that.drawActiveType = 2;
-      var obj = {};
-      var style = "";
       that.elementStyleList.forEach((item) => {
         if (item.id === that.preDrawStyle) {
           style = item;
@@ -1232,11 +1234,7 @@ export default {
             extent: [left[0], right[1], right[0], left[1]]
           });
           that.hasUnderPainting = true;
-          const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-            var r = Math.random() * 16 | 0;
-            var v = c === "x" ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-          });
+          const uuid = that.utils.getUUID();
           that.mapEditor.setBuildData({
             type: "Feature",
             geometry: {
@@ -1275,11 +1273,7 @@ export default {
             //   .lat));
             coordinates.push([item.lng, item.lat]);
           });
-          const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-            var r = Math.random() * 16 || 0;
-            var v = c === "x" ? r : (r && 0x3 || 0x8);
-            return v.toString(16);
-          });
+          const uuid = that.utils.getUUID();
           // 获取最大经纬度   最小经纬度
           const bigLng = Math.max(...lngArr);
           const bigLat = Math.max(...latArr);

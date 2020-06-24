@@ -383,7 +383,7 @@ export default {
           if (data.code === 200) {
             // 获取flag
             that.downloadFlag = data.msg;
-            var arr = [];
+            const arr = [];
             // 循环任务对象列表 包括单个和列表勾选的
             that.downloadTaskObjArr.forEach((element, num) => {
               if (that.downloadTaskObjArr[num].downloadBuildingArrs) {
@@ -516,10 +516,10 @@ export default {
     // 根据任务id查询楼宇列表；
     getBuildingByTaskId() {
       var that = this;
+      var promiseObjArr = [];
       that.downloadLoading = true;
       that.collapseActiveName = "1";
       that.downloadTaskObjArrCopy = [];
-      var promiseObjArr = [];
       that.downloadTaskObjArr.forEach((itm, indexNum) => {
         const promiseObj = new Promise(((relve) => {
           const param = {};
