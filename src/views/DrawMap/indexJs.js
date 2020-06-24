@@ -76,7 +76,7 @@ export default {
         });
         return;
       }
-      // 判断有没有元素数据
+      // 判断有没有要素数据
       let y = 0;
       Object.keys(layerData.layerData).forEach((key) => {
         if (layerData.layerData[key].features.length > 0) {
@@ -87,7 +87,7 @@ export default {
         i += 1;
       } else {
         that.$message({
-          message: "楼层至少存在一条元素数据",
+          message: "楼层至少存在一条要素数据",
           type: "warning"
         });
         return;
@@ -235,7 +235,7 @@ export default {
           });
       }
     },
-    // 搜索数据图表信息面元素
+    // 搜索数据图表信息面要素
     dataChartDataFilter(pName) {
       var that = this;
       const data = that.mapEditor.getData("polygon");
@@ -472,7 +472,7 @@ export default {
         size
       });
     },
-    // 元素高度变动
+    // 要素高度变动
     elementHeightChange(height) {
       var that = this;
       that.iconActiveNum = "";
@@ -490,7 +490,7 @@ export default {
         that.mapEditor.addFeatureById("point", that.selectedElement.id, "height", height);
       }
     },
-    // 点击选择元素
+    // 点击选择要素
     selectElementClick() {
       this.mapEditor.cancelDraw();
     },
@@ -718,7 +718,7 @@ export default {
         that.selectedElement.value.color = style.borderColor;
       }
     },
-    // 监听元素color变动
+    // 监听要素color变动
     drawSelectedColorChange(col) {
       var that = this;
       var color = col;
@@ -762,7 +762,7 @@ export default {
         that.selectedElement.value.color = color;
       }
     },
-    // 监听元素name变动
+    // 监听要素name变动
     drawSelectedNameInput(name) {
       var that = this;
       that.iconActiveNum = "";
@@ -817,7 +817,7 @@ export default {
       that.dataChartPOIData = that.mapEditor.getData("point");
     },
 
-    // 路径-绘制元素-直梯
+    // 路径-绘制要素-直梯
     verticalFloorClick() {
       var that = this;
       if (that.drawActiveLine === 1) {
@@ -835,7 +835,7 @@ export default {
       that.drawActiveLine = 1;
       that.isDrawLine = false;
     },
-    // 路径-绘制元素-扶梯
+    // 路径-绘制要素-扶梯
     holdFloorClick() {
       var that = this;
       if (that.drawActiveLine === 2) {
@@ -853,7 +853,7 @@ export default {
       that.drawActiveLine = 2;
       that.isDrawLine = false;
     },
-    // 路径-绘制元素-楼梯
+    // 路径-绘制要素-楼梯
     commonFloorClick() {
       var that = this;
       if (that.drawActiveLine === 3) {
@@ -1035,12 +1035,12 @@ export default {
       var that = this;
       that.mapEditor.zoomIn();
     },
-    // 绘制点元素
+    // 绘制点要素
     drawPoint() {
       var that = this;
       that.mapEditor.drawPoint();
     },
-    // 绘制线元素
+    // 绘制线要素
     drawLine() {
       var that = this;
       if (that.isDrawLine) {
@@ -1096,7 +1096,7 @@ export default {
       });
     },
 
-    // 设置面元素的样式
+    // 设置面要素的样式
     setPolygonStyle(id) {
       var that = this;
       that.mapEditor.setPolygonStyle(id, {
@@ -1110,7 +1110,7 @@ export default {
       });
     },
 
-    // 绘制面元素
+    // 绘制面要素
     drawpolygon() {
       var that = this;
       if (that.drawActiveType === 3) {
@@ -1361,7 +1361,7 @@ export default {
         });
     },
 
-    // 获取所有元素样式
+    // 获取所有要素样式
     getElementStyles() {
       var that = this;
       that

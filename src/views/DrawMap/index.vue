@@ -4,8 +4,11 @@
     <div class="handlerFor">
       <span class="titleName">矢量地图编辑器</span>
       <span>
-        <el-button size="mini" class="handlerButton" type="primary" @click="themeClick">主题</el-button>
-        <el-button size="mini" class="lf10 handlerButton" type="primary" @click="getAllData">查看属性数据</el-button>
+
+        <el-button size="mini" class="handlerButton" type="primary" @click="themeClick">
+          <i class="iconCommon themeIcon iconSize"></i>主题</el-button>
+        <el-button size="mini" class="lf10 handlerButton" type="primary" @click="getAllData">
+          <i class="iconCommon propotyIcon iconSize"></i>查看属性数据</el-button>
         <!-- <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>-->
          <!-- <el-button size="mini" @click="adjustImageCancel" class="lf10 handlerButton" type="primary">
           <i class="iconCommon adjust iconSize"></i>结束调整平面图
@@ -65,13 +68,13 @@
           <div style="flex:1;overflow:auto">
             <!-- 绘制模块 -->
             <div v-show="tabNum==1">
-              <!-- 选择元素部分 -->
+              <!-- 选择要素部分 -->
               <el-collapse class="taskDown" accordion>
                 <el-collapse-item>
                   <template slot="title">
                     <div class="taskDownInfoCon" @click="selectElementClick">
                       <span>
-                        <i class="iconCommon iconSelectElement bigSize" style="width:12px;margin-right:10px"></i>选择元素
+                        <i class="iconCommon iconSelectElement bigSize" style="width:12px;margin-right:10px"></i>选择要素
                       </span>
                       <span></span>
                     </div>
@@ -79,12 +82,12 @@
                   <div>
                     <el-card body-style="{border:0}" shadow="never">
                       <div v-show="!selectedElement.id">
-                        <div class="center">请在底图上选择要编辑的元素</div>
-                        <!-- <div class="center">（按住crtl键可以选择多个元素）</div> -->
+                        <div class="center">请在底图上选择要编辑的要素</div>
+                        <!-- <div class="center">（按住crtl键可以选择多个要素）</div> -->
                       </div>
                       <table class="formTable" v-show="selectedElement.id">
                         <!-- <tr>
-                          <td>元素类型</td>
+                          <td>要素类型</td>
                           <td>
                             <el-input
                               class="leftInputWid"
@@ -96,7 +99,7 @@
                           </td>
                         </tr>-->
                         <tr>
-                          <td>元素ID</td>
+                          <td>要素ID</td>
                           <td>
                             <el-input
                               class="leftInputWid"
@@ -120,7 +123,7 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>元素名称</td>
+                          <td>要素名称</td>
                           <td>
                             <el-input
                               class="leftInputWid"
@@ -132,7 +135,7 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>元素样式</td>
+                          <td>要素样式</td>
                           <td>
                             <el-select
                               clearable
@@ -176,7 +179,7 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>元素高度</td>
+                          <td>要素高度</td>
                           <td>
                             <el-input-number
                               size="small"
@@ -238,7 +241,7 @@
                     <div class="taskDownInfoCon">
                       <span>
                         <i class="iconCommon iconDrawElement bigSize"></i>
-                        绘制元素
+                        绘制要素
                       </span>
                       <span></span>
                     </div>
@@ -283,7 +286,7 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>元素样式</td>
+                          <td>要素样式</td>
                           <td>
                             <el-select
                               class="leftInputWid"
@@ -302,7 +305,7 @@
                           </td>
                         </tr>
                         <tr>
-                          <td>元素高度</td>
+                          <td>要素高度</td>
                           <td>
                             <el-input-number
                               v-model="elementHeight"
@@ -333,7 +336,7 @@
                     <div class="taskDownInfoCon">
                       <span>
                         <i class="iconCommon iconSelectElement bigSize" style="width:12px"></i>
-                        选择元素
+                        选择要素
                       </span>
                       <span></span>
                     </div>
@@ -341,12 +344,12 @@
                   <div>
                     <el-card body-style="{border:0}" shadow="never">
                       <div v-show="!facilityTypeTarget.id&&!isLineLayerSeleced">
-                        <div class="center">请在底图上选择元素</div>
-                        <!-- <div class="center">（按住crtl键可以选择多个元素）</div> -->
+                        <div class="center">请在底图上选择要素</div>
+                        <!-- <div class="center">（按住crtl键可以选择多个要素）</div> -->
                       </div>
                       <div v-show="isLineLayerSeleced">
                         <div class="center" style="color:red">右键菜单可删除选中线段</div>
-                        <!-- <div class="center">（按住crtl键可以选择多个元素）</div> -->
+                        <!-- <div class="center">（按住crtl键可以选择多个要素）</div> -->
                       </div>
 
                       <table class="formTable" v-show="facilityTypeTarget.id">
@@ -397,7 +400,7 @@
                     <div class="taskDownInfoCon">
                       <span>
                         <i class="iconCommon iconDrawElement bigSize"></i>
-                        绘制元素
+                        绘制要素
                       </span>
                       <span></span>
                     </div>
@@ -531,7 +534,7 @@
     <el-dialog :visible.sync="editElementStyleModal" width="500px" title="编辑主题样式">
       <table class="wd100">
         <tr>
-          <td class="rightLebal">元素样式：</td>
+          <td class="rightLebal">要素样式：</td>
           <td>
             <div class="center">
               <el-input

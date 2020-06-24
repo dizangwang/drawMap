@@ -76,7 +76,7 @@ export default {
   ],
   // 数据图表信息弹窗
   dataChartInfoModal: false,
-  // 元素样式列数据
+  // 要素样式列数据
   elementStyleColumn: [{
     title: "选择",
     type: "selection",
@@ -123,11 +123,11 @@ export default {
   setFloorInfoModal: false,
   // 左侧-顶部-tab栏
   tabNum: 1,
-  // 元素高度
+  // 要素高度
   elementHeight: 0,
   // 标注高度
   markHeight: 0,
-  // 元素样式
+  // 要素样式
   elementStyle: "",
   // 右侧地图高度
   height: "",
@@ -143,7 +143,7 @@ export default {
   activeFloorData: {},
   // 地图编辑器
   mapEditor: "",
-  // 选中的元素
+  // 选中的要素
   selectedElement: {
     layername: "",
     id: "",
@@ -159,9 +159,9 @@ export default {
   },
   // 当前选中的要绘制的要素
   drawActiveType: "",
-  // 绘制完元素后获得的元素信息
+  // 绘制完要素后获得的要素信息
   targetDrawedElement: "",
-  // 路径-绘制元素-楼梯类型
+  // 路径-绘制要素-楼梯类型
   drawActiveLine: "",
   // 是否有底图
   hasUnderPainting: true,
@@ -177,9 +177,9 @@ export default {
   },
   // 样式绘制前选择的样式id
   preDrawStyle: "",
-  // 元素样式列表数据
+  // 要素样式列表数据
   elementStyleListCopy: [],
-  // 元素样式列表
+  // 要素样式列表
   elementStyleList: [{
     id: "1",
     name: "red",
