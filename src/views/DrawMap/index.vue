@@ -481,7 +481,7 @@
 
     <!-- 到达楼层信息 -->
     <el-dialog :visible.sync="goFloorNumModal" width="600px" :title="floorNumTitle">
-      <el-checkbox v-model="goFloorNumCheckAll" @change="goFloorNumAllChange">全选</el-checkbox>
+      <!-- <el-checkbox v-model="goFloorNumCheckAll" @change="goFloorNumAllChange">全选</el-checkbox> -->
       <el-checkbox-group v-model="goFloorArr" size="medium">
         <el-checkbox-button
           v-for="(item) in floorArr"

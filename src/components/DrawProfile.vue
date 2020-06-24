@@ -449,7 +449,7 @@ export default {
       // 绘制结束回调方法
       var overlaycomplete = (e) => {
         that.activeLonLatData = e.overlay.Tn || e.overlay.la || e.overlay.ka || e.overlay.ao;
-        // console.log(that.activeLonLatData, that.indoorManager.getFloor());
+        // console.log(e);
         var currentFloor = that.indoorManager.getFloor();
         if (!currentFloor) {
           // console.log(that.currentFloor);
