@@ -65,6 +65,5 @@ module.exports = {
     "no-mixed-operators":0,
     "no-unexpected-multiline":0,
     "no-bitwise":0
-    // "prefer-destructuring":0
   }
 };
