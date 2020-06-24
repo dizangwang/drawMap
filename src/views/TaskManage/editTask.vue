@@ -124,9 +124,9 @@ import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "Header",
-  computed: {
-    ...mapGetters(["userInfo", "taskTypes"])
-  },
+  // computed: {
+  //   ...mapGetters(["userInfo", "taskTypes"])
+  // },
 
   data() {
     return {
@@ -169,6 +169,9 @@ export default {
       // 任务id
       id: "",
 
+      // 类型列表
+      taskTypes: [],
+
       // 任务详情对象
       detailData: {}
     };
@@ -179,6 +182,7 @@ export default {
     init(id) {
       var that = this;
       that.id = id;
+      that.getAllTypes();
       that.$refs.formValidate.resetFields();
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
@@ -189,6 +193,27 @@ export default {
           that.getTaskById(id);
         });
       });
+    },
+    // 获取任务类型放到vuex中
+    getAllTypes() {
+      var that = this;
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.getAllTypes,
+          data: {}
+        })
+        .then((res) => {
+          const { data } = res;
+          if (data.code === 200) {
+            that.taskTypes = data.data;
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
     },
 
     // 根据任务id获取详情
@@ -268,6 +293,8 @@ export default {
         });
       } else {
         that.cityId = that.detailData.cityId;
+        that.formValidate.cityId = "";
+        that.formValidate.districtId = "";
       }
     },
 

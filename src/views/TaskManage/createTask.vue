@@ -124,9 +124,9 @@ import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "Header",
-  computed: {
-    ...mapGetters(["userInfo", "taskTypes"])
-  },
+  // computed: {
+  //   ...mapGetters(["userInfo", "taskTypes"])
+  // },
 
   data() {
     return {
@@ -150,7 +150,7 @@ export default {
       districtList: [],
 
       // 任务类型列表
-      taskTypeList: [],
+      taskTypes: [],
 
       // 校验规则
       ruleValidate: {
@@ -176,7 +176,7 @@ export default {
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
       });
-
+      that.getAllTypes();
       that.getAreasWithPid("", (data) => {
         that.provinceList = data;
       });
@@ -185,6 +185,27 @@ export default {
     // 取消事件
     cancelClick() {
       this.$emit("cancel");
+    },
+    // 获取任务类型放到vuex中
+    getAllTypes() {
+      var that = this;
+      that
+        .ajax({
+          method: "get",
+          url: that.apis.getAllTypes,
+          data: {}
+        })
+        .then((res) => {
+          const { data } = res;
+          if (data.code === 200) {
+            that.taskTypes = data.data;
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        });
     },
 
     // 监听城市变动

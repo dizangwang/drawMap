@@ -11,9 +11,9 @@ import EditTask from "./editTask.vue";
 
 export default {
   name: "Login",
-  computed: {
-    ...mapGetters(["userInfo", "taskTypes"])
-  },
+  // computed: {
+  //   ...mapGetters(["userInfo", "taskTypes"])
+  // },
   components: {
     CreateTask,
     EditTask
@@ -124,8 +124,9 @@ export default {
       // 是否请求超时
       isTimeout: false,
       // 左下角下载按钮展示
-      leftBottomTaskDownShow: false
-
+      leftBottomTaskDownShow: false,
+      // 任务类型列表
+      taskTypes: []
     };
   },
   mounted() {
@@ -353,6 +354,7 @@ export default {
               type: "warning"
             });
             that.downTaskModal = false;
+            that.downloadLoading = false;
           }
         })
         .catch((error) => {
@@ -543,7 +545,9 @@ export default {
                   records.forEach((item, index) => {
                     const promise = new Promise((resolve) => {
                       // 根据楼宇id获取
-                      that.getFloorOutlineByBuildingId(item.id, (resultData) => {
+                      that.getFloorOutlineByBuildingId(item.id, (
+                        resultData
+                      ) => {
                         records[index].floors = resultData;
                         that.downloadTaskObjArr[indexNum]
                           .downloadBuildingArrs = records;
@@ -680,8 +684,8 @@ export default {
             data
           } = res;
           if (data.code === 200) {
-            that.taskTypeList = data.data;
-            that.setTaskTypes(data.data);
+            that.taskTypes = data.data;
+            // that.setTaskTypes(data.data);
           } else {
             that.$message({
               message: data.msg,
