@@ -59,9 +59,9 @@ module.exports = {
     "linebreak-style": ["off", "windows"],
     "no-var": 0,
     quotes: ["error", "double", { allowTemplateLiterals: true }],
-    "no-unused-vars": 0,
-    "no-undef": 0,
-    "vars-on-top": 0,
-    "no-mixed-operators":0
+    // "no-unused-vars": 0,
+    // "no-undef": 0,
+    // "vars-on-top": 0,
+    // "no-mixed-operators":0
   }
 };
