@@ -122,7 +122,7 @@
             ///设置点样式
             document.getElementById("setPointStyle").onclick = () => {
                 mapEditor.setPointStyle("要素ID （1_point 或者UUID）", {
-                    img: "./img/poi.png",
+                    img: "../img/poi.png",
                     size: 50,
 
                 });
@@ -206,7 +206,7 @@
             ///设置底图数据
             document.getElementById("setImageData").onclick = () => {
                 mapEditor.setImageData({
-                    data: "./img/poi.png",
+                    data: "../img/poi.png",
                     extent: [118.783, 32.04, 118.786, 32.042]
                 });
             }
@@ -274,7 +274,7 @@
             }
             ///编辑图片轮廓
             document.getElementById("editImage").onclick = () => {
-                mapEditor.editImage("./img/poi.png");
+                mapEditor.editImage("../img/1.png");
             }
             ///编辑图片轮廓
             document.getElementById("cancelEditImage").onclick = () => {
