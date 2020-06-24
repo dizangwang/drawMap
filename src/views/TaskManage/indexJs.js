@@ -352,6 +352,7 @@ export default {
               message: data.msg,
               type: "warning"
             });
+            that.downTaskModal = false;
           }
         })
         .catch((error) => {

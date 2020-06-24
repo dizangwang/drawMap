@@ -901,6 +901,23 @@ export default {
               width: ""
             }
           };
+          that.facilityTypeTarget = {
+            id: "",
+            layername: "",
+            value: {
+              borderColor: "",
+              fillColor: "",
+              font: "",
+              fontBorderColor: "",
+              fontFillColor: "",
+              height: "",
+              id: "",
+              name: "",
+              styleID: "",
+              typeID: "",
+              width: ""
+            }
+          };
           that.isPoiSelected = false;
           that.drawActiveType = "";
           that.iconActiveNum = "";
