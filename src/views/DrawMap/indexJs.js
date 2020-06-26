@@ -48,9 +48,11 @@ export default {
       const layerData = that.mapEditor.getSaveData();
       if (layerData.imageData.data) {
         if (that.adjustImageWord === "调整平面图") {
+          that.mapEditor.setLayerDisplay("build", true);
           that.mapEditor.editImage(layerData.imageData.data);
           that.adjustImageWord = "完成调整";
         } else {
+          that.mapEditor.setLayerDisplay("build", false);
           that.mapEditor.cancelEditImage();
           that.adjustImageWord = "调整平面图";
         }
@@ -304,6 +306,50 @@ export default {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning"
+          }).then(() => {
+            that.saveDataCallBack(() => {
+              that
+                .ajax({
+                  method: "post",
+                  url: that.apis.floorFinishById + that.activeFloorData.floorData
+                    .properties
+                    .id,
+                  data: {}
+                })
+                .then((res1) => {
+                  const data1 = res1.data;
+                  if (data1.code === 200) {
+                    that
+                      .ajax({
+                        method: "post",
+                        url: that.apis.floorMgrPublish,
+                        data: {
+                          id: that.activeFloorData.floorData.properties.id
+                        }
+                      })
+                      .then((res2) => {
+                        const data2 = res2.data;
+                        if (data2.code === 200) {
+                          that.$message({
+                            message: "发布成功",
+                            type: "success"
+                          });
+                          that.loadFloor();
+                        } else {
+                          that.$message({
+                            message: data2.msg,
+                            type: "warning"
+                          });
+                        }
+                      });
+                  } else {
+                    that.$message({
+                      message: data1.msg,
+                      type: "warning"
+                    });
+                  }
+                });
+            });
           });
         return;
       }
@@ -313,6 +359,50 @@ export default {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning"
+          }).then(() => {
+            that.saveDataCallBack(() => {
+              that
+                .ajax({
+                  method: "post",
+                  url: that.apis.floorFinishById + that.activeFloorData.floorData
+                    .properties
+                    .id,
+                  data: {}
+                })
+                .then((res3) => {
+                  const data3 = res3.data;
+                  if (data3.code === 200) {
+                    that
+                      .ajax({
+                        method: "post",
+                        url: that.apis.floorMgrPublish,
+                        data: {
+                          id: that.activeFloorData.floorData.properties.id
+                        }
+                      })
+                      .then((res4) => {
+                        const data4 = res4.data;
+                        if (data4.code === 200) {
+                          that.$message({
+                            message: "发布成功",
+                            type: "success"
+                          });
+                          that.loadFloor();
+                        } else {
+                          that.$message({
+                            message: data4.msg,
+                            type: "warning"
+                          });
+                        }
+                      });
+                  } else {
+                    that.$message({
+                      message: data3.msg,
+                      type: "warning"
+                    });
+                  }
+                });
+            });
           });
       }
     },
@@ -666,7 +756,7 @@ export default {
       if (that.selectedElement.layername === "多边形图层") {
         that.mapEditor.setPolygonStyle(that.selectedElement.id, {
           name: that.selectedElement.value.name,
-          width: that.selectedElement.value.width,
+          width: style.borderWidth,
           fillColor: style.fillColor,
           styleID: style.id,
           borderColor: style.borderColor,
@@ -830,7 +920,7 @@ export default {
       }
       that.mapEditor.drawPoint({
         img: "./icon/verticalFloor.png",
-        size: 30
+        size: 31
       });
       that.isDrawfacibility = true;
       that.floorNumTitle = "通行设施设置-直梯";
@@ -849,7 +939,7 @@ export default {
       that.isDrawfacibility = true;
       that.mapEditor.drawPoint({
         img: "./icon/holdFloor.png",
-        size: 30
+        size: 31
       });
       that.floorNumTitle = "通行设施设置-扶梯";
       that.drawActiveLine = 2;
@@ -868,7 +958,7 @@ export default {
       that.isDrawfacibility = true;
       that.mapEditor.drawPoint({
         img: "./icon/floor.png",
-        size: 30
+        size: 31
       });
       that.drawActiveLine = 3;
       that.isDrawLine = false;
@@ -882,10 +972,39 @@ export default {
         container: "mapInDoor",
         data: mapData
       });
+      that.mapEditor.setLayerDisplay("build", false);
       // /选择要素回调事件
       that.mapEditor.selectFeature((e) => {
         // console.log(e)
+        const emptyObj = {
+          id: "",
+          layername: "",
+          value: {
+            borderColor: "",
+            fillColor: "",
+            font: "",
+            fontBorderColor: "",
+            fontFillColor: "",
+            height: "",
+            id: "",
+            name: "",
+            styleID: "",
+            typeID: "",
+            width: ""
+          }
+        };
         if (!e) {
+          that.selectedElement = emptyObj;
+          that.facilityTypeTarget = emptyObj;
+          that.isPoiSelected = false;
+          that.drawActiveType = "";
+          that.iconActiveNum = "";
+          that.isDrawLine = "";
+          that.drawActiveLine = "";
+          that.isLineLayerSeleced = false;
+          return;
+        }
+        if (e.layername === "建筑物图层") {
           that.selectedElement = {
             id: "",
             layername: "",
@@ -903,29 +1022,6 @@ export default {
               width: ""
             }
           };
-          that.facilityTypeTarget = {
-            id: "",
-            layername: "",
-            value: {
-              borderColor: "",
-              fillColor: "",
-              font: "",
-              fontBorderColor: "",
-              fontFillColor: "",
-              height: "",
-              id: "",
-              name: "",
-              styleID: "",
-              typeID: "",
-              width: ""
-            }
-          };
-          that.isPoiSelected = false;
-          that.drawActiveType = "";
-          that.iconActiveNum = "";
-          that.isDrawLine = "";
-          that.drawActiveLine = "";
-          that.isLineLayerSeleced = false;
           return;
         }
 
@@ -938,22 +1034,20 @@ export default {
         that.isLineLayerSeleced = false;
         if (e.layername === "POI图层") {
           that.isPoiSelected = true;
-          if (that.tabNum === 2) {
-            if (/\/icon\//.test(e.value.img)) {
-              that.facilityTypeTarget = e;
-              that.facilityToFloor = that.facilityTypeTarget.value.floor;
-              that.facilityGroup = that.facilityTypeTarget.value.group;
-            }
+          if (/\/icon\//.test(e.value.img) || e.value.size === 31) {
+            that.facilityTypeTarget = e;
+            that.facilityToFloor = that.facilityTypeTarget.value.floor;
+            that.facilityGroup = that.facilityTypeTarget.value.group;
+            that.selectedElement = emptyObj;
+          } else {
+            that.selectedElement = e;
+            that.facilityTypeTarget = emptyObj;
           }
-          that.selectedElement = e;
-          that.selectedElement.value.fillColor = "#ffffff";
         }
         if (e.layername === "多边形图层") {
           that.selectedElement = e;
         }
-        if (e.layername === "建筑物图层") {
-          that.selectedElement = e;
-        }
+
         if (e.layername === "路径图层") {
           that.isLineLayerSeleced = true;
           that.selectedElement = e;
@@ -967,21 +1061,24 @@ export default {
         that.targetDrawedElement = e;
 
         // 绘制多边形的时候
-        if (that.drawActiveType === 3) {
+        if (e.layername === "多边形图层") {
           that.selectedElement = e;
           that.selectedElement.value.height = that.elementHeight;
           that.selectedElement.value.styleID = that.preDrawStyle;
-          that.mapEditor.addFeatureById("point", e.id, "height", that.elementHeight);
-
-          if (that.preDrawStyle) {
-            that.mapEditor.addFeatureById("point", e.id, "styleID", that.preDrawStyle);
-          }
+          setTimeout(() => {
+            that.mapEditor.addFeatureById("polygon", e.id, "height", that.elementHeight);
+            if (that.preDrawStyle) {
+              that.mapEditor.addFeatureById("polygon", e.id, "styleID", that.preDrawStyle);
+            }
+          });
         }
         if (e.layername === "POI图层") {
           if (that.tabNum === 2) {
             that.facilityTypeTarget = e;
           }
+
           setTimeout(() => {
+            that.mapEditor.addFeatureById("point", e.id, "name", that.iconName);
             that.mapEditor.addFeatureById("point", e.id, "height", that.elementHeight);
             if (that.preDrawStyle) {
               that.mapEditor.addFeatureById("point", e.id, "styleID", that.preDrawStyle);
@@ -995,6 +1092,7 @@ export default {
           }
         }
         if (e.layername === "多边形图层") {
+          that.selectedElement = e;
           setTimeout(() => {
             that.mapEditor.addFeatureById("polygon", e.id, "height", that.elementHeight);
             if (that.preDrawStyle) {
@@ -1411,6 +1509,18 @@ export default {
         that.activeFloorData = that.buildingFloorsObj.floors[e];
       });
     },
+    // 全选楼层
+    floorCheck() {
+      var that = this;
+      if (that.floorArr.length === that.goFloorArr.length) {
+        that.goFloorArr = [];
+      } else {
+        that.goFloorArr = [];
+        that.floorArr.forEach((item) => {
+          that.goFloorArr.push(item.value);
+        });
+      }
+    },
 
     // 加载楼层信息
     loadFloor() {
@@ -1426,22 +1536,63 @@ export default {
             data
           } = res;
           if (data.code === 200) {
+            const floors = [];
             that.buildingFloorsObj = data.data;
             that.floorArr = [];
-            Object.keys(that.buildingFloorsObj.floors).forEach((key) => {
-              const floorKey = +key;
-              let strKey = "";
-              if (floorKey > 0) {
-                strKey = `F${floorKey}`;
-              } else {
-                strKey = `B${-floorKey}`;
-              }
-              that.floorArr.push({
-                id: that.buildingFloorsObj.floors[key].floorData.properties.id,
-                label: strKey,
-                value: key
+            const numArr = [];
+
+
+            Object.keys(that.buildingFloorsObj.floors).forEach((floor) => {
+              const num = +floor;
+              numArr.push(num);
+            });
+            numArr.sort((a, b) => b - a);
+            // console.log(JSON.stringify(numArr))
+
+            numArr.forEach((item) => {
+              const key = `${item}`;
+              Object.keys(that.buildingFloorsObj.floors).forEach((floorKey) => {
+                if (floorKey === key) {
+                  const obj = {};
+                  obj[floorKey] = that.buildingFloorsObj.floors[floorKey];
+                  floors.push(obj);
+                }
               });
             });
+            // that.buildingFloorsObj.floors=floors;
+            // console.log(JSON.stringify(floors,null,4))
+
+            floors.forEach((item) => {
+              Object.keys(item).forEach((key) => {
+                const floorKey = +key;
+                let strKey = "";
+                if (floorKey > 0) {
+                  strKey = `F${floorKey}`;
+                } else {
+                  strKey = `B${-floorKey}`;
+                }
+                that.floorArr.push({
+                  id: that.buildingFloorsObj.floors[key].floorData.properties.id,
+                  label: strKey,
+                  value: key
+                });
+              });
+            });
+
+            // Object.keys(that.buildingFloorsObj.floors).forEach((key) => {
+            //   const floorKey = +key;
+            //   let strKey = "";
+            //   if (floorKey > 0) {
+            //     strKey = `F${floorKey}`;
+            //   } else {
+            //     strKey = `B${-floorKey}`;
+            //   }
+            //   that.floorArr.push({
+            //     id: that.buildingFloorsObj.floors[key].floorData.properties.id,
+            //     label: strKey,
+            //     value: key
+            //   });
+            // });
             if (!that.activeFloor) {
               if (that.buildingFloorsObj.floors["1"]) {
                 that.activeFloor = "1";

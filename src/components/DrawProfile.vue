@@ -451,7 +451,11 @@ export default {
       const convert = new howso.CoordConvert();
       kes.forEach((item) => {
         const { length } = floorDataCopy[item];
-        floorDataCopy[item].push(floorDataCopy[item][0]);
+        const first = floorDataCopy[item][0];
+        const last = floorDataCopy[item][floorDataCopy[item].length - 1];
+        if (first.lng !== last.lng || first.lat !== last.lat) {
+          floorDataCopy[item].push(floorDataCopy[item][0]);
+        }
         floorDataCopy[item].forEach((floor, index) => {
           const gcj = convert.bd09_To_gcj02(floor.lng, floor.lat);
           floorDataCopy[item][index] = convert.gcj02_To_wgs84(gcj.lng, gcj.lat);

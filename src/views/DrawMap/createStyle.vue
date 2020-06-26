@@ -10,7 +10,7 @@
             </el-form-item>
           </td>
         </tr>
-        <tr>
+        <!-- <tr>
           <td class="required rightLebal">边框宽度：</td>
           <td>
             <el-form-item size="mini" label-width="0" prop="borderWidth">
@@ -25,7 +25,7 @@
               <el-color-picker show-alpha size="medium " v-model="formValidate.borderColor"></el-color-picker>
             </el-form-item>
           </td>
-        </tr>
+        </tr> -->
 
         <tr>
           <td class="required rightLebal">填充颜色：</td>
@@ -59,7 +59,7 @@ export default {
       formValidate: {
         name: "",
         borderColor: "",
-        borderWidth: "",
+        borderWidth: 0,
         fillColor: ""
       },
       // 校验规则
@@ -67,12 +67,12 @@ export default {
         name: [
           { required: true, message: "请填写样式名称", trigger: "change" }
         ],
-        borderWidth: [
-          { required: true, message: "请填写边框宽度", trigger: "change" }
-        ],
-        borderColor: [
-          { required: true, message: "请选择边框颜色", trigger: "change" }
-        ],
+        // borderWidth: [
+        //   { required: true, message: "请填写边框宽度", trigger: "change" }
+        // ],
+        // borderColor: [
+        //   { required: true, message: "请选择边框颜色", trigger: "change" }
+        // ],
         fillColor: [
           { required: true, message: "请选择填充颜色", trigger: "change" }
         ]
@@ -102,6 +102,8 @@ export default {
       // 校验规则
       that.$refs.formValidate.validate((valid) => {
         if (valid) {
+          that.formValidate.borderWidth = 1;
+          that.formValidate.borderColor = that.formValidate.fillColor;
           that
             .ajax({
               method: "post",

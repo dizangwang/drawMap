@@ -4,22 +4,23 @@
     <div class="handlerFor">
       <span class="titleName">矢量地图编辑器</span>
       <span>
-
         <el-button size="mini" class="handlerButton" type="primary" @click="themeClick">
-          <i class="iconCommon themeIcon iconSize"></i>主题</el-button>
+          <i class="iconCommon themeIcon iconSize"></i>主题
+        </el-button>
         <el-button size="mini" class="lf10 handlerButton" type="primary" @click="getAllData">
-          <i class="iconCommon propotyIcon iconSize"></i>查看属性数据</el-button>
+          <i class="iconCommon propotyIcon iconSize"></i>查看属性数据
+        </el-button>
         <!-- <el-button size="mini" class="lf10" type="primary" @click="canceldraw">取消绘制</el-button>-->
-         <!-- <el-button size="mini" @click="adjustImageCancel" class="lf10 handlerButton" type="primary">
+        <!-- <el-button size="mini" @click="adjustImageCancel" class="lf10 handlerButton" type="primary">
           <i class="iconCommon adjust iconSize"></i>结束调整平面图
-        </el-button> -->
+        </el-button>-->
         <el-button size="mini" @click="adjustImage" class="lf10 handlerButton" type="primary">
-          <i class="iconCommon adjust iconSize"></i>{{adjustImageWord}}
+          <i class="iconCommon adjust iconSize"></i>
+          {{adjustImageWord}}
         </el-button>
         <el-button size="mini" class="lf10 handlerButton" type="primary" @click="floorFinishById">
           <i class="iconCommon complete iconSize" v-if="floorFinishStatus=='完成'"></i>
           <i class="iconCommon uncomplete iconSize" v-if="floorFinishStatus=='未完成'"></i>
-
           {{floorFinishStatus}}
         </el-button>
         <el-button size="mini" class="lf10 handlerButton" type="primary" @click="saveData">
@@ -74,7 +75,10 @@
                   <template slot="title">
                     <div class="taskDownInfoCon" @click="selectElementClick">
                       <span>
-                        <i class="iconCommon iconSelectElement bigSize" style="width:12px;margin-right:10px"></i>选择要素
+                        <i
+                          class="iconCommon iconSelectElement bigSize"
+                          style="width:12px;margin-right:10px"
+                        ></i>选择要素
                       </span>
                       <span></span>
                     </div>
@@ -110,7 +114,7 @@
                             ></el-input>
                           </td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                           <td>类型ID</td>
                           <td>
                             <el-input
@@ -121,8 +125,8 @@
                               placeholder="请输入内容"
                             ></el-input>
                           </td>
-                        </tr>
-                        <tr>
+                        </tr>-->
+                        <tr v-if="selectedElement.layername=='多边形图层'">
                           <td>要素名称</td>
                           <td>
                             <el-input
@@ -134,7 +138,7 @@
                             ></el-input>
                           </td>
                         </tr>
-                        <tr>
+                        <tr v-if="selectedElement.layername=='多边形图层'">
                           <td>要素样式</td>
                           <td>
                             <el-select
@@ -155,7 +159,7 @@
                             <!-- <i class="el-icon-delete lf10"></i> -->
                           </td>
                         </tr>
-                        <tr v-if="!isPoiSelected">
+                        <!-- <tr v-if="!isPoiSelected">
                           <td>填充颜色</td>
                           <td>
                             <el-color-picker
@@ -166,8 +170,8 @@
                               @active-change="drawSelectedColorChange"
                             ></el-color-picker>
                           </td>
-                        </tr>
-                        <tr v-if="isPoiSelected">
+                        </tr>-->
+                        <!-- <tr v-if="isPoiSelected">
                           <td>图标大小</td>
                           <td>
                             <el-input-number
@@ -177,8 +181,10 @@
                               :min="1"
                             ></el-input-number>
                           </td>
-                        </tr>
-                        <tr>
+                        </tr>-->
+                        <tr
+                          v-if="selectedElement.layername=='多边形图层'  || selectedElement.layername=='POI图层'"
+                        >
                           <td>要素高度</td>
                           <td>
                             <el-input-number
@@ -484,7 +490,11 @@
 
     <!-- 到达楼层信息 -->
     <el-dialog :visible.sync="goFloorNumModal" width="600px" :title="floorNumTitle">
-      <!-- <el-checkbox v-model="goFloorNumCheckAll" @change="goFloorNumAllChange">全选</el-checkbox> -->
+      <span
+        style="cursor:pointer"
+        :style="{color:goFloorArr.length==floorArr.length?'blue':''}"
+        @click="floorCheck"
+      >全选</span>
       <el-checkbox-group v-model="goFloorArr" size="medium">
         <el-checkbox-button
           v-for="(item) in floorArr"
@@ -575,7 +585,7 @@
     <el-dialog :visible.sync="dataChartInfoModal" width="700px" title="数据图表信息">
       <div v-if="layerType==1">
         <div class="center">
-          <el-select size="small" v-model="layerType" placeholder="图面层">
+          <el-select style="width:120px" size="small" v-model="layerType" placeholder="图面层">
             <el-option value="1" label="图面层"></el-option>
             <el-option value="2" label="POI层"></el-option>
           </el-select>
@@ -598,19 +608,19 @@
         </div>
       </div>
       <div v-if="layerType==2">
-        <div class="center">
-          <el-select size="small" v-model="layerType" placeholder="图面层">
+        <div>
+          <el-select style="width:120px" size="small" v-model="layerType" placeholder="图面层">
             <el-option value="1" label="图面层"></el-option>
             <el-option value="2" label="POI层"></el-option>
           </el-select>
-          <el-input
+          <!-- <el-input
             class="lf10"
             size="small"
             v-model="dataChartDataPoiSearch"
             @input="dataChartDataPoiFilter"
             placeholder="搜索"
             show-word-limit
-          />
+          />-->
           <i class="el-icon-delete lf10 cursor" @click="deleteSelectedElement"></i>
         </div>
         <div class="editElementStyle">

@@ -35,11 +35,15 @@ export default {
   },
   facilityGroup(group) {
     var that = this;
-    that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "group", group);
+    setTimeout(() => {
+      that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "group", group);
+    });
   },
   facilityToFloor(floor) {
     var that = this;
-    that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "floor", floor);
+    setTimeout(() => {
+      that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "floor", floor);
+    });
   },
   layerType() {
     this.dataChartSelectedIds = [];

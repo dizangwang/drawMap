@@ -44,11 +44,12 @@ export default {
     title: "图标",
     slot: "img",
     width: 80
-  },
-  {
-    title: "名称",
-    key: "name"
   }
+  // },
+  // {
+  //   title: "名称",
+  //   key: "name"
+  // }
   ],
   // poi搜索
   dataChartDataPoiSearch: "",
@@ -86,14 +87,14 @@ export default {
     title: "样式名称",
     key: "name"
   },
-  {
-    title: "边框宽度",
-    key: "borderWidth"
-  },
-  {
-    title: "边框颜色",
-    slot: "borderColor"
-  },
+  // {
+  //   title: "边框宽度",
+  //   key: "borderWidth"
+  // },
+  // {
+  //   title: "边框颜色",
+  //   slot: "borderColor"
+  // },
   {
     title: "填充颜色",
     slot: "color"
