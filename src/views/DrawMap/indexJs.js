@@ -218,7 +218,7 @@ export default {
         });
       } else {
         that
-          .$confirm("是否删除选中的样式?", "提示", {
+          .$confirm("是否删除选中的要素?", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning"
@@ -756,11 +756,11 @@ export default {
       if (that.selectedElement.layername === "多边形图层") {
         that.mapEditor.setPolygonStyle(that.selectedElement.id, {
           name: that.selectedElement.value.name,
-          width: style.borderWidth,
+          width: 0,
           fillColor: style.fillColor,
           styleID: style.id,
-          borderColor: style.borderColor,
-          borderWidth: style.borderWidth,
+          borderColor: style.fillColor,
+          borderWidth: 0,
           fontSize: that.selectedElement.value.fontSize,
           fontFillColor: that.selectedElement.value.fontFillColor,
           fontBorderColor: that.selectedElement.value.fontBorderColor
@@ -1067,6 +1067,8 @@ export default {
           that.selectedElement.value.styleID = that.preDrawStyle;
           setTimeout(() => {
             that.mapEditor.addFeatureById("polygon", e.id, "height", that.elementHeight);
+            that.mapEditor.addFeatureById("polygon", e.id, "width", 0);
+            that.mapEditor.addFeatureById("polygon", e.id, "borderColor", e.value.fillColor);
             if (that.preDrawStyle) {
               that.mapEditor.addFeatureById("polygon", e.id, "styleID", that.preDrawStyle);
             }
@@ -1094,6 +1096,8 @@ export default {
         if (e.layername === "多边形图层") {
           that.selectedElement = e;
           setTimeout(() => {
+            that.mapEditor.addFeatureById("polygon", e.id, "width", 0);
+            that.mapEditor.addFeatureById("polygon", e.id, "borderColor", e.value.fillColor);
             that.mapEditor.addFeatureById("polygon", e.id, "height", that.elementHeight);
             if (that.preDrawStyle) {
               that.mapEditor.addFeatureById("polygon", e.id, "styleID", that.preDrawStyle);
@@ -1179,8 +1183,8 @@ export default {
           name: "",
           styleID: style.id,
           fillColor: style.fillColor,
-          borderColor: style.borderColor,
-          borderWidth: style.borderWidth
+          borderColor: style.fillColor,
+          borderWidth: 0
         };
         that.mapEditor.drawBox(obj);
         return;
@@ -1234,8 +1238,8 @@ export default {
           name: "",
           styleID: style.id,
           fillColor: style.fillColor,
-          borderColor: style.borderColor,
-          borderWidth: style.borderWidth
+          borderColor: style.fillColor,
+          width: 0
         };
         that.mapEditor.drawPolygon(obj);
         return;
@@ -1273,8 +1277,9 @@ export default {
           name: "",
           styleID: style.id,
           fillColor: style.fillColor,
-          borderColor: style.borderColor,
-          borderWidth: style.borderWidth
+          borderColor: style.fillColor,
+          borderWidth: 0,
+          width: 0
         };
         that.mapEditor.drawCircle(obj);
         return;
