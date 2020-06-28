@@ -376,60 +376,7 @@ export default {
         return;
       }
 
-      if (!that.compareData(that.activeFloorData, layerData) || !that.compareData(layerData, that
-        .activeFloorData)) {
-        that
-          .$confirm("是否保存并切换状态为完成后发布？", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning"
-          }).then(() => {
-            that.saveDataCallBack(() => {
-              that
-                .ajax({
-                  method: "post",
-                  url: that.apis.floorFinishById + that.activeFloorData.floorData
-                    .properties
-                    .id,
-                  data: {}
-                })
-                .then((res1) => {
-                  const data1 = res1.data;
-                  if (data1.code === 200) {
-                    that
-                      .ajax({
-                        method: "post",
-                        url: that.apis.floorMgrPublish,
-                        data: {
-                          id: that.activeFloorData.floorData.properties.id
-                        }
-                      })
-                      .then((res2) => {
-                        const data2 = res2.data;
-                        if (data2.code === 200) {
-                          that.$message({
-                            message: "发布成功",
-                            type: "success"
-                          });
-                          that.loadFloor();
-                        } else {
-                          that.$message({
-                            message: data2.msg,
-                            type: "warning"
-                          });
-                        }
-                      });
-                  } else {
-                    that.$message({
-                      message: data1.msg,
-                      type: "warning"
-                    });
-                  }
-                });
-            });
-          });
-        return;
-      }
+
       if (that.floorFinishStatus === "完成") {
         that
           .$confirm("是否切换状态为完成后发布？", "提示", {
@@ -481,6 +428,54 @@ export default {
                 });
             });
           });
+        return;
+      }
+
+      if (!that.compareData(that.activeFloorData, layerData) || !that.compareData(layerData, that
+        .activeFloorData)) {
+        that.saveDataCallBack(() => {
+          that
+            .ajax({
+              method: "post",
+              url: that.apis.floorFinishById + that.activeFloorData.floorData
+                .properties
+                .id,
+              data: {}
+            })
+            .then((res1) => {
+              const data1 = res1.data;
+              if (data1.code === 200) {
+                that
+                  .ajax({
+                    method: "post",
+                    url: that.apis.floorMgrPublish,
+                    data: {
+                      id: that.activeFloorData.floorData.properties.id
+                    }
+                  })
+                  .then((res2) => {
+                    const data2 = res2.data;
+                    if (data2.code === 200) {
+                      that.$message({
+                        message: "发布成功",
+                        type: "success"
+                      });
+                      that.loadFloor();
+                    } else {
+                      that.$message({
+                        message: data2.msg,
+                        type: "warning"
+                      });
+                    }
+                  });
+              } else {
+                that.$message({
+                  message: data1.msg,
+                  type: "warning"
+                });
+              }
+            });
+        });
       }
     },
     // 设置楼层完成
