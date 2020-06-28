@@ -72,6 +72,8 @@ export default {
       that.facilityToFloor = arr.join(",");
       that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "floor", that
         .facilityToFloor);
+      that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "sytleID", that
+        .facilityToFloor);
       that.goFloorNumModal = false;
     },
     adjustImage() {

@@ -7,6 +7,9 @@ export class InterCtionManage {
     constructor(mapedit) {
         this.mapEditor = mapedit;
 
+        this._drawFeatureArray = [];
+
+
         this.mapEditor.ol.interactions = {};
 
         this._filter = {
@@ -307,6 +310,8 @@ export class InterCtionManage {
             f.setStyle(style);
         }
 
+        // this.mapEditor.interactionManage.getSelectFeatures().push(f);
+        this._drawFeatureArray.push(f);
         if (typeof (this.mapEditor.event.drawFeature) != "undefined") {
             let d = f.getProperties();
             delete d["geometry"];
@@ -321,12 +326,16 @@ export class InterCtionManage {
 
     ///取消绘制
     cancelDraw() {
+
         this._removeAllInteraction();
 
         if (typeof (this.mapEditor.event.drawFinish) != "undefined")
             this.mapEditor.event.drawFinish("绘制结束");
         // this.mapEditor.ol.map.addInteraction(this.mapEditor.ol.interactions.select);
         this.mapEditor.ol.interactions.select.setActive(true);
+
+        this.mapEditor.ol.interactions.select.getFeatures().push(this._drawFeatureArray[this._drawFeatureArray.length - 1]);
+
     }
 
     ///获取选择要素
