@@ -309,7 +309,9 @@ export default {
             });
             that.dataChartData = that.mapEditor.getData("polygon");
             const arrs = that.mapEditor.getData("point");
-            that.dataChartPOIData = arrs.filter((currentValue, index, arr) => !/\/icon\//.test(currentValue.img));
+            that.dataChartPOIData = arrs.filter((currentValue, index, arr) => !/\/icon\//.test(
+              currentValue.img
+            ));
           });
       }
     },
@@ -329,7 +331,9 @@ export default {
     dataChartDataPoiFilter(poiName) {
       var that = this;
       const arrs = that.mapEditor.getData("point");
-      that.dataChartPOIData = arrs.filter((currentValue, index, arr) => !/\/icon\//.test(currentValue.img));
+      that.dataChartPOIData = arrs.filter((currentValue, index, arr) => !/\/icon\//.test(
+        currentValue.img
+      ));
       const data = that.dataChartPOIData;
       const arr = [];
       data.forEach((item) => {
@@ -810,10 +814,12 @@ export default {
     },
     // 监听样式选择器变动
     styleSelectChange(styleIndex) {
+      // console.log(styleIndex)
       var that = this;
       var style = "";
       that.iconActiveNum = "";
       that.drawActiveType = "";
+
       if (styleIndex === "") {
         that.selectedElement.value.fillColor = "";
         return;
@@ -826,6 +832,7 @@ export default {
           }
         });
       }
+      that.selectedElement.value.styleID = styleIndex;
       if (that.selectedElement.layername === "多边形图层") {
         that.mapEditor.setPolygonStyle(that.selectedElement.id, {
           name: that.selectedElement.value.name,
@@ -842,6 +849,7 @@ export default {
         that.selectedElement.value.fillColor = style.fillColor;
         that.selectedElement.value.borderColor = style.borderColor;
         that.selectedElement.value.borderWidth = style.borderWidth;
+        that.selectedElement.value.styleID = style.id;
       }
       if (that.selectedElement.layername === "建筑物图层") {
         that.mapEditor.setBuildStyle(that.selectedElement.id, {
@@ -982,7 +990,9 @@ export default {
       // that.dataChartPOIData = that.mapEditor.getData("point");
 
       const arrs = that.mapEditor.getData("point");
-      that.dataChartPOIData = arrs.filter((currentValue, index, arr) => !/\/icon\//.test(currentValue.img));
+      that.dataChartPOIData = arrs.filter((currentValue, index, arr) => !/\/icon\//.test(
+        currentValue.img
+      ));
     },
 
     // 路径-绘制要素-直梯
@@ -1147,7 +1157,7 @@ export default {
         if (e.layername === "多边形图层") {
           that.selectedElement = e;
           that.selectedElement.value.height = that.elementHeight;
-          that.selectedElement.value.styleID = that.preDrawStyle;
+
           setTimeout(() => {
             that.mapEditor.addFeatureById("polygon", e.id, "height", that.elementHeight);
             that.mapEditor.addFeatureById("polygon", e.id, "width", 0);
