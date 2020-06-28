@@ -72,10 +72,9 @@ export default {
       that.facilityToFloor = arr.join(",");
       that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "floor", that
         .facilityToFloor);
-      that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "sytleID", that
-        .facilityToFloor);
       that.goFloorNumModal = false;
     },
+    // 调整底图
     adjustImage() {
       var that = this;
       const layerData = that.mapEditor.getSaveData();
@@ -97,6 +96,7 @@ export default {
         });
       }
     },
+    // 调整结束后更新经纬度信息
     updateLngLat(lngLatObj) {
       var that = this;
       that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((res) => {
@@ -108,7 +108,6 @@ export default {
           lowerRightCornerLongitude: lngLatObj[2],
           lowerRightCornerLatitude: lngLatObj[3]
         };
-
         let str = "";
         Object.keys(obj).forEach((item) => {
           str += `${item}=${obj[item]}&`;

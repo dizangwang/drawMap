@@ -37,7 +37,6 @@ export default {
     var that = this;
     setTimeout(() => {
       that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "group", group);
-      that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "typeID", group);
     });
   },
   facilityToFloor(floor) {
