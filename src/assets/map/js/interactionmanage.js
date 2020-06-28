@@ -35,7 +35,8 @@ export class InterCtionManage {
                 if (l == this.mapEditor.ol.layers.temLayer)
                     return true;
                 return false;
-            }
+            },
+            hitTolerance: 3,
         });
 
         ///初始化捕捉图层
@@ -90,6 +91,9 @@ export class InterCtionManage {
                         value: f,
                     })
                 }
+            } else {
+                if (typeof (this.mapEditor.event.selectFeature) != "undefined")
+                    this.mapEditor.event.selectFeature(null)
             }
         })
     }
@@ -318,6 +322,9 @@ export class InterCtionManage {
     ///取消绘制
     cancelDraw() {
         this._removeAllInteraction();
+
+        if (typeof (this.mapEditor.event.drawFinish) != "undefined")
+            this.mapEditor.event.drawFinish("绘制结束");
         // this.mapEditor.ol.map.addInteraction(this.mapEditor.ol.interactions.select);
         this.mapEditor.ol.interactions.select.setActive(true);
     }
@@ -412,6 +419,11 @@ export class InterCtionManage {
         this.mapEditor.event.drawFeature = fun;
     }
 
+    ///绘制结束事件
+    drawFinish(fun) {
+        this.mapEditor.event.drawFinish = fun;
+    }
+
     ///开启捕捉
     _startSnap(b) {
         if (b)
@@ -449,6 +461,8 @@ export class InterCtionManage {
     ///开启旋转要素
     startRotate() {
         this.chanelEdit();
+
+        this.rotatePoint = ol.extent.getCenter(this.mapEditor.interactionManage.getSelectFeatures().getArray()[0].getGeometry().getExtent());
 
         this.isRotate = true;
         this._startDrap(false);
@@ -497,6 +511,7 @@ export class InterCtionManage {
         // console.log(event)
 
         this.rotate_before = null;
+        this.rotatePoint = null;
         // this.rotate_center = null;
     }
 
@@ -524,7 +539,7 @@ export class InterCtionManage {
             // console.log(event)
             this.getSelectFeatures().forEach(f => {
                 let g = f.getGeometry();
-                let c = ol.extent.getCenter(g.getExtent());
+                let c = this.rotatePoint;
                 let a = getAngle({
                     x: this.rotate_before[0] - c[0],
                     y: this.rotate_before[1] - c[1],

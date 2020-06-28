@@ -39,12 +39,17 @@
                 console.log(e);
             })
 
+            ///绘制结束
+            mapEditor.drawFinish(e => {
+                console.log(e);
+            })
+
             ///绘制点
             document.getElementById("drawpoint").onclick = () => {
                 mapEditor.drawPoint({
                     img: "../img/poi.png",
                     size: 50,
-                    styleID:"testID"
+                    styleID: "testID"
                 });
             }
 
@@ -219,11 +224,11 @@
                         "type": "Polygon",
                         "coordinates": [
                             [
-                            [118.783, 32.042],
-                            [118.783,32.04],
-                            [118.786, 32.04],
-                            [118.786, 32.042],
-                            [118.783, 32.042]
+                                [118.783, 32.042],
+                                [118.783, 32.04],
+                                [118.786, 32.04],
+                                [118.786, 32.042],
+                                [118.783, 32.042]
                             ]
                         ]
                     },
@@ -248,7 +253,7 @@
 
             ///根据ID添加要素信息
             document.getElementById("addFeatureById").onclick = () => {
-                mapEditor.addFeatureById("point","要素ID （1_point 或者UUID）","111111","11111");
+                mapEditor.addFeatureById("point", "要素ID （1_point 或者UUID）", "111111", "11111");
             }
 
             ///获取保存后端数据
@@ -262,7 +267,7 @@
             }
             ///设置中心点坐标
             document.getElementById("setCenter").onclick = () => {
-               mapEditor.setCenter([118.7845,32.041]);
+                mapEditor.setCenter([118.7845, 32.041]);
             }
             ///获取缩放层级
             document.getElementById("getZoom").onclick = () => {
@@ -274,11 +279,11 @@
             }
             ///编辑图片轮廓
             document.getElementById("editImage").onclick = () => {
-                mapEditor.editImage("../img/1.png");
+                mapEditor.editImage("https://www.fengmap.com/img/editor/guide-operation/menu1.png");
             }
             ///编辑图片轮廓
             document.getElementById("cancelEditImage").onclick = () => {
-                mapEditor.cancelEditImage();
+                console.log(mapEditor.cancelEditImage());
             }
         } 
     </script>
@@ -319,7 +324,7 @@
             <input type="button" value="设置缩放级别" id="setZoom">
             <input type="button" value="编辑图片位置" id="editImage">
             <input type="button" value="取消编辑图片位置" id="cancelEditImage">
-            
+
 
             <!-- 比例尺容器 样式可以改 ID写死 -->
             <div id="scaleLine" style="position:absolute; z-index: 999;top: 70px; "></div>

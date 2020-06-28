@@ -4,6 +4,8 @@ export class ContextMenu {
         this.init()
     }
     init() {
+
+        this.liArray = [];
         ///右键菜单样式
         var style = document.createElement('style');
         style.type = 'text/css';
@@ -47,20 +49,42 @@ export class ContextMenu {
         });
         this.menu_overlay.setMap(this.mapEditor.ol.map);
 
+        ////地图右键事件
         this.mapEditor.ol.map.getViewport().addEventListener("contextmenu", (e) => {
-
-
-
             e.preventDefault();
-
-
             if (this.mapEditor.interactionManage.getSelectFeatures().getLength() == 0) {
-                this.mapEditor.cancelDraw();
+                if (this.mapEditor.ol.interactions.draw.getActive())
+                    this.mapEditor.cancelDraw();
                 return;
             }
 
+            this.contextmenuUl.childNodes.forEach(c => {
+                this.contextmenuUl.removeChild(c);
+            });
+            let layername = "";
+
+            let l = this.mapEditor.ol.interactions.select.getLayer(this.mapEditor.interactionManage.getSelectFeatures().getArray()[0]);
+            if (l == this.mapEditor.ol.layers.buildLayer)
+                layername = "build";
+            if (l == this.mapEditor.ol.layers.pointLayer)
+                layername = "point";
+            if (l == this.mapEditor.ol.layers.pathLayer)
+                layername = "path";
+            if (l == this.mapEditor.ol.layers.polygonLayer)
+                layername = "polygon";
+            if (l == this.mapEditor.ol.layers.temLayer)
+                layername = "image";
+
+            this.liArray.forEach(li => {
+                if (li.title.indexOf(layername) != -1)
+                    this.contextmenuUl.appendChild(li.data);
+            })
+
+
+
             let coordinate = this.mapEditor.ol.map.getEventCoordinate(e);
             this.menu_overlay.setPosition(coordinate);
+
         });
 
         this.mapEditor.ol.map.getViewport().addEventListener("click", (e) => {
@@ -70,11 +94,14 @@ export class ContextMenu {
     }
 
     ///添加右键菜单事件
-    add(name, fun) {
+    add(name, fun, title) {
         let li = document.createElement('li');
         li.innerHTML = name;
         li.onclick = fun;
-        this.contextmenuUl.appendChild(li);
+        this.liArray.push({
+            title: title,
+            data: li,
+        })
     }
 
 

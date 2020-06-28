@@ -169,20 +169,20 @@ export default class MapEditor {
 
         this.contextmenu.add("修改要素", () => {
             this.interactionManage.modifySelectFeature();
-        });
+        }, "build,path,polygon,image");
         this.contextmenu.add("移动要素", () => {
             this.interactionManage.moveSelectFeature();
-        });
+        }, "build,point,path,polygon,image");
         this.contextmenu.add("旋转要素", () => {
             this.interactionManage.startRotate();
-        });
-        this.contextmenu.add("取消编辑", () => {
-            this.interactionManage.chanelEdit();
-            this.interactionManage.clearSelectFeatures();
-        });
+        }, "build,polygon,image");
+        // this.contextmenu.add("取消编辑", () => {
+        //     this.interactionManage.chanelEdit();
+        //     this.interactionManage.clearSelectFeatures();
+        // });
         this.contextmenu.add("删除要素", () => {
             this.interactionManage.removeSelectFeature();
-        });
+        }, "point,path,polygon,image");
 
         ///比例尺
         this.ol.control.scaleLine = new ol.control.ScaleLine({
@@ -233,11 +233,15 @@ export default class MapEditor {
         this.interactionManage.selectFeature(fun)
     }
 
-    ///选择要素回调事件
+    ///绘制要素回调事件
     drawFeature(fun) {
         this.interactionManage.drawFeature(fun)
     }
 
+    ///绘制结束
+    drawFinish(fun) {
+        this.interactionManage.drawFinish(fun)
+    }
 
     ///绘制点
     drawPoint(style = null) {
@@ -278,8 +282,8 @@ export default class MapEditor {
             this.ol.layers.temLayer.getSource().addFeature(f);
 
             let e = f.getGeometry().getExtent();
-            let p0 =  this.transformTo4326(e[0], e[1]);
-            let p1 =  this.transformTo4326(e[2], e[3]);
+            let p0 = this.transformTo4326(e[0], e[1]);
+            let p1 = this.transformTo4326(e[2], e[3]);
             let extent = [p0[0], p0[1], p1[0], p1[1]]
             this.setImageData({
                 data: data,
@@ -294,11 +298,11 @@ export default class MapEditor {
     cancelEditImage() {
         this.interactionManage._filter.editImage = false;
 
-        if ( this.ol.layers.temLayer.getSource().getFeatures().length > 0) {
-            let f =  this.ol.layers.temLayer.getSource().getFeatures()[0].clone();
+        if (this.ol.layers.temLayer.getSource().getFeatures().length > 0) {
+            let f = this.ol.layers.temLayer.getSource().getFeatures()[0].clone();
             let e = f.getGeometry().getExtent();
-            let p0 =  this.transformTo4326(e[0], e[1]);
-            let p1 =  this.transformTo4326(e[2], e[3]);
+            let p0 = this.transformTo4326(e[0], e[1]);
+            let p1 = this.transformTo4326(e[2], e[3]);
             let extent = [p0[0], p0[1], p1[0], p1[1]]
             this.setImageData({
                 data: this.temImg,
@@ -309,6 +313,7 @@ export default class MapEditor {
         this.ol.map.removeLayer(this.ol.layers.temLayer);
         this.interactionManage.cancelEditImage();
 
+        return this.map.imageData.extent;
     }
 
     ///取消绘制

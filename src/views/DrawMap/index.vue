@@ -495,13 +495,28 @@
         :style="{color:goFloorArr.length==floorArr.length?'blue':''}"
         @click="floorCheck"
       >全选</span>
-      <el-checkbox-group v-model="goFloorArr" size="medium">
+      <!-- <el-checkbox-group v-model="goFloorArr" size="medium">
         <el-checkbox-button
           v-for="(item) in floorArr"
           :label="item.value"
           :key="item.label"
         >{{item.label}}</el-checkbox-button>
-      </el-checkbox-group>
+      </el-checkbox-group>-->
+      <div style="overflow:hidden">
+        <div
+          class="floorButton"
+          @click="floorClick(item.value)"
+          :class="{floorButtonActive:isFloorActive(item.value)}"
+          v-for="(item) in floorArr"
+          :label="item.value"
+          :key="item.label"
+        >{{item.label}}</div>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="goFloorNumModal = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="floorOkClick">确 定</el-button>
+      </span>
     </el-dialog>
 
     <!-- 所有图标 -->
@@ -563,6 +578,7 @@
       </table>
       <div class="editElementStyle">
         <Table
+          height="250"
           @on-selection-change="styleTableSelectChange"
           :columns="elementStyleColumn"
           :data="elementStyleListCopy"
@@ -601,6 +617,7 @@
         </div>
         <div class="editElementStyle">
           <Table
+            height="250"
             @on-selection-change="dataChartInfoChange"
             :columns="dataChartColumn"
             :data="dataChartData"
@@ -625,6 +642,7 @@
         </div>
         <div class="editElementStyle">
           <Table
+            height="250"
             @on-selection-change="dataChartInfoChange"
             :columns="dataChartPOIColumn"
             :data="dataChartPOIData"

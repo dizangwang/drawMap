@@ -37,7 +37,7 @@ export default {
 
   {
     title: "高度",
-    key: "size",
+    key: "height",
     width: 80
   },
   {

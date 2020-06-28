@@ -262,3 +262,28 @@
   justify-content: space-between;
   align-items: center;
 }
+.floorButton{
+  display: block;
+  float:left;
+  padding-left:10px;
+  padding-right:10px;
+  height:30px;
+  line-height: 30px;
+  border:1px solid hsl(220, 4%, 58%);
+  color:hsl(220, 4%, 58%);
+  margin-right:7px;
+  margin-bottom:7px;
+  min-width: 47px;
+  text-align:center;
+  border-radius: 3px;
+  cursor: pointer;
+
+}
+.floorButtonActive{
+ 
+  border:1px solid hsl(200, 100%, 49%);
+  color:white;
+  background: hsl(200, 100%, 49%);
+ 
+
+}

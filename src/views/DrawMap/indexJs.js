@@ -43,6 +43,37 @@ export default {
   },
   watch: Watch,
   methods: {
+    // 通行设施设置，点击楼层
+    floorClick(item) {
+      var that = this;
+      if (that.goFloorArr.indexOf(item) > -1) {
+        that.goFloorArr.splice(that.goFloorArr.indexOf(item), 1);
+      } else {
+        that.goFloorArr.push(item);
+      }
+    },
+    // 判断是否给楼层加高亮
+    isFloorActive(value) {
+      var that = this;
+      if (that.goFloorArr.indexOf(value) > -1) {
+        return true;
+      }
+      return false;
+    },
+    // 通行设施设置-点击确定
+    floorOkClick() {
+      var that = this;
+      const arr = [];
+      that.floorArr.forEach((item) => {
+        if (that.goFloorArr.includes(item.value)) {
+          arr.push(item.label);
+        }
+      });
+      that.facilityToFloor = arr.join(",");
+      that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "floor", that
+        .facilityToFloor);
+      that.goFloorNumModal = false;
+    },
     adjustImage() {
       var that = this;
       const layerData = that.mapEditor.getSaveData();
@@ -53,7 +84,8 @@ export default {
           that.adjustImageWord = "完成调整";
         } else {
           that.mapEditor.setLayerDisplay("build", false);
-          that.mapEditor.cancelEditImage();
+          const arr = that.mapEditor.cancelEditImage();
+          that.updateLngLat(arr);
           that.adjustImageWord = "调整平面图";
         }
       } else {
@@ -62,6 +94,48 @@ export default {
           type: "warning"
         });
       }
+    },
+    updateLngLat(lngLatObj) {
+      var that = this;
+      that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((res) => {
+        const obj = {
+          floorOutline: res.floorOutline,
+          planarGraph: res.planarGraph,
+          upperLeftCornerLongitude: lngLatObj[0],
+          upperLeftCornerLatitude: lngLatObj[1],
+          lowerRightCornerLongitude: lngLatObj[2],
+          lowerRightCornerLatitude: lngLatObj[3]
+        };
+
+        let str = "";
+        Object.keys(obj).forEach((item) => {
+          str += `${item}=${obj[item]}&`;
+        });
+        that
+          .ajax({
+            method: "post",
+            url: that.apis.floorMgrUpdateSettings + that.activeFloorData.floorData.properties
+              .id,
+            data: str
+          })
+          .then((result) => {
+            const {
+              data
+            } = result;
+            if (data.code === 200) {
+              // that.$message({
+              //   message: "提交成功",
+              //   type: "success"
+              // });
+              that.saveDataCallBack(() => {});
+            } else {
+              that.$message({
+                message: data.msg,
+                type: "warning"
+              });
+            }
+          });
+      });
     },
     isComplete(fn) {
       var that = this;
@@ -233,7 +307,8 @@ export default {
               }
             });
             that.dataChartData = that.mapEditor.getData("polygon");
-            that.dataChartPOIData = that.mapEditor.getData("point");
+            const arrs = that.mapEditor.getData("point");
+            that.dataChartPOIData = arrs.filter((currentValue, index, arr) => !/\/icon\//.test(currentValue.img));
           });
       }
     },
@@ -252,7 +327,9 @@ export default {
     // 搜索数据图表信息POI素
     dataChartDataPoiFilter(poiName) {
       var that = this;
-      const data = that.mapEditor.getData("point");
+      const arrs = that.mapEditor.getData("point");
+      that.dataChartPOIData = arrs.filter((currentValue, index, arr) => !/\/icon\//.test(currentValue.img));
+      const data = that.dataChartPOIData;
       const arr = [];
       data.forEach((item) => {
         if (item.name.indexOf(poiName) > -1) {
@@ -906,7 +983,10 @@ export default {
       var that = this;
       that.dataChartInfoModal = true;
       that.dataChartData = that.mapEditor.getData("polygon");
-      that.dataChartPOIData = that.mapEditor.getData("point");
+      // that.dataChartPOIData = that.mapEditor.getData("point");
+
+      const arrs = that.mapEditor.getData("point");
+      that.dataChartPOIData = arrs.filter((currentValue, index, arr) => !/\/icon\//.test(currentValue.img));
     },
 
     // 路径-绘制要素-直梯
@@ -1054,6 +1134,13 @@ export default {
           that.selectedElement.value.fillColor = e.value.color;
         }
       });
+      // /绘制结束回调
+      that.mapEditor.drawFinish((e) => {
+        that.drawActiveType = "";
+        that.iconActiveNum = "";
+        that.drawActiveLine = "";
+        that.isDrawLine = "";
+      });
       // 绘制要素回调事件
       that.mapEditor.drawFeature((e) => {
         // console.log(e)
@@ -1068,7 +1155,8 @@ export default {
           setTimeout(() => {
             that.mapEditor.addFeatureById("polygon", e.id, "height", that.elementHeight);
             that.mapEditor.addFeatureById("polygon", e.id, "width", 0);
-            that.mapEditor.addFeatureById("polygon", e.id, "borderColor", e.value.fillColor);
+            that.mapEditor.addFeatureById("polygon", e.id, "borderColor", e.value
+              .fillColor);
             if (that.preDrawStyle) {
               that.mapEditor.addFeatureById("polygon", e.id, "styleID", that.preDrawStyle);
             }
@@ -1097,7 +1185,8 @@ export default {
           that.selectedElement = e;
           setTimeout(() => {
             that.mapEditor.addFeatureById("polygon", e.id, "width", 0);
-            that.mapEditor.addFeatureById("polygon", e.id, "borderColor", e.value.fillColor);
+            that.mapEditor.addFeatureById("polygon", e.id, "borderColor", e.value
+              .fillColor);
             that.mapEditor.addFeatureById("polygon", e.id, "height", that.elementHeight);
             if (that.preDrawStyle) {
               that.mapEditor.addFeatureById("polygon", e.id, "styleID", that.preDrawStyle);
@@ -1425,7 +1514,7 @@ export default {
         if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res
           .lowerRightCornerLongitude && !res.lowerRightCornerLatitude && !res.floorOutline) {
           that.$message({
-            message: "没有经纬度无法定位底图",
+            message: "没有对角线经纬度和轮廓信息无法定位底图",
             type: "warning"
           });
         }

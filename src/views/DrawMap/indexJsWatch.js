@@ -15,23 +15,23 @@ export default {
     }
   },
   goFloorArr(flrArr) {
-    var that = this;
-    const arr = [];
+    // var that = this;
+    // const arr = [];
 
-    that.floorArr.forEach((item) => {
-      if (flrArr.includes(item.value)) {
-        arr.push(item.label);
-      }
-    });
-    if (that.floorArr.length === flrArr.length) {
-      that.goFloorNumCheckAll = true;
-    } else {
-      that.goFloorNumCheckAll = false;
-    }
+    // that.floorArr.forEach((item) => {
+    //   if (flrArr.includes(item.value)) {
+    //     arr.push(item.label);
+    //   }
+    // });
+    // if (that.floorArr.length === flrArr.length) {
+    //   that.goFloorNumCheckAll = true;
+    // } else {
+    //   that.goFloorNumCheckAll = false;
+    // }
 
-    that.facilityToFloor = arr.join(",");
-    that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "floor", that
-      .facilityToFloor);
+    // that.facilityToFloor = arr.join(",");
+    // that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "floor", that
+    //   .facilityToFloor);
   },
   facilityGroup(group) {
     var that = this;
