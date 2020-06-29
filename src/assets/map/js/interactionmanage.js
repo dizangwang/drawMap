@@ -334,7 +334,9 @@ export class InterCtionManage {
         // this.mapEditor.ol.map.addInteraction(this.mapEditor.ol.interactions.select);
         this.mapEditor.ol.interactions.select.setActive(true);
 
-        this.mapEditor.ol.interactions.select.getFeatures().push(this._drawFeatureArray[this._drawFeatureArray.length - 1]);
+
+        if(this._drawFeatureArray.length>0)
+            this.mapEditor.ol.interactions.select.getFeatures().push(this._drawFeatureArray[this._drawFeatureArray.length - 1]);
 
     }
 

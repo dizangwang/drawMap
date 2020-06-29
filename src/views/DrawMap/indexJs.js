@@ -70,7 +70,7 @@ export default {
         }
       });
       that.facilityToFloor = arr.join(",");
-      that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "floor", that
+      that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "target_floor", that
         .facilityToFloor);
       that.goFloorNumModal = false;
     },
