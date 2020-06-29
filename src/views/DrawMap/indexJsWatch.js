@@ -42,7 +42,7 @@ export default {
   facilityToFloor(floor) {
     var that = this;
     setTimeout(() => {
-      that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "target_floor", floor);
+      that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "targetFloor", floor);
     });
   },
   layerType() {

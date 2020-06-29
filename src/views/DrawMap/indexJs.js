@@ -1626,7 +1626,7 @@ export default {
 
         that.selectedElement = emptyObj;
         that.facilityTypeTarget = emptyObj;
-
+        that.adjustImageWord = "调整平面图";
         that.activeFloorData = that.buildingFloorsObj.floors[e];
       });
     },
