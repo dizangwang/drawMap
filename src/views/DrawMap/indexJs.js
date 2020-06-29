@@ -70,7 +70,7 @@ export default {
         }
       });
       that.facilityToFloor = arr.join(",");
-      that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "target_floor", that
+      that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "targetFloor", that
         .facilityToFloor);
       that.goFloorNumModal = false;
     },
@@ -1122,7 +1122,7 @@ export default {
           that.isPoiSelected = true;
           if (/\/icon\//.test(e.value.img) || e.value.size === 31) {
             that.facilityTypeTarget = e;
-            that.facilityToFloor = that.facilityTypeTarget.value.floor;
+            that.facilityToFloor = that.facilityTypeTarget.value.targetFloor;
             that.facilityGroup = that.facilityTypeTarget.value.group;
             that.selectedElement = emptyObj;
           } else {
@@ -1606,6 +1606,27 @@ export default {
     floorChange(e) {
       var that = this;
       setTimeout(() => {
+        const emptyObj = {
+          id: "",
+          layername: "",
+          value: {
+            borderColor: "",
+            fillColor: "",
+            font: "",
+            fontBorderColor: "",
+            fontFillColor: "",
+            height: "",
+            id: "",
+            name: "",
+            styleID: "",
+            typeID: "",
+            width: ""
+          }
+        };
+
+        that.selectedElement = emptyObj;
+        that.facilityTypeTarget = emptyObj;
+
         that.activeFloorData = that.buildingFloorsObj.floors[e];
       });
     },
