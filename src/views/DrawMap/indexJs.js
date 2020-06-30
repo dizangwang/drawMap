@@ -759,7 +759,7 @@ export default {
     addIconClick() {
       var that = this;
       that.allIconModal = true;
-      const [obj] = that.allIconsArr[0];
+      const [obj] = that.allIconsArr;
       that.iconPreview = obj;
     },
     // 图标管理
