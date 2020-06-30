@@ -2,7 +2,15 @@
   <div class="app">
     <!-- 操作栏 -->
     <div class="handlerFor">
-      <span class="titleName">矢量地图编辑器</span>
+      <span class="titleName">
+        <el-popover placement="bottom-start" content="返回上一页" trigger="hover">
+          <i
+            slot="reference"
+            onclick="window.history.back()"
+            class="iconCommon historybackWhiteIcon historyBack"
+          ></i>
+        </el-popover>矢量地图编辑器
+      </span>
       <span>
         <el-button size="mini" class="handlerButton" type="primary" @click="themeClick">
           <i class="iconCommon themeIcon iconSize"></i>主题
@@ -374,12 +382,14 @@
                         </tr>
                         <tr>
                           <td>到达楼层</td>
-                          <td>
+                          <td style="cursor:pointer" @click="facilityToFloorClick">
                             <el-input
-                              class="leftInputWid"
+                              style="cursor:pointer"
+                              readonly
+                              class="leftInputWid inputPointer"
                               v-model="facilityToFloor"
                               size="mini"
-                              placeholder="请输入内容"
+                              placeholder="请选择楼层"
                             ></el-input>
                           </td>
                         </tr>

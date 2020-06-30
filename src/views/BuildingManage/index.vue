@@ -13,7 +13,18 @@
           <el-option value="1" label="任务"></el-option>
           <el-option value="2" label="楼宇"></el-option>
         </el-select>
-        <span v-if="taskObj" class="lf20">{{taskObj.taskName}}</span>
+        <span>
+         <el-popover  v-if="taskObj"  placement="bottom-start" content="返回上一页" trigger="hover">
+          <i
+           v-if="taskObj"
+            slot="reference"
+            onclick="window.history.back()"
+            class="iconCommon historybackIcon historyBack lf20"
+            style="vertical-align:-0.5em;margin-right:0"
+          ></i>
+        </el-popover>
+        </span>
+        <span v-if="taskObj" class="lf10">{{taskObj.taskName}}</span>
         <!-- <el-select
           v-model="searchForm.publishStatus"
           placeholder="发布状态"

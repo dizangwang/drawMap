@@ -43,6 +43,27 @@ export default {
   },
   watch: Watch,
   methods: {
+    // 通行设施设置，编辑楼层
+    facilityToFloorClick() {
+      var that = this;
+      that.goFloorNumModal = true;
+      if (that.facilityToFloor) {
+        const arr = that.facilityToFloor.split(",");
+        const newArr = [];
+        arr.forEach((item) => {
+          if (item.indexOf("F") > -1) {
+            newArr.push(`${item.replace("F", "")}`);
+          }
+          if (item.indexOf("B") > -1) {
+            newArr.push(`${-item.replace("B", "")}`);
+          }
+        });
+        that.goFloorArr = newArr;
+      } else {
+        // 清空楼层选择
+        that.goFloorArr = [];
+      }
+    },
     // 通行设施设置，点击楼层
     floorClick(item) {
       var that = this;
@@ -309,9 +330,8 @@ export default {
             });
             that.dataChartData = that.mapEditor.getData("polygon");
             const arrs = that.mapEditor.getData("point");
-            that.dataChartPOIData = arrs.filter((currentValue, index, arr) => !/\/icon\//.test(
-              currentValue.img
-            ));
+            that.dataChartPOIData = arrs.filter((currentValue, index, arr) => currentValue
+              .size !== 31);
           });
       }
     },
@@ -331,9 +351,7 @@ export default {
     dataChartDataPoiFilter(poiName) {
       var that = this;
       const arrs = that.mapEditor.getData("point");
-      that.dataChartPOIData = arrs.filter((currentValue, index, arr) => !/\/icon\//.test(
-        currentValue.img
-      ));
+      that.dataChartPOIData = arrs.filter((currentValue, index, arr) => currentValue.size !== 31);
       const data = that.dataChartPOIData;
       const arr = [];
       data.forEach((item) => {
@@ -990,9 +1008,7 @@ export default {
       // that.dataChartPOIData = that.mapEditor.getData("point");
 
       const arrs = that.mapEditor.getData("point");
-      that.dataChartPOIData = arrs.filter((currentValue, index, arr) => !/\/icon\//.test(
-        currentValue.img
-      ));
+      that.dataChartPOIData = arrs.filter((currentValue, index, arr) => currentValue.size !== 31);
     },
 
     // 路径-绘制要素-直梯
@@ -1120,7 +1136,7 @@ export default {
         that.isLineLayerSeleced = false;
         if (e.layername === "POI图层") {
           that.isPoiSelected = true;
-          if (/\/icon\//.test(e.value.img) || e.value.size === 31) {
+          if (e.value.size === 31 || /\/icon\//.test(e.value.img)) {
             that.facilityTypeTarget = e;
             that.facilityToFloor = that.facilityTypeTarget.value.targetFloor;
             that.facilityGroup = that.facilityTypeTarget.value.group;
@@ -1160,9 +1176,9 @@ export default {
 
           setTimeout(() => {
             that.mapEditor.addFeatureById("polygon", e.id, "height", that.elementHeight);
-            that.mapEditor.addFeatureById("polygon", e.id, "width", 0);
-            that.mapEditor.addFeatureById("polygon", e.id, "borderColor", e.value
-              .fillColor);
+            that.mapEditor.addFeatureById("polygon", e.id, "width", 1);
+            // that.mapEditor.addFeatureById("polygon", e.id, "borderColor", e.value
+            //   .fillColor);
             if (that.preDrawStyle) {
               that.mapEditor.addFeatureById("polygon", e.id, "styleID", that.preDrawStyle);
             }
@@ -1175,7 +1191,7 @@ export default {
 
           setTimeout(() => {
             that.mapEditor.addFeatureById("point", e.id, "name", that.iconName);
-            that.mapEditor.addFeatureById("point", e.id, "height", that.elementHeight);
+            that.mapEditor.addFeatureById("point", e.id, "height", 1);
             if (that.preDrawStyle) {
               that.mapEditor.addFeatureById("point", e.id, "styleID", that.preDrawStyle);
             }
@@ -1190,9 +1206,9 @@ export default {
         if (e.layername === "多边形图层") {
           that.selectedElement = e;
           setTimeout(() => {
-            that.mapEditor.addFeatureById("polygon", e.id, "width", 0);
-            that.mapEditor.addFeatureById("polygon", e.id, "borderColor", e.value
-              .fillColor);
+            that.mapEditor.addFeatureById("polygon", e.id, "width", 1);
+            // that.mapEditor.addFeatureById("polygon", e.id, "borderColor", e.value
+            //   .fillColor);
             that.mapEditor.addFeatureById("polygon", e.id, "height", that.elementHeight);
             if (that.preDrawStyle) {
               that.mapEditor.addFeatureById("polygon", e.id, "styleID", that.preDrawStyle);
@@ -1279,15 +1295,16 @@ export default {
           styleID: style.id,
           fillColor: style.fillColor,
           borderColor: style.fillColor,
-          borderWidth: 0
+          borderWidth: 0,
+          width: 0
         };
         that.mapEditor.drawBox(obj);
         return;
       }
       that.mapEditor.drawBox({
         name: "",
-        width: 0,
-        fillColor: "rgba(255,255,255,0.1)",
+        width: 1,
+        fillColor: "rgba(255,255,255,0.3)",
         borderColor: "rgba(0,0,0,1)",
         fontSize: 12,
         fontFillColor: "rgba(255,255,255,1)",
@@ -1341,8 +1358,8 @@ export default {
       }
       that.mapEditor.drawPolygon({
         name: "",
-        width: 0,
-        fillColor: "rgba(255,255,255,0.1)",
+        width: 1,
+        fillColor: "rgba(255,255,255,0.3)",
         borderColor: "rgba(0,0,0,1)",
         fontSize: 12,
         fontFillColor: "rgba(255,255,255,1)",
@@ -1381,8 +1398,8 @@ export default {
       }
       that.mapEditor.drawCircle({
         name: "",
-        width: 0,
-        fillColor: "rgba(255,255,255,0.1)",
+        width: 1,
+        fillColor: "rgba(255,255,255,0.3)",
         borderColor: "rgba(0,0,0,1)",
         fontSize: 12,
         fontFillColor: "rgba(255,255,255,1)",
