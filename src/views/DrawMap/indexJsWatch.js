@@ -57,7 +57,7 @@ export default {
     if (num !== 1) {
       that.iconActiveNum = "";
     }
-    that.mapEditor.cancelDraw();
+    // that.mapEditor.cancelDraw();
   },
   activeFloorData(result) {
     var that = this;
