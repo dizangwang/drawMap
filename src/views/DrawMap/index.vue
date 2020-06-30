@@ -366,7 +366,7 @@
                         <!-- <div class="center">（按住crtl键可以选择多个要素）</div> -->
                       </div>
 
-                      <table class="formTable" v-show="facilityTypeTarget.id">
+                      <table class="formTable" v-show="facilityTypeTarget.id&&!isLineLayerSeleced">
                         <tr>
                           <td>设施类型</td>
                           <td>
