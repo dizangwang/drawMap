@@ -1107,23 +1107,7 @@ export default {
           return;
         }
         if (e.layername === "建筑物图层") {
-          that.selectedElement = {
-            id: "",
-            layername: "",
-            value: {
-              borderColor: "",
-              fillColor: "",
-              font: "",
-              fontBorderColor: "",
-              fontFillColor: "",
-              height: "",
-              id: "",
-              name: "",
-              styleID: "",
-              typeID: "",
-              width: ""
-            }
-          };
+          that.selectedElement = emptyObj;
           return;
         }
 
@@ -1182,6 +1166,9 @@ export default {
             if (that.preDrawStyle) {
               that.mapEditor.addFeatureById("polygon", e.id, "styleID", that.preDrawStyle);
             }
+
+            that.mapEditor.cancelDraw();
+            that.drawActiveType = "";
           });
         }
         if (e.layername === "POI图层") {
