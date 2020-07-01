@@ -34,7 +34,7 @@ new Vue({
   router,
   store,
   mounted() {
-
+    window.context = this;
   },
   render: (h) => h(App)
 }).$mount("#app");

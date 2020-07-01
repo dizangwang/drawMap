@@ -68,7 +68,7 @@ export default {
   },
   mounted() {
     // 初始化地图
-    this.init();
+    // this.init();
   },
   methods: {
     // 根据经纬度绘制多边形
@@ -104,78 +104,80 @@ export default {
       that.floorData = {};
       that.currentFloor = "";
       that.editOutLine = "";
-      that.init(initObj.address);
-      // 判断是否传过来轮廓的经纬度
-      if (initObj.editOutLine) {
-        that.isSave = true;
-        let i = 0;
-        const convert = new howso.CoordConvert();
-        that.editOutLine = initObj.editOutLine;
-        Object.keys(that.editOutLine).forEach((key) => {
-          if (that.editOutLine[key]) {
-            if (typeof that.editOutLine[key] === "string") {
-              that.floorData[key] = JSON.parse(that.editOutLine[key]);
-            }
-            i += 1;
-            that.floorData[key].forEach((kkk, num) => {
-              const gcj = convert.wgs84_To_gcj02(kkk.lng, kkk.lat);
-              that.floorData[key][num] = convert.gcj02_To_bd09(
-                gcj.lng,
-                gcj.lat
-              );
-            });
-            that.editOutLine[key] = JSON.stringify(that.floorData[key]);
-          }
-        });
-        if (i === 0) {
-          return;
-        }
-        const lngArr = [];
-        const latArr = [];
-        // 把值赋值给floorData
-        Object.keys(that.floorData).forEach((key) => {
-          if (that.floorData[key]) {
-            // that.floorData[key] = JSON.parse(that.editOutLine[key]);
-            that.floorData[key].forEach((item) => {
-              lngArr.push(item.lng);
-              latArr.push(item.lat);
-            });
-          }
-        });
-        setTimeout(() => {
-          const bigLng = Math.max(...lngArr);
-          const bigLat = Math.max(...latArr);
-          const smallLng = Math.min(...lngArr);
-          const smallLat = Math.min(...latArr);
-          that.map.centerAndZoom(
-            new BMap.Point((bigLng + smallLng) / 2, (bigLat + smallLat) / 2),
-            18
-          );
-        }, 1500);
-        if (Object.keys(that.floorData).length === 1) {
-          Object.keys(that.floorData).forEach((floorNum) => {
-            if (that.floorData[floorNum]) {
-              that.createPolygon(that.floorData[floorNum]);
+      that.init(initObj.address, () => {
+        // 判断是否传过来轮廓的经纬度
+        if (initObj.editOutLine) {
+          that.isSave = true;
+          let i = 0;
+          const convert = new howso.CoordConvert();
+          that.editOutLine = initObj.editOutLine;
+          Object.keys(that.editOutLine).forEach((key) => {
+            if (that.editOutLine[key]) {
+              if (typeof that.editOutLine[key] === "string") {
+                that.floorData[key] = JSON.parse(that.editOutLine[key]);
+              }
+              i += 1;
+              that.floorData[key].forEach((kkk, num) => {
+                const gcj = convert.wgs84_To_gcj02(kkk.lng, kkk.lat);
+                that.floorData[key][num] = convert.gcj02_To_bd09(
+                  gcj.lng,
+                  gcj.lat
+                );
+              });
+              that.editOutLine[key] = JSON.stringify(that.floorData[key]);
             }
           });
-          return;
-        }
-        // 默认渲染F1层
-        if (that.floorData.F1) {
+          if (i === 0) {
+            return;
+          }
+          const lngArr = [];
+          const latArr = [];
+          // 把值赋值给floorData
+          Object.keys(that.floorData).forEach((key) => {
+            if (that.floorData[key]) {
+              // that.floorData[key] = JSON.parse(that.editOutLine[key]);
+              that.floorData[key].forEach((item) => {
+                lngArr.push(item.lng);
+                latArr.push(item.lat);
+              });
+            }
+          });
+          setTimeout(() => {
+            const bigLng = Math.max(...lngArr);
+            const bigLat = Math.max(...latArr);
+            const smallLng = Math.min(...lngArr);
+            const smallLat = Math.min(...latArr);
+            that.map.centerAndZoom(
+              new BMap.Point((bigLng + smallLng) / 2, (bigLat + smallLat) / 2),
+              18
+            );
+          }, 1800);
+          if (Object.keys(that.floorData).length === 1) {
+            Object.keys(that.floorData).forEach((floorNum) => {
+              if (that.floorData[floorNum]) {
+                that.createPolygon(that.floorData[floorNum]);
+              }
+            });
+            return;
+          }
+          // 默认渲染F1层
           if (that.floorData.F1) {
-            that.createPolygon(that.floorData.F1);
+            if (that.floorData.F1) {
+              that.createPolygon(that.floorData.F1);
+            }
+          }
+          // 如果没有F1层有B1层，就渲染B1层
+          if (!that.floorData.F1 && that.floorData.B1) {
+            if (that.floorData.B1) {
+              that.createPolygon(that.floorData.B1);
+            }
           }
         }
-        // 如果没有F1层有B1层，就渲染B1层
-        if (!that.floorData.F1 && that.floorData.B1) {
-          if (that.floorData.B1) {
-            that.createPolygon(that.floorData.B1);
-          }
-        }
-      }
+      });
     },
+
     // 初始化地图
-    init(area) {
+    init(area, fn) {
       var that = this;
       // 初始化地图宽高
       that.mapStyle.width = `${window.innerWidth - 35}px`;
@@ -220,7 +222,6 @@ export default {
           var lis = document.querySelectorAll(".floor-select-container li");
           // 拿到已经绘制好轮廓的楼层
           var keys = Object.keys(that.floorData);
-          // that.editOutLine
           // 循环楼层
           keys.forEach((key) => {
             // 循环地图右侧楼层
@@ -235,6 +236,9 @@ export default {
                 button.style.color = "red";
                 if (keys.length === 1) {
                   button.setAttribute("class", " btn-select-floor selected");
+                  // setTimeout(() => {
+                  //   button.click();
+                  // });
                 }
               }
             });
@@ -290,6 +294,7 @@ export default {
           }
         }
       });
+      fn();
     },
     // 监听输入框值的变化
     searchValueChange(val) {
