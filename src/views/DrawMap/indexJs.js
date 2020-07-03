@@ -42,6 +42,41 @@ export default {
     });
   },
   watch: Watch,
+  // 导航离开该组件的对应路由时调用
+  beforeRouteLeave(to, from, next) {
+    var that = this;
+    const layerData = that.mapEditor.getSaveData();
+    if (!that.compareData(layerData, that.activeFloorData)) {
+      next(false);
+      setTimeout(() => {
+        that
+          .$confirm("绘制内容尚未保存", "提示", {
+            confirmButtonText: "保存后离开",
+            cancelButtonText: "离开",
+            type: "warning",
+            distinguishCancelAndClose: true,
+            callback(action, instance) {
+              if (action === "confirm") {
+                that.saveDataCallBack(() => {
+                  that.$message({
+                    message: "保存成功",
+                    type: "success"
+                  });
+                  next();
+                });
+              }
+              if (action === "cancel") {
+                next();
+              }
+            }
+          });
+      }, 500);
+    } else {
+      // window.history.back();
+      // that.$router.push(to.path);
+      next();
+    }
+  },
   methods: {
     // 通行设施设置，编辑楼层
     facilityToFloorClick() {
@@ -99,6 +134,7 @@ export default {
     adjustImage() {
       var that = this;
       const layerData = that.mapEditor.getSaveData();
+
       if (layerData.imageData.data) {
         if (that.adjustImageWord === "调整平面图") {
           that.mapEditor.setLayerDisplay("build", true);
@@ -106,8 +142,20 @@ export default {
           that.adjustImageWord = "完成调整";
         } else {
           that.mapEditor.setLayerDisplay("build", false);
-          const arr = that.mapEditor.cancelEditImage();
-          that.updateLngLat(arr);
+          const result = that.mapEditor.cancelEditImage();
+          that.updateLngLat(result.extent);
+          // let img=new Image();
+          // img.src=result.data;
+          // img.onload=()=>{
+          //   that.mapEditor.setImageData({
+          //     data:result.data,
+          //     extent:result.extent
+          //   })
+          //   return
+          //   setTimeout(()=>{
+          //     that.updateLngLat(result.extent);
+          //   },1000);
+          // };
           that.adjustImageWord = "调整平面图";
         }
       } else {
@@ -125,9 +173,9 @@ export default {
           floorOutline: res.floorOutline,
           planarGraph: res.planarGraph,
           upperLeftCornerLongitude: lngLatObj[0],
-          upperLeftCornerLatitude: lngLatObj[1],
+          upperLeftCornerLatitude: lngLatObj[3],
           lowerRightCornerLongitude: lngLatObj[2],
-          lowerRightCornerLatitude: lngLatObj[3]
+          lowerRightCornerLatitude: lngLatObj[1]
         };
         let str = "";
         Object.keys(obj).forEach((item) => {
@@ -163,7 +211,6 @@ export default {
       var that = this;
       var i = 0;
       const layerData = that.mapEditor.getSaveData();
-      // console.log(layerData.imageData.data);
       // 判断是否有底图
       if (layerData.imageData.data) {
         i += 1;
@@ -203,7 +250,6 @@ export default {
           });
           return;
         }
-        // console.log(i);
         if (i >= 3) {
           fn();
         }
@@ -235,29 +281,38 @@ export default {
       });
     },
     // 对比geo数据判断数据是否保存 true:数据一致  false:数据有差异
-    compareData(data1, data2) {
+    compareData(param1, param2) {
+      var data1 = param1;
+      var data2 = param2;
       var keys = Object.keys(data1);
       var i = 0;
-      try {
-        keys.forEach((key) => {
-          if (key === "imageData") {
-            Object.keys(data1[key]).forEach((imgKey) => {
-              if (JSON.stringify(data1[key].data) !== JSON.stringify(data2[key].data)) {
+
+      keys.forEach((key) => {
+        if (key === "imageData") {
+          Object.keys(data1[key]).forEach((imgKey) => {
+            if (data1[key].data !== null && data2[key].data !== null) {
+              if (data1[key].data !== data2[key].data) {
                 i += 1;
               }
+            }
+
+            if (data2[key].extent !== null) {
               if (typeof data1[key].extent === "string") {
-                if (data1[key].extent !== JSON.stringify(data2[key].extent)) {
-                  i += 1;
-                }
+                data1[key].extent = JSON.parse(data1[key].extent);
               }
-              if (typeof data1[key].extent === "object") {
-                if (data2[key].extent !== JSON.stringify(data1[key].extent)) {
-                  i += 1;
-                }
+              if (typeof data2[key].extent === "string") {
+                data2[key].extent = JSON.parse(data2[key].extent);
               }
-            });
-          }
-          if (key === "floorData") {
+
+
+              if (JSON.stringify(data2[key].extent) !== JSON.stringify(data1[key].extent)) {
+                i += 1;
+              }
+            }
+          });
+        }
+        if (key === "floorData") {
+          if (JSON.stringify(data1[key]) !== "{}") {
             if (data1[key].geometry) {
               if (JSON.stringify(data1[key].geometry.coordinates) !== JSON.stringify(
                 data2[
@@ -273,34 +328,166 @@ export default {
               }
             });
           }
-          if (key === "layerData") {
-            Object.keys(data1[key]).forEach((layer) => {
-              data1[key][layer].features.forEach((feature, index) => {
-                if (data1[key][layer].features[index].geometry.coordinates) {
-                  const geometry1 = JSON.stringify(data1[key][layer].features[index]
-                    .geometry.coordinates);
-                  const geometry2 = JSON.stringify(data2[key][layer].features[index]
-                    .geometry.coordinates);
-                  if (geometry1 !== geometry2) {
-                    i += 1;
-                  }
+        }
+        if (key === "layerData") {
+          Object.keys(data1[key]).forEach((layer) => {
+            // 判断两个长度是否相等
+
+            if (layer === "polygon") {
+              if (data1[key][layer].features.length === data2[key][layer].features.length) {
+                const obj1 = {};
+                const obj2 = {};
+                // 重新组装对象
+                if (data1[key][layer].features.length !== 0) {
+                  data1[key][layer].features.forEach((feature, index) => {
+                    obj1[data1[key][layer].features[index].properties.id] = data1[
+                      key][layer].features[index];
+                    obj2[data2[key][layer].features[index].properties.id] = data2[
+                      key][layer].features[index];
+                  });
+                  Object.keys(obj1).forEach((fitem) => {
+                    const coordinates1 = obj1[fitem].geometry.coordinates;
+                    const properties1 = obj1[fitem].properties;
+                    if (obj2[fitem]) {
+                      const coordinates2 = obj2[fitem].geometry.coordinates;
+                      const properties2 = obj2[fitem].properties;
+
+                      let geometry1 = coordinates1;
+                      geometry1.forEach((geo1, gnum1) => {
+                        geometry1[gnum1].forEach((geo11, gnum11) => {
+                          geometry1[gnum1][gnum11][0] = (+geo11[0]).toFixed(7);
+                          geometry1[gnum1][gnum11][1] = (+geo11[1]).toFixed(7);
+                        });
+                      });
+                      geometry1 = JSON.stringify(geometry1);
+                      let geometry2 = coordinates2;
+
+                      geometry2.forEach((geo2, gnum2) => {
+                        geometry2[gnum2].forEach((geo22, gnum22) => {
+                          geometry2[gnum2][gnum22][0] = (+geo22[0]).toFixed(7);
+                          geometry2[gnum2][gnum22][1] = (+geo22[1]).toFixed(7);
+                        });
+                      });
+                      geometry2 = JSON.stringify(geometry2);
+                      if (geometry1 !== geometry2) {
+                        i += 1;
+                      }
+
+                      Object.keys(properties1).forEach((property) => {
+                        if (properties1[property] !== properties2[property]) {
+                          i += 1;
+                        }
+                      });
+                    } else {
+                      i += 1;
+                    }
+                  });
                 }
-                const properties1 = data1[key][layer].features[index].properties;
-                Object.keys(properties1).forEach((property) => {
-                  if (data1[key][layer].features[index].properties[property]
-                    !== data2[key][
-                      layer
-                    ].features[index].properties[property]) {
-                    i += 1;
-                  }
-                });
-              });
-            });
-          }
-        });
-      } catch (e) {
-        return false;
-      }
+              } else {
+                i += 1;
+              }
+            }
+            if (layer === "path") {
+              if (data1[key][layer].features.length === data2[key][layer].features.length) {
+                const obj1 = {};
+                const obj2 = {};
+                // 重新组装对象
+                if (data1[key][layer].features.length !== 0) {
+                  data1[key][layer].features.forEach((feature, index) => {
+                    obj1[data1[key][layer].features[index].properties.id] = data1[
+                      key][layer].features[index];
+                    obj2[data2[key][layer].features[index].properties.id] = data2[
+                      key][layer].features[index];
+                  });
+                  Object.keys(obj1).forEach((fitem) => {
+                    const coordinates1 = obj1[fitem].geometry.coordinates;
+                    const properties1 = obj1[fitem].properties;
+                    if (obj2[fitem]) {
+                      const coordinates2 = obj2[fitem].geometry.coordinates;
+                      const properties2 = obj2[fitem].properties;
+
+                      let geometry1 = coordinates1;
+                      geometry1.forEach((geo1, gnum1) => {
+                        geometry1[gnum1].forEach((geo11, gnum11) => {
+                          geometry1[gnum1][gnum11] = (+geo11).toFixed(7);
+                        });
+                      });
+                      geometry1 = JSON.stringify(geometry1);
+                      let geometry2 = coordinates2;
+
+                      geometry2.forEach((geo2, gnum2) => {
+                        geometry2[gnum2].forEach((geo22, gnum22) => {
+                          geometry2[gnum2][gnum22] = (+geo22).toFixed(7);
+                        });
+                      });
+                      geometry2 = JSON.stringify(geometry2);
+                      if (geometry1 !== geometry2) {
+                        i += 1;
+                      }
+
+                      Object.keys(properties1).forEach((property) => {
+                        if (properties1[property] !== properties2[property]) {
+                          i += 1;
+                        }
+                      });
+                    } else {
+                      i += 1;
+                    }
+                  });
+                }
+              } else {
+                i += 1;
+              }
+            }
+
+            if (layer === "point") {
+              if (data1[key][layer].features.length === data2[key][layer].features.length) {
+                const obj1 = {};
+                const obj2 = {};
+                // 重新组装对象
+                if (data1[key][layer].features.length !== 0) {
+                  data1[key][layer].features.forEach((feature, index) => {
+                    obj1[data1[key][layer].features[index].properties.id] = data1[
+                      key][layer].features[index];
+                    obj2[data2[key][layer].features[index].properties.id] = data2[
+                      key][layer].features[index];
+                  });
+                  Object.keys(obj1).forEach((fitem) => {
+                    const coordinates1 = obj1[fitem].geometry.coordinates;
+                    const properties1 = obj1[fitem].properties;
+                    if (obj2[fitem]) {
+                      const coordinates2 = obj2[fitem].geometry.coordinates;
+                      const properties2 = obj2[fitem].properties;
+
+                      let geometry1 = coordinates1;
+                      geometry1[0] = (+geometry1[0]).toFixed(7);
+                      geometry1[1] = (+geometry1[1]).toFixed(7);
+                      geometry1 = JSON.stringify(geometry1);
+                      let geometry2 = coordinates2;
+
+                      geometry2[0] = (+geometry2[0]).toFixed(7);
+                      geometry2[1] = (+geometry2[1]).toFixed(7);
+                      geometry2 = JSON.stringify(geometry2);
+                      if (geometry1 !== geometry2) {
+                        i += 1;
+                      }
+                      Object.keys(properties1).forEach((property) => {
+                        if (properties1[property] !== properties2[property]) {
+                          i += 1;
+                        }
+                      });
+                    } else {
+                      i += 1;
+                    }
+                  });
+                }
+              } else {
+                i += 1;
+              }
+            }
+          });
+        }
+      });
       return i === 0;
     },
 
@@ -370,7 +557,7 @@ export default {
       var that = this;
       const layerData = that.mapEditor.getSaveData();
       // 点击发布，判断地图是否已保存且状态为完成
-      if (that.compareData(that.activeFloorData, layerData) && that.compareData(layerData, that
+      if (that.compareData(layerData, that
         .activeFloorData) && that.floorFinishStatus === "未完成") {
         that
           .ajax({
@@ -450,55 +637,65 @@ export default {
                   }
                 });
             });
+          }).catch(() => {
+            // todo
           });
         return;
       }
 
-      if (!that.compareData(that.activeFloorData, layerData) || !that.compareData(layerData, that
-        .activeFloorData)) {
-        that.saveDataCallBack(() => {
-          that
-            .ajax({
-              method: "post",
-              url: that.apis.floorFinishById + that.activeFloorData.floorData
-                .properties
-                .id,
-              data: {}
-            })
-            .then((res1) => {
-              const data1 = res1.data;
-              if (data1.code === 200) {
-                that
-                  .ajax({
-                    method: "post",
-                    url: that.apis.floorMgrPublish,
-                    data: {
-                      id: that.activeFloorData.floorData.properties.id
-                    }
-                  })
-                  .then((res2) => {
-                    const data2 = res2.data;
-                    if (data2.code === 200) {
-                      that.$message({
-                        message: "发布成功",
-                        type: "success"
+      if (!that.compareData(layerData, that.activeFloorData)) {
+        that
+          .$confirm("是否保存并切换状态为完成后发布？", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          }).then(() => {
+            that.saveDataCallBack(() => {
+              that
+                .ajax({
+                  method: "post",
+                  url: that.apis.floorFinishById + that.activeFloorData.floorData
+                    .properties
+                    .id,
+                  data: {}
+                })
+                .then((res1) => {
+                  const data1 = res1.data;
+                  if (data1.code === 200) {
+                    that
+                      .ajax({
+                        method: "post",
+                        url: that.apis.floorMgrPublish,
+                        data: {
+                          id: that.activeFloorData.floorData.properties.id
+                        }
+                      })
+                      .then((res2) => {
+                        const data2 = res2.data;
+                        if (data2.code === 200) {
+                          that.$message({
+                            message: "发布成功",
+                            type: "success"
+                          });
+                          that.loadFloor();
+                        } else {
+                          that.$message({
+                            message: data2.msg,
+                            type: "warning"
+                          });
+                        }
                       });
-                      that.loadFloor();
-                    } else {
-                      that.$message({
-                        message: data2.msg,
-                        type: "warning"
-                      });
-                    }
-                  });
-              } else {
-                that.$message({
-                  message: data1.msg,
-                  type: "warning"
+                  } else {
+                    that.$message({
+                      message: data1.msg,
+                      type: "warning"
+                    });
+                  }
                 });
-              }
             });
-        });
+          }).catch(() => {
+            // todo
+          });
       }
     },
     // 设置楼层完成
@@ -620,7 +817,7 @@ export default {
           } = res;
           if (data.code === 200) {
             that.$message({
-              message: "操作成功",
+              message: "保存成功",
               type: "success"
             });
 
@@ -782,7 +979,6 @@ export default {
     },
     // 全选楼梯变动监听
     goFloorNumAllChange(isAll) {
-      // console.log(isAll)
       var that = this;
       if (isAll) {
         that.floorArr.forEach((item) => {
@@ -832,7 +1028,6 @@ export default {
     },
     // 监听样式选择器变动
     styleSelectChange(styleIndex) {
-      // console.log(styleIndex)
       var that = this;
       var style = "";
       that.iconActiveNum = "";
@@ -1077,7 +1272,6 @@ export default {
       that.mapEditor.setLayerDisplay("build", false);
       // /选择要素回调事件
       that.mapEditor.selectFeature((e) => {
-        // console.log(e)
         const emptyObj = {
           id: "",
           layername: "",
@@ -1149,8 +1343,6 @@ export default {
       });
       // 绘制要素回调事件
       that.mapEditor.drawFeature((e) => {
-        // console.log(e)
-
         that.targetDrawedElement = e;
 
         // 绘制多边形的时候
@@ -1606,6 +1798,38 @@ export default {
           }
         });
     },
+    // 左上角-返回上一页
+    back() {
+      var that = this;
+      const layerData = that.mapEditor.getSaveData();
+      if (!that.compareData(layerData, that.activeFloorData)) {
+        that
+          .$confirm("绘制内容尚未保存", "提示", {
+            confirmButtonText: "保存后离开",
+            cancelButtonText: "离开",
+            type: "warning",
+            distinguishCancelAndClose: true,
+            callback(action, instance) {
+              if (action === "confirm") {
+                that.saveDataCallBack(() => {
+                  that.$message({
+                    message: "保存成功",
+                    type: "success"
+                  });
+                  setTimeout(() => {
+                    window.history.back();
+                  }, 800);
+                });
+              }
+              if (action === "cancel") {
+                window.history.back();
+              }
+            }
+          });
+      } else {
+        window.history.back();
+      }
+    },
     // 监听楼层变动
     floorChange(e) {
       var that = this;
@@ -1627,13 +1851,52 @@ export default {
             width: ""
           }
         };
-
-        that.selectedElement = emptyObj;
-        that.facilityTypeTarget = emptyObj;
-        that.adjustImageWord = "调整平面图";
-        that.activeFloorData = that.buildingFloorsObj.floors[e];
+        const layerData = that.mapEditor.getSaveData();
+        let oldfloor = "";
+        if (that.activeFloorArrCache.length >= 2) {
+          oldfloor = that.activeFloorArrCache[that.activeFloorArrCache.length - 2];
+        } else {
+          [oldfloor] = that.activeFloorArrCache;
+        }
+        that.activeFloor = oldfloor;
+        if (!that.compareData(layerData, that.activeFloorData)) {
+          that
+            .$confirm("绘制内容尚未保存", "提示", {
+              confirmButtonText: "保存后离开",
+              cancelButtonText: "离开",
+              type: "warning",
+              distinguishCancelAndClose: true,
+              callback(action, instance) {
+                if (action === "confirm") {
+                  that.saveData();
+                  that.selectedElement = emptyObj;
+                  that.facilityTypeTarget = emptyObj;
+                  that.adjustImageWord = "调整平面图";
+                  that.activeFloor = e;
+                  that.activeFloorData = that.buildingFloorsObj.floors[e];
+                }
+                if (action === "cancel") {
+                  that.selectedElement = emptyObj;
+                  that.facilityTypeTarget = emptyObj;
+                  that.adjustImageWord = "调整平面图";
+                  that.activeFloor = e;
+                  that.activeFloorData = that.buildingFloorsObj.floors[e];
+                }
+                if (action === "close") {
+                  that.activeFloor = oldfloor;
+                }
+              }
+            });
+        } else {
+          that.selectedElement = emptyObj;
+          that.facilityTypeTarget = emptyObj;
+          that.adjustImageWord = "调整平面图";
+          that.activeFloor = e;
+          that.activeFloorData = that.buildingFloorsObj.floors[e];
+        }
       });
     },
+
     // 全选楼层
     floorCheck() {
       var that = this;
@@ -1672,7 +1935,6 @@ export default {
               numArr.push(num);
             });
             numArr.sort((a, b) => b - a);
-            // console.log(JSON.stringify(numArr))
 
             numArr.forEach((item) => {
               const key = `${item}`;
@@ -1684,8 +1946,6 @@ export default {
                 }
               });
             });
-            // that.buildingFloorsObj.floors=floors;
-            // console.log(JSON.stringify(floors,null,4))
 
             floors.forEach((item) => {
               Object.keys(item).forEach((key) => {

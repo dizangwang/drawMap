@@ -279,9 +279,19 @@ export default class MapEditor {
         if (this.ol.layers.buildLayer.getSource().getFeatures().length > 0) {
             let f = this.ol.layers.buildLayer.getSource().getFeatures()[0].clone();
 
+            let e = f.getGeometry().getExtent();
+
+            let arr = [];
+            arr.push([e[0], e[1]]);
+            arr.push([e[0], e[3]]);
+            arr.push([e[2], e[3]]);
+            arr.push([e[2], e[1]]);
+            arr.push([e[0], e[1]]);
+            let polygon = new ol.geom.Polygon([arr]);
+            f.setGeometry(polygon);
+
             this.ol.layers.temLayer.getSource().addFeature(f);
 
-            let e = f.getGeometry().getExtent();
             let p0 = this.transformTo4326(e[0], e[1]);
             let p1 = this.transformTo4326(e[2], e[3]);
             let extent = [p0[0], p0[1], p1[0], p1[1]]
@@ -298,6 +308,7 @@ export default class MapEditor {
     cancelEditImage() {
         this.interactionManage._filter.editImage = false;
 
+        let img = this.interactionManage.cancelEditImage();
         if (this.ol.layers.temLayer.getSource().getFeatures().length > 0) {
             let f = this.ol.layers.temLayer.getSource().getFeatures()[0].clone();
             let e = f.getGeometry().getExtent();
@@ -305,15 +316,17 @@ export default class MapEditor {
             let p1 = this.transformTo4326(e[2], e[3]);
             let extent = [p0[0], p0[1], p1[0], p1[1]]
             this.setImageData({
-                data: this.temImg,
+                data: img,
                 extent: extent
             });
         }
 
         this.ol.map.removeLayer(this.ol.layers.temLayer);
-        this.interactionManage.cancelEditImage();
 
-        return this.map.imageData.extent;
+        return {
+            data: img,
+            extent: this.map.imageData.extent
+        };
     }
 
     ///取消绘制
@@ -640,6 +653,24 @@ export default class MapEditor {
         ctx.drawImage(img, 0, 0, img.width, img.height);
         var dataURL = this.canvas.toDataURL("image/png");
         return dataURL;
+    }
+
+    rotateBase64Iamge(img, angle) {
+        if (this.canvas == null)
+            this.canvas = document.createElement("canvas");
+
+
+        this.canvas.width = img.width;
+        this.canvas.height = img.height;
+        var ctx = this.canvas.getContext("2d");
+        let w = img.width;
+        let h = img.height;
+        ctx.translate(w / 2, h / 2); // 1
+        ctx.rotate(-angle); // 2
+        ctx.drawImage(img, -w / 2, -h / 2);
+        // 恢复设置（恢复的步骤要跟你修改的步骤向反）
+        ctx.rotate(angle);
+        return this.canvas.toDataURL("image/png");
     }
 
 }

@@ -279,13 +279,27 @@
             }
             ///编辑图片轮廓
             document.getElementById("editImage").onclick = () => {
-                mapEditor.editImage("https://www.fengmap.com/img/editor/guide-operation/menu1.png");
+                mapEditor.editImage("../img/test.png");
             }
             ///编辑图片轮廓
             document.getElementById("cancelEditImage").onclick = () => {
                 console.log(mapEditor.cancelEditImage());
+
+                let o = mapEditor.cancelEditImage();
+                let img = new Image();
+                img.src = o.data;
+                img.onload = () => {
+                    ///todo 
+                    ///把img对象 按照他传进来的图片路径替换掉
+                    ///然后用新路径和范围调用这个接口
+                    // mapEditor.setImageData({
+                    // data: "../img/poi.png",//图片路径
+                    // extent: o.extent,
+                }
             }
-        } 
+
+        }
+
     </script>
 
 </head>

@@ -44,7 +44,12 @@ export class InterCtionManage {
 
         ///初始化捕捉图层
         this.mapEditor.ol.interactions.modify = new ol.interaction.Modify({
-            features: this.getSelectFeatures()
+            features: this.getSelectFeatures(),
+            insertVertexCondition: () => {
+                if (this._filter.editImage)
+                    return false;
+                return true;
+            },
         });
         this.mapEditor.ol.interactions.translate = new ol.interaction.Translate({
             features: this.getSelectFeatures()
@@ -99,6 +104,92 @@ export class InterCtionManage {
                     this.mapEditor.event.selectFeature(null)
             }
         })
+
+        this.isRotate = false;
+        this.isImageModify = false;
+        this.imageModifyIndex = null;
+
+        this.rotate_click = this.mapEditor.ol.map.on('click', event => {
+
+            if (this.isRotate)
+                this._onRotateMapClick(event);
+
+
+
+            // this.imageModifyIndex = null;
+
+            // let f = this.mapEditor.ol.layers.temLayer.getSource().getFeatures()[0].clone();
+            // let g = f.getGeometry();
+            // let ps = g.getCoordinates();
+
+            // ps[0].forEach((p, i) => {
+            //     let pp = this.mapEditor.ol.map.getPixelFromCoordinate(p);
+            //     let a = pp[0] - event.pixel[0];
+            //     let b = pp[1] - event.pixel[1];
+            //     let d = Math.sqrt(a * a + b * b);
+            //     if (d <= 10) {
+            //         this.imageModifyIndex = i;
+            //         return;
+            //     }
+            // })
+
+            // this.mapEditor.ol. map.getPixelFromCoordinate(coordinate)
+            // if (ps[0].indexOf(event.coordinate) >= 0) {
+            // console.log(1);
+            // }
+
+        })
+
+
+
+
+        this.rotate_drag = this.mapEditor.ol.map.on('pointerdrag', event => {
+
+            if (this.isImageModify) {
+                if (this.imageModifyIndex == null) {
+                    let f = this.mapEditor.ol.layers.temLayer.getSource().getFeatures()[0].clone();
+                    let g = f.getGeometry();
+                    let ps = g.getCoordinates();
+                    for (let i = 0; i < 4; i++) {
+                        let p = ps[0][i];
+                        let pp = this.mapEditor.ol.map.getPixelFromCoordinate(p);
+                        let a = pp[0] - event.pixel[0];
+                        let b = pp[1] - event.pixel[1];
+                        let d = Math.sqrt(a * a + b * b);
+                        if (d <= 10) {
+                            this.imageModifyIndex = i;
+                            // break;
+                        }
+                    }
+                }
+                if (this.imageModifyIndex != null)
+                    this._onImageModifyMove(event);
+                return;
+            }
+
+            if (this.isRotate)
+                this._onRotateMapDrag(event);
+
+
+            if (this._filter.editImage) {
+                this.freshImage();
+            }
+        })
+
+    }
+
+    freshImage() {
+        if (this.mapEditor.ol.layers.temLayer.getSource().getFeatures().length > 0) {
+            let f = this.mapEditor.ol.layers.temLayer.getSource().getFeatures()[0].clone();
+            let e = f.getGeometry().getExtent();
+            this.mapEditor.ol.layers.imageLayer.setSource(new ol.source.ImageStatic({
+                url: this.temBase64,
+                projection: new ol.proj.Projection({
+                    code: "EPSG:3857"
+                }),
+                imageExtent: e
+            }));
+        }
     }
 
     chanelEdit() {
@@ -211,7 +302,7 @@ export class InterCtionManage {
     }
 
 
-
+    ///绘制完成事件
     _drawEnd(f, layer, s = null) {
         let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             var r = Math.random() * 16 | 0,
@@ -247,9 +338,6 @@ export class InterCtionManage {
                     src: this.mapEditor.getBase64Image(img)
                 }));
             }
-
-
-
         }
         if (layer == "path") {
             let style = this.mapEditor.ol.layers.pathLayer.getStyle();
@@ -311,7 +399,9 @@ export class InterCtionManage {
         }
 
         // this.mapEditor.interactionManage.getSelectFeatures().push(f);
-        this._drawFeatureArray.push(f);
+        if (layername == "多边形图层")
+            this._drawFeatureArray.push(f);
+
         if (typeof (this.mapEditor.event.drawFeature) != "undefined") {
             let d = f.getProperties();
             delete d["geometry"];
@@ -335,7 +425,7 @@ export class InterCtionManage {
         this.mapEditor.ol.interactions.select.setActive(true);
 
 
-        if(this._drawFeatureArray.length>0)
+        if (this._drawFeatureArray.length > 0)
             this.mapEditor.ol.interactions.select.getFeatures().push(this._drawFeatureArray[this._drawFeatureArray.length - 1]);
 
     }
@@ -375,39 +465,32 @@ export class InterCtionManage {
 
     ///编辑图片
     editImage(data) {
-        this.temImg = data;
+        let img = new Image();
+        img.src = data;
+        img.onload = (() => {
+            this.temImg = img;
+            this.temBase64 = this.mapEditor.getBase64Image(this.temImg);
+        }).bind(this)
         this.clearSelectFeatures()
         this.chanelEdit();
         this.mapEditor.ol.interactions.translate.setActive(true);
         this.mapEditor.ol.interactions.modify.setActive(true);
 
-        this.mapEditor.ol.interactions.modify.on("modifyend", (e) => {
-            if (this.mapEditor.ol.layers.temLayer.getSource().getFeatures().length > 0) {
-                let f = this.mapEditor.ol.layers.temLayer.getSource().getFeatures()[0].clone();
-                let e = f.getGeometry().getExtent();
-                this.mapEditor.ol.layers.imageLayer.setSource(new ol.source.ImageStatic({
-                    url: this.temImg,
-                    projection: new ol.proj.Projection({
-                        code: "EPSG:3857"
-                    }),
-                    imageExtent: e
-                }));
-            }
-        })
-        this.mapEditor.ol.interactions.translate.on("translateend", (e) => {
-            if (this.mapEditor.ol.layers.temLayer.getSource().getFeatures().length > 0) {
-                let f = this.mapEditor.ol.layers.temLayer.getSource().getFeatures()[0].clone();
-                let e = f.getGeometry().getExtent();
-                this.mapEditor.ol.layers.imageLayer.setSource(new ol.source.ImageStatic({
-                    url: this.temImg,
-                    projection: new ol.proj.Projection({
-                        code: "EPSG:3857"
-                    }),
-                    imageExtent: e
-                }));
 
-            }
+
+        this.mapEditor.ol.interactions.modify.on("modifystart", (e) => {
+            this.isImageModify = true;
+        });
+
+
+
+        this.mapEditor.ol.interactions.modify.on("modifyend", (e) => {
+            this.isImageModify = false;
+            this.imageModifyIndex = null;
+
         })
+
+        this.mapEditor.ol.interactions.translate.on("translateend", (e) => {})
 
         this._startSnap(true);
     }
@@ -416,8 +499,49 @@ export class InterCtionManage {
     cancelEditImage() {
         this.clearSelectFeatures()
         this.chanelEdit();
+        this.mapEditor.ol.interactions.modify.on("modifystart", (e) => {});
         this.mapEditor.ol.interactions.modify.on("modifyend", (e) => {});
         this.mapEditor.ol.interactions.modify.on("translateend", (e) => {});
+
+
+        return this.temBase64;
+
+    }
+
+    _onImageModifyMove(event) {
+        if (this.mapEditor.ol.layers.temLayer.getSource().getFeatures().length > 0) {
+            let f = this.mapEditor.ol.layers.temLayer.getSource().getFeatures()[0].clone();
+            let g = f.getGeometry();
+            let ps = g.getCoordinates();
+
+            // console.log(this.imageModifyIndex);
+
+            let p0 = ps[0][this.imageModifyIndex >= 2 ? this.imageModifyIndex - 2 : this.imageModifyIndex + 2];
+
+            let p1 = event.coordinate;
+            let maxX = p0[0] > p1[0] ? p0[0] : p1[0];
+            let maxY = p0[1] > p1[1] ? p0[1] : p1[1];
+            let minX = p0[0] < p1[0] ? p0[0] : p1[0];
+            let minY = p0[1] < p1[1] ? p0[1] : p1[1];
+
+            let e = [minX, minY, maxX, maxY];
+            let arr = [];
+            arr.push([e[0], e[1]]);
+            arr.push([e[0], e[3]]);
+            arr.push([e[2], e[3]]);
+            arr.push([e[2], e[1]]);
+            arr.push([e[0], e[1]]);
+            let newGeo = new ol.geom.Polygon([arr]);
+            this.mapEditor.ol.layers.temLayer.getSource().getFeatures()[0].setGeometry(newGeo);
+            this.mapEditor.ol.layers.imageLayer.setSource(new ol.source.ImageStatic({
+                url: this.temBase64,
+                projection: new ol.proj.Projection({
+                    code: "EPSG:3857"
+                }),
+                imageExtent: e
+            }));
+            return;
+        }
     }
 
     ///选择要素回调
@@ -477,26 +601,7 @@ export class InterCtionManage {
 
         this.isRotate = true;
         this._startDrap(false);
-        this.rotate_click = this.mapEditor.ol.map.on('click', event => {
-            this._onRotateMapClick(event);
-        })
-        this.rotate_drag = this.mapEditor.ol.map.on('pointerdrag', event => {
-            this._onRotateMapDrag(event);
 
-            if (this._filter.editImage) {
-                if (this.mapEditor.ol.layers.temLayer.getSource().getFeatures().length > 0) {
-                    let f = this.mapEditor.ol.layers.temLayer.getSource().getFeatures()[0].clone();
-                    let e = f.getGeometry().getExtent();
-                    this.mapEditor.ol.layers.imageLayer.setSource(new ol.source.ImageStatic({
-                        url: this.temImg,
-                        projection: new ol.proj.Projection({
-                            code: "EPSG:3857"
-                        }),
-                        imageExtent: e
-                    }));
-                }
-            }
-        })
     }
 
 
@@ -504,8 +609,8 @@ export class InterCtionManage {
         this.isRotate = false;
         this._startDrap(true);
 
-        ol.Observable.unByKey(this.rotate_click);
-        ol.Observable.unByKey(this.rotate_drag);
+        // ol.Observable.unByKey(this.rotate_click);
+        // ol.Observable.unByKey(this.rotate_drag);
     }
 
     _startDrap(b) {
@@ -520,7 +625,7 @@ export class InterCtionManage {
     ///要素旋转 鼠标离开事件
     _onRotateMapClick(event) {
         // console.log(event)
-
+        this.rotare_first = null;
         this.rotate_before = null;
         this.rotatePoint = null;
         // this.rotate_center = null;
@@ -528,40 +633,57 @@ export class InterCtionManage {
 
     ///要素旋转鼠标拖动事件
     _onRotateMapDrag(event) {
+        if (this.rotare_first == null)
+            this.rotare_first = event.coordinate;
         if (this.rotate_before == null) {
             this.rotate_before = event.coordinate;
             return;
         } else {
-            ///求角度
-
-            let getAngle = ({
-                x: x1,
-                y: y1
-            }, {
-                x: x2,
-                y: y2
-            }) => {
-                const dot = x1 * x2 + y1 * y2
-                const det = x1 * y2 - y1 * x2
-                const angle = Math.atan2(det, dot) / Math.PI * 180
-                return Math.round(angle + 360) % 360
-            }
-
             // console.log(event)
             this.getSelectFeatures().forEach(f => {
-                let g = f.getGeometry();
-                let c = this.rotatePoint;
-                let a = getAngle({
-                    x: this.rotate_before[0] - c[0],
-                    y: this.rotate_before[1] - c[1],
-                }, {
-                    x: event.coordinate[0] - c[0],
-                    y: event.coordinate[1] - c[1],
-                });
+                if (!this._filter.editImage) {
+                    let g = f.getGeometry();
+                    let c = this.rotatePoint;
+                    let a = this.getAngle({
+                        x: this.rotate_before[0] - c[0],
+                        y: this.rotate_before[1] - c[1],
+                    }, {
+                        x: event.coordinate[0] - c[0],
+                        y: event.coordinate[1] - c[1],
+                    });
+                    g.rotate(a * (Math.PI / 180), c);
+                } else {
+                    let c = this.rotatePoint;
+                    let a = this.getAngle({
+                        x: this.rotare_first[0] - c[0],
+                        y: this.rotare_first[1] - c[1],
+                    }, {
+                        x: event.coordinate[0] - c[0],
+                        y: event.coordinate[1] - c[1],
+                    });
 
-                g.rotate(a * (Math.PI / 180), c);
+                    let i = new Image();
+                    i.src = this.temBase64;
+                    i.onload = (() => {
+                        this.temBase64 = this.mapEditor.rotateBase64Iamge(this.temImg, a * (Math.PI / 180));
+                    }).bind(this);
+                }
             });
             this.rotate_before = event.coordinate;
         }
+    }
+
+
+    getAngle({
+        x: x1,
+        y: y1
+    }, {
+        x: x2,
+        y: y2
+    }) {
+        const dot = x1 * x2 + y1 * y2
+        const det = x1 * y2 - y1 * x2
+        const angle = Math.atan2(det, dot) / Math.PI * 180
+        return Math.round(angle + 360) % 360
     }
 }

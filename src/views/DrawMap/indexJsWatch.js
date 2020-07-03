@@ -59,12 +59,16 @@ export default {
     }
     // that.mapEditor.cancelDraw();
   },
+  activeFloor(afl) {
+    if (afl) {
+      this.activeFloorArrCache.push(afl);
+    }
+  },
   activeFloorData(result) {
     var that = this;
     if (!result) {
       return;
     }
-
     const val = JSON.parse(JSON.stringify(result));
     that.getFloorInfoById(val.floorData.properties.id).then((floorInfo) => {
       that.finishStatus = floorInfo.finishStatus;

@@ -239,5 +239,7 @@ export default {
   // 调整平面图
   adjustImageWord: "调整平面图",
   // 完成状态
-  finishStatus: ""
+  finishStatus: "",
+  // 缓存楼层变动
+  activeFloorArrCache: []
 };
