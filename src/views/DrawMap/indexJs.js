@@ -143,7 +143,14 @@ export default {
         } else {
           that.mapEditor.setLayerDisplay("build", false);
           const result = that.mapEditor.cancelEditImage();
-          that.updateLngLat(result.extent);
+
+          that.mapEditor.setImageData({
+            data: encodeURIComponent(result.data),
+            extent: result.extent
+          });
+
+          // console.log(result.data)
+          that.updateLngLat(result);
           // let img=new Image();
           // img.src=result.data;
           // img.onload=()=>{
@@ -166,8 +173,9 @@ export default {
       }
     },
     // 调整结束后更新经纬度信息
-    updateLngLat(lngLatObj) {
+    updateLngLat(resultInfo) {
       var that = this;
+      var lngLatObj = resultInfo.extent;
       that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((res) => {
         const obj = {
           floorOutline: res.floorOutline,
