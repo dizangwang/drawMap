@@ -157,11 +157,10 @@ export default {
           const result = that.mapEditor.cancelEditImage();
 
           that.mapEditor.setImageData({
-            data: encodeURIComponent(result.data),
+            data: result.data,
             extent: result.extent
           });
 
-          // console.log(result.data)
           that.updateLngLat(result);
           // let img=new Image();
           // img.src=result.data;
@@ -783,8 +782,9 @@ export default {
     // 保存数据后的回调
     saveDataCallBack(fn) {
       var that = this;
-      const layerData = that.mapEditor.getSaveData();
       var obj = {};
+      const layerData = that.mapEditor.getSaveData();
+      layerData.imageData.data = encodeURIComponent(layerData.imageData.data);
       obj.id = that.buildingFloorsObj.id;
       obj.name = that.buildingFloorsObj.name;
       obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
@@ -816,8 +816,9 @@ export default {
     // 保存数据
     saveData() {
       var that = this;
-      const layerData = that.mapEditor.getSaveData();
       var obj = {};
+      const layerData = that.mapEditor.getSaveData();
+      layerData.imageData.data = encodeURIComponent(layerData.imageData.data);
       obj.id = that.buildingFloorsObj.id;
       obj.name = that.buildingFloorsObj.name;
       obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
@@ -1933,6 +1934,7 @@ export default {
     // 加载楼层信息
     loadFloor() {
       var that = this;
+      //  that.mapLoading=true;
       that
         .ajax({
           method: "get",
@@ -1940,6 +1942,7 @@ export default {
           data: ""
         })
         .then((res) => {
+          // that.mapLoading=false;
           const {
             data
           } = res;

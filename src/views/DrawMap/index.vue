@@ -476,7 +476,7 @@
           </div>
         </div>
       </div>
-      <div class="rightHandlerCon" :style="{ height: height }">
+      <div class="rightHandlerCon"   v-loading="mapLoading" :style="{ height: height }">
         <div
           v-show="!hasUnderPainting"
           class="noUnderPaint center"

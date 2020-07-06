@@ -241,5 +241,7 @@ export default {
   // 完成状态
   finishStatus: "",
   // 缓存楼层变动
-  activeFloorArrCache: []
+  activeFloorArrCache: [],
+  // map加载时loading
+  mapLoading: false
 };
