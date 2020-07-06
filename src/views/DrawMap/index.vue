@@ -4,7 +4,7 @@
     <div class="handlerFor">
       <span class="titleName">
         <el-popover placement="bottom-start" content="返回上一页" trigger="hover">
-          <i slot="reference" @click="back" class="iconCommon historybackWhiteIcon historyBack"></i>
+          <i slot="reference" onclick="window.history.back()" class="iconCommon historybackWhiteIcon historyBack"></i>
         </el-popover>矢量地图编辑器
       </span>
       <span>

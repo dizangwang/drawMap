@@ -17,6 +17,11 @@
         @on-change="searchValueChange"
         style="width:250px"
       />
+      <div
+        id="searchResultPanel"
+        style="border:1px solid black;width:150px;height:auto;display:none"
+      ></div>
+
       <div class="resultList" v-if="searchResultShow">
         <div
           class="searchItem"
@@ -325,16 +330,20 @@ export default {
       map.clearOverlays();
       function myFun() {
         const result = local.getResults();
-        // console.log("result",result)
         if (result) {
-          if (
-            Object.prototype.hasOwnProperty.call(result, "Qq")
-            || Object.prototype.hasOwnProperty.call(result, "Yq")
-          ) {
-            that.searchResult = result.Qq || result.Yq;
-          } else {
-            that.searchResult = [];
-          }
+          let targetArr = [];
+          Object.keys(result).forEach((key) => {
+            if (
+              Object.prototype.toString.call(result[key]) === "[object Array]"
+            ) {
+              if (result[key].length > 0) {
+                if (result[key][0].address) {
+                  targetArr = result[key];
+                }
+              }
+            }
+          });
+          that.searchResult = targetArr;
         } else {
           that.searchResult = [];
         }
@@ -404,8 +413,24 @@ export default {
       that.currentFloor = that.indoorManager.getFloor();
       // 绘制结束回调方法
       const overlaycomplete = (e) => {
-        that.activeLonLatData = e.overlay.Tn || e.overlay.la || e.overlay.ka || e.overlay.ao;
-        // console.log(e);
+        let targetArr = [];
+        Object.keys(e.overlay).forEach((key) => {
+          if (
+            Object.prototype.toString.call(e.overlay[key]) === "[object Array]"
+          ) {
+            if (e.overlay[key].length > 0 && e.overlay[key][0]) {
+              const arr = e.overlay[key];
+              if (
+                arr[0].lng === arr[arr.length - 1].lng
+                && arr[0].lat === arr[arr.length - 1].lat
+              ) {
+                targetArr = arr;
+              }
+            }
+          }
+        });
+
+        that.activeLonLatData = targetArr;
         let currentFloor = that.indoorManager.getFloor();
         if (!currentFloor) {
           // console.log(that.currentFloor);

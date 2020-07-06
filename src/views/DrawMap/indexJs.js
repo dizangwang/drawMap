@@ -40,6 +40,18 @@ export default {
     that.$nextTick(() => {
       that.initMap(TestData.floors[1]);
     });
+
+    window.addEventListener("beforeunload", (ev) => {
+      var event = ev;
+      // 窗口刷新或关闭的时候进行判断询问
+      if (/drawMap/g.test(window.location.hash)) {
+        const layerData = that.mapEditor.getSaveData();
+        if (!that.compareData(layerData, that.activeFloorData)) {
+          event.preventDefault();
+          event.returnValue = "绘制内容尚未保存,确定要离开此页面吗？";
+        }
+      }
+    });
   },
   watch: Watch,
   // 导航离开该组件的对应路由时调用
