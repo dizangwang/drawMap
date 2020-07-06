@@ -233,6 +233,7 @@
                     :class="{floorItemGreen:it.isGreen,floorItemRed:it.isRed}"
                     v-for="it in item.floors"
                     :key="it.id"
+                    :title="it.isRedReason"
                   >{{it.floorNum | formatFloorFilter}}</div>
                 </div>
               </el-card>

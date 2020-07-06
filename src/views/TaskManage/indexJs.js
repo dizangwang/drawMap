@@ -290,31 +290,34 @@ export default {
               that.downloadTaskObjArrCopy.forEach((element, num) => {
                 let taskRedNum = 0;
                 let taskGreenNum = 0;
-                that.downloadTaskObjArrCopy[num].downloadBuildingArrs.forEach((item, ind) => {
-                  const itemCopy = JSON.parse(JSON.stringify(item));
-                  const {
-                    floors
-                  } = itemCopy;
-                  let redNum = 0;
-                  let greenNum = 0;
-                  floors.forEach((it, index) => {
-                    if (result[it.id]) {
-                      itemCopy.floors[index].isRed = true;
-                      redNum += 1;
-                      taskRedNum += 1;
-                    } else {
-                      itemCopy.floors[index].isGreen = true;
-                      greenNum += 1;
-                      taskGreenNum += 1;
-                    }
+                if (that.downloadTaskObjArrCopy[num].downloadBuildingArrs) {
+                  that.downloadTaskObjArrCopy[num].downloadBuildingArrs.forEach((item,
+                    ind) => {
+                    const itemCopy = JSON.parse(JSON.stringify(item));
+                    const {
+                      floors
+                    } = itemCopy;
+                    let redNum = 0;
+                    let greenNum = 0;
+                    floors.forEach((it, index) => {
+                      if (result[it.id]) {
+                        itemCopy.floors[index].isRed = true;
+                        itemCopy.floors[index].isRedReason = result[it.id];
+                        redNum += 1;
+                        taskRedNum += 1;
+                      } else {
+                        itemCopy.floors[index].isGreen = true;
+                        greenNum += 1;
+                        taskGreenNum += 1;
+                      }
+                    });
+                    itemCopy.redNum = redNum;
+                    itemCopy.greenNum = greenNum;
+                    that.downloadTaskObjArrCopy[num].downloadBuildingArrs[ind] = itemCopy;
                   });
-
-                  itemCopy.redNum = redNum;
-                  itemCopy.greenNum = greenNum;
-                  that.downloadTaskObjArrCopy[num].downloadBuildingArrs[ind] = itemCopy;
-                });
-                that.downloadTaskObjArrCopy[num].redNum = taskRedNum;
-                that.downloadTaskObjArrCopy[num].greenNum = taskGreenNum;
+                  that.downloadTaskObjArrCopy[num].redNum = taskRedNum;
+                  that.downloadTaskObjArrCopy[num].greenNum = taskGreenNum;
+                }
               });
             } else {
               that.downloadTaskObjArrCopy.forEach((element, num) => {
@@ -400,6 +403,7 @@ export default {
               }
             });
             that.floorForDownloadArr = arr;
+
             if (arr.length > 0) {
               that.floorMgrPrepareDownload(arr.join(","));
             } else {
