@@ -16,7 +16,7 @@ export default class MapEditor {
         ///geojson{} 对应的楼层关联件。样式信息，颜色字体等数据
         ///map 结构
         this.map = option.data;
-
+        this._container = option.container;
         ///事件
         this.event = {};
         ///ol对象
@@ -269,39 +269,79 @@ export default class MapEditor {
     }
 
     ///编辑图片
-    editImage(data) {
-        this.temImg = data;
-        this.ol.layers.temLayer = new ol.layer.Vector({
-            source: new ol.source.Vector(),
-            style: Style.buildStyle()
-        });
-        this.ol.map.addLayer(this.ol.layers.temLayer);
-        if (this.ol.layers.buildLayer.getSource().getFeatures().length > 0) {
-            let f = this.ol.layers.buildLayer.getSource().getFeatures()[0].clone();
-
-            let e = f.getGeometry().getExtent();
-
-            let arr = [];
-            arr.push([e[0], e[1]]);
-            arr.push([e[0], e[3]]);
-            arr.push([e[2], e[3]]);
-            arr.push([e[2], e[1]]);
-            arr.push([e[0], e[1]]);
-            let polygon = new ol.geom.Polygon([arr]);
-            f.setGeometry(polygon);
-
-            this.ol.layers.temLayer.getSource().addFeature(f);
-
-            let p0 = this.transformTo4326(e[0], e[1]);
-            let p1 = this.transformTo4326(e[2], e[3]);
-            let extent = [p0[0], p0[1], p1[0], p1[1]]
-            this.setImageData({
-                data: data,
-                extent: extent
+    editImage(data, ext = null) {
+        let img = new Image();
+        img.src = data;
+        img.onload = () => {
+            this.temImg = data;
+            this.ol.layers.temLayer = new ol.layer.Vector({
+                source: new ol.source.Vector(),
+                style: Style.buildStyle()
             });
+            this.ol.map.addLayer(this.ol.layers.temLayer);
+            if (this.ol.layers.buildLayer.getSource().getFeatures().length > 0) {
+                let f = this.ol.layers.buildLayer.getSource().getFeatures()[0].clone();
+                let e;
+                if (ext == null) {
+                    let mapSize = this.ol.map.getSize();
+                    var mapExtent = this.ol.map.getView().calculateExtent(mapSize);
+                    let w = (mapExtent[2] - mapExtent[0]) / mapSize[0];
+                    let h = (mapExtent[3] - mapExtent[1]) / mapSize[1];
+
+                    let imgW = img.width * 3 / 4;
+                    let imgH = img.height * 3 / 4;
+
+                    var p = ol.extent.getCenter(mapExtent);
+                    e = [p[0] - imgW * w / 2, p[1] - imgH * h / 2, p[0] + imgW * w / 2, p[1] + imgH * h / 2]
+
+                } else
+                    e = ext;
+
+                let arr = [];
+                arr.push([e[0], e[1]]);
+                arr.push([e[0], e[3]]);
+                arr.push([e[2], e[3]]);
+                arr.push([e[2], e[1]]);
+                arr.push([e[0], e[1]]);
+                let polygon = new ol.geom.Polygon([arr]);
+                f.setGeometry(polygon);
+
+                let style = new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(217,0,0,1.0)',
+                        width: 1
+                    }),
+                    fill: new ol.style.Fill({
+                        color: 'rgba(247,254,255,0.8)'
+                    }),
+                    text: new ol.style.Text({
+                        font: 'normal 12px 微软雅黑',
+                        // text: featrue.get('name'),
+                        fill: new ol.style.Fill({
+                            color: 'rgba(255,255,255,1)'
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: 'rgba(0,0,0,1)',
+                            width: 2
+                        })
+                    })
+                });
+                f.setStyle(style);
+
+                this.ol.layers.temLayer.getSource().addFeature(f);
+
+                let p0 = this.transformTo4326(e[0], e[1]);
+                let p1 = this.transformTo4326(e[2], e[3]);
+                let extent = [p0[0], p0[1], p1[0], p1[1]]
+                this.setImageData({
+                    data: data,
+                    extent: extent
+                });
+            }
+            this.interactionManage._filter.editImage = true;
+            this.interactionManage.editImage(data);
         }
-        this.interactionManage._filter.editImage = true;
-        this.interactionManage.editImage(data);
+
     }
 
     // 取消图片编辑
@@ -663,8 +703,9 @@ export default class MapEditor {
         this.canvas.width = img.width;
         this.canvas.height = img.height;
         var ctx = this.canvas.getContext("2d");
-        let w = img.width;
-        let h = img.height;
+        
+        let w = this.canvas.width;
+        let h = this.canvas.height;
         ctx.translate(w / 2, h / 2); // 1
         ctx.rotate(-angle); // 2
         ctx.drawImage(img, -w / 2, -h / 2);

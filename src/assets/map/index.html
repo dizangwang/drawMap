@@ -279,7 +279,8 @@
             }
             ///编辑图片轮廓
             document.getElementById("editImage").onclick = () => {
-                mapEditor.editImage("../img/test.png");
+                /*已有图片extent时直接传。没有的时候传null*/
+                mapEditor.editImage("../img/test.png",null);   
             }
             ///编辑图片轮廓
             document.getElementById("cancelEditImage").onclick = () => {

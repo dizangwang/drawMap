@@ -653,6 +653,7 @@ export class InterCtionManage {
                     });
                     g.rotate(a * (Math.PI / 180), c);
                 } else {
+                    /////图片旋转
                     let c = this.rotatePoint;
                     let a = this.getAngle({
                         x: this.rotare_first[0] - c[0],

@@ -25,6 +25,8 @@ export default {
   },
   mounted() {
     var that = this;
+    that.tabNum = 1;
+    that.adjustImageWord = "调整平面图";
     that.buildingId = that.$route.params.id;
     that.height = `${window.innerHeight - 75}px`;
     window.onresize = () => {
@@ -150,7 +152,7 @@ export default {
       if (layerData.imageData.data) {
         if (that.adjustImageWord === "调整平面图") {
           that.mapEditor.setLayerDisplay("build", true);
-          that.mapEditor.editImage(layerData.imageData.data);
+          that.mapEditor.editImage(layerData.imageData.data, null);
           that.adjustImageWord = "完成调整";
         } else {
           that.mapEditor.setLayerDisplay("build", false);
