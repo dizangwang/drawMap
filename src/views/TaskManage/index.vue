@@ -178,7 +178,7 @@
       </div>
     </div>
     <!-- 弹窗区 -->
-    <el-dialog :visible.sync="createTaskModal" width="500px" title="创建任务">
+    <el-dialog :close-on-click-modal=false :visible.sync="createTaskModal" width="500px" title="创建任务">
       <CreateTask ref="createTask" @success="createTaskSuccess" @cancel="createTaskModal=false" />
     </el-dialog>
 

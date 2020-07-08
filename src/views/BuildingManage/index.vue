@@ -170,7 +170,7 @@
       </div>
     </div>
 
-    <el-dialog :visible.sync="createBuildingModal" width="400px" title="创建楼宇">
+    <el-dialog  :close-on-click-modal=false :visible.sync="createBuildingModal" width="400px" title="创建楼宇">
       <CreateBuilding
         ref="createBuilding"
         @success="createBuildingSuccess"

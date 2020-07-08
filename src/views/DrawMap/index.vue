@@ -27,7 +27,7 @@
           <i class="iconCommon uncomplete iconSize" v-if="floorFinishStatus=='未完成'"></i>
           {{floorFinishStatus}}
         </el-button>
-        <el-button size="mini" class="lf10 handlerButton" type="primary" @click="saveData">
+        <el-button size="mini" class="lf10 handlerButton" type="primary" @click="previewClick">
           <i class="iconCommon iconEye iconSize"></i>预览
         </el-button>
         <el-button size="mini" class="lf10 handlerButton" type="primary" @click="saveData">
@@ -476,7 +476,9 @@
           </div>
         </div>
       </div>
-      <div class="rightHandlerCon"   v-loading="mapLoading" :style="{ height: height }">
+      <!-- element-loading-text="数据更新并加载中..."  v-loading="mapLoading" -->
+
+      <div class="rightHandlerCon"   :style="{ height: height }">
         <div
           v-show="!hasUnderPainting"
           class="noUnderPaint center"

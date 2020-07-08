@@ -238,12 +238,12 @@ export default {
               }
               // 楼层比对
               if (floor === key) {
-                button.style.color = "red";
+                button.style.color = "#ffc107";
                 if (keys.length === 1) {
                   button.setAttribute("class", " btn-select-floor selected");
-                  // setTimeout(() => {
-                  //   button.click();
-                  // });
+                  setTimeout(() => {
+                    button.click();
+                  });
                 }
               }
             });
@@ -269,7 +269,7 @@ export default {
               const floor = button.getAttribute("data-floor");
               // 楼层比对
               if (floor === key) {
-                button.style.color = "red";
+                button.style.color = "#ffc107";
               }
             });
           });
@@ -288,7 +288,7 @@ export default {
                 const floor = button.getAttribute("data-floor");
                 // 楼层比对
                 if (floor === key) {
-                  button.style.color = "red";
+                  button.style.color = "#ffc107";
                 }
               });
             });

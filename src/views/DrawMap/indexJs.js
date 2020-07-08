@@ -158,10 +158,10 @@ export default {
           that.mapEditor.setLayerDisplay("build", false);
           const result = that.mapEditor.cancelEditImage();
 
-          that.mapEditor.setImageData({
-            data: result.data,
-            extent: result.extent
-          });
+          // that.mapEditor.setImageData({
+          //   data: result.data,
+          //   extent: result.extent
+          // });
 
           that.updateLngLat(result);
           // let img=new Image();
@@ -189,6 +189,7 @@ export default {
     updateLngLat(resultInfo) {
       var that = this;
       var lngLatObj = resultInfo.extent;
+      that.mapLoading = true;
       that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((res) => {
         const obj = {
           floorOutline: res.floorOutline,
@@ -303,6 +304,7 @@ export default {
     },
     // 对比geo数据判断数据是否保存 true:数据一致  false:数据有差异
     compareData(param1, param2) {
+      // console.log("compareData", param1, param2);
       var data1 = param1;
       var data2 = param2;
       var keys = Object.keys(data1);
@@ -580,6 +582,7 @@ export default {
       // 点击发布，判断地图是否已保存且状态为完成
       if (that.compareData(layerData, that
         .activeFloorData) && that.floorFinishStatus === "未完成") {
+        that.mapLoading = true;
         that
           .ajax({
             method: "post",
@@ -637,6 +640,7 @@ export default {
                       })
                       .then((res4) => {
                         const data4 = res4.data;
+                        that.mapLoading = false;
                         if (data4.code === 200) {
                           that.$message({
                             message: "发布成功",
@@ -693,6 +697,7 @@ export default {
                       })
                       .then((res2) => {
                         const data2 = res2.data;
+                        that.mapLoading = false;
                         if (data2.code === 200) {
                           that.$message({
                             message: "发布成功",
@@ -722,6 +727,7 @@ export default {
     // 设置楼层完成
     floorFinishById() {
       var that = this;
+      that.mapLoading = true;
       that.isComplete(() => {
         if (that.floorFinishStatus === "完成") {
           that.saveDataCallBack(() => {
@@ -781,10 +787,17 @@ export default {
         }
       });
     },
+    previewClick() {
+      var that = this;
+      that.saveDataCallBack(() => {
+        // todo
+      });
+    },
     // 保存数据后的回调
     saveDataCallBack(fn) {
       var that = this;
       var obj = {};
+      that.mapLoading = true;
       const layerData = that.mapEditor.getSaveData();
       layerData.imageData.data = encodeURIComponent(layerData.imageData.data);
       obj.id = that.buildingFloorsObj.id;
@@ -819,6 +832,7 @@ export default {
     saveData() {
       var that = this;
       var obj = {};
+      that.mapLoading = true;
       const layerData = that.mapEditor.getSaveData();
       layerData.imageData.data = encodeURIComponent(layerData.imageData.data);
       obj.id = that.buildingFloorsObj.id;
@@ -1936,7 +1950,7 @@ export default {
     // 加载楼层信息
     loadFloor() {
       var that = this;
-      //  that.mapLoading=true;
+      that.mapLoading = true;
       that
         .ajax({
           method: "get",
@@ -1944,7 +1958,7 @@ export default {
           data: ""
         })
         .then((res) => {
-          // that.mapLoading=false;
+          that.mapLoading = false;
           const {
             data
           } = res;
