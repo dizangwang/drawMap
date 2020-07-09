@@ -478,7 +478,7 @@
       </div>
       <!-- element-loading-text="数据更新并加载中..."  v-loading="mapLoading" -->
 
-      <div class="rightHandlerCon"   :style="{ height: height }">
+      <div class="rightHandlerCon" element-loading-text="数据加载中..."  v-loading="mapLoading"  :style="{ height: height }">
         <div
           v-show="!hasUnderPainting"
           class="noUnderPaint center"

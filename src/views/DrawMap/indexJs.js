@@ -148,42 +148,15 @@ export default {
     adjustImage() {
       var that = this;
       const layerData = that.mapEditor.getSaveData();
-      // console.log(layerData);
       if (layerData.imageData.data) {
         if (that.adjustImageWord === "调整平面图") {
           that.mapEditor.setLayerDisplay("build", true);
-
           that.mapEditor.editImage(layerData.imageData.data, layerData.imageData.extent);
-
-          // if(layerData.imageData.extent){
-          //   that.mapEditor.editImage(layerData.imageData.data);
-          // }else{
-          //   that.mapEditor.editImage(layerData.imageData.data, null);
-          // }
-
           that.adjustImageWord = "完成调整";
         } else {
           that.mapEditor.setLayerDisplay("build", false);
           const result = that.mapEditor.cancelEditImage();
-
-          // that.mapEditor.setImageData({
-          //   data: result.data,
-          //   extent: result.extent
-          // });
-
           that.updateLngLat(result);
-          // let img=new Image();
-          // img.src=result.data;
-          // img.onload=()=>{
-          //   that.mapEditor.setImageData({
-          //     data:result.data,
-          //     extent:result.extent
-          //   })
-          //   return
-          //   setTimeout(()=>{
-          //     that.updateLngLat(result.extent);
-          //   },1000);
-          // };
           that.adjustImageWord = "调整平面图";
         }
       } else {
@@ -197,7 +170,9 @@ export default {
     updateLngLat(resultInfo) {
       var that = this;
       var lngLatObj = resultInfo.extent;
-      that.mapLoading = true;
+      // that.mapLoading = true;
+      that.saveDataCallBack(() => {});
+      // 获取楼层的信息更新经纬度的信息
       that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((res) => {
         const obj = {
           floorOutline: res.floorOutline,
@@ -211,6 +186,7 @@ export default {
         Object.keys(obj).forEach((item) => {
           str += `${item}=${obj[item]}&`;
         });
+        // 更新楼层的信息
         that
           .ajax({
             method: "post",
@@ -227,7 +203,6 @@ export default {
               //   message: "提交成功",
               //   type: "success"
               // });
-              that.saveDataCallBack(() => {});
             } else {
               that.$message({
                 message: data.msg,
@@ -518,6 +493,7 @@ export default {
           });
         }
       });
+      // console.log("i", i);
       return i === 0;
     },
 
@@ -589,7 +565,7 @@ export default {
       // 点击发布，判断地图是否已保存且状态为完成
       if (that.compareData(layerData, that
         .activeFloorData) && that.floorFinishStatus === "未完成") {
-        that.mapLoading = true;
+        // that.mapLoading = true;
         that
           .ajax({
             method: "post",
@@ -618,57 +594,57 @@ export default {
       }
 
 
-      if (that.floorFinishStatus === "完成") {
+      if (that.compareData(layerData, that
+        .activeFloorData) && that.floorFinishStatus === "完成") {
         that
           .$confirm("是否切换状态为完成后发布？", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning"
           }).then(() => {
-            that.saveDataCallBack(() => {
-              that
-                .ajax({
-                  method: "post",
-                  url: that.apis.floorFinishById + that.activeFloorData.floorData
-                    .properties
-                    .id,
-                  data: {}
-                })
-                .then((res3) => {
-                  const data3 = res3.data;
-                  if (data3.code === 200) {
-                    that
-                      .ajax({
-                        method: "post",
-                        url: that.apis.floorMgrPublish,
-                        data: {
-                          id: that.activeFloorData.floorData.properties.id
-                        }
-                      })
-                      .then((res4) => {
-                        const data4 = res4.data;
-                        that.mapLoading = false;
-                        if (data4.code === 200) {
-                          that.$message({
-                            message: "发布成功",
-                            type: "success"
-                          });
-                          that.loadFloor();
-                        } else {
-                          that.$message({
-                            message: data4.msg,
-                            type: "warning"
-                          });
-                        }
-                      });
-                  } else {
-                    that.$message({
-                      message: data3.msg,
-                      type: "warning"
+            that
+              .ajax({
+                method: "post",
+                url: that.apis.floorFinishById + that.activeFloorData.floorData
+                  .properties
+                  .id,
+                data: {}
+              })
+              .then((res3) => {
+                const data3 = res3.data;
+                if (data3.code === 200) {
+                  that.floorFinishStatus = "未完成";
+                  that
+                    .ajax({
+                      method: "post",
+                      url: that.apis.floorMgrPublish,
+                      data: {
+                        id: that.activeFloorData.floorData.properties.id
+                      }
+                    })
+                    .then((res4) => {
+                      const data4 = res4.data;
+                      // that.mapLoading = false;
+                      if (data4.code === 200) {
+                        that.$message({
+                          message: "发布成功",
+                          type: "success"
+                        });
+                        // that.loadFloor();
+                      } else {
+                        that.$message({
+                          message: data4.msg,
+                          type: "warning"
+                        });
+                      }
                     });
-                  }
-                });
-            });
+                } else {
+                  that.$message({
+                    message: data3.msg,
+                    type: "warning"
+                  });
+                }
+              });
           }).catch(() => {
             // todo
           });
@@ -704,13 +680,13 @@ export default {
                       })
                       .then((res2) => {
                         const data2 = res2.data;
-                        that.mapLoading = false;
+                        // that.mapLoading = false;
                         if (data2.code === 200) {
                           that.$message({
                             message: "发布成功",
                             type: "success"
                           });
-                          that.loadFloor();
+                          // that.loadFloor();
                         } else {
                           that.$message({
                             message: data2.msg,
@@ -734,62 +710,62 @@ export default {
     // 设置楼层完成
     floorFinishById() {
       var that = this;
-      that.mapLoading = true;
-      that.isComplete(() => {
-        if (that.floorFinishStatus === "完成") {
-          that.saveDataCallBack(() => {
-            that
-              .ajax({
-                method: "post",
-                url: that.apis.floorFinishById + that.activeFloorData.floorData.properties
-                  .id,
-                data: {}
-              })
-              .then((res) => {
-                const {
-                  data
-                } = res;
-                if (data.code === 200) {
-                  that.$message({
-                    message: "操作成功",
-                    type: "success"
-                  });
-                  that.loadFloor();
-                } else {
-                  that.$message({
-                    message: data.msg,
-                    type: "warning"
-                  });
-                }
+      // that.mapLoading = true;
+
+      function floorFinish(flag) {
+        let url = "";
+        // 1:完成2：未完成
+        if (flag === 1) {
+          url = that.apis.floorFinishById + that.activeFloorData.floorData.properties.id;
+        } else if (flag === 2) {
+          url = that.apis.floorUnFinishById + that.activeFloorData.floorData.properties.id;
+        }
+        that
+          .ajax({
+            method: "post",
+            url,
+            data: {}
+          })
+          .then((res) => {
+            const {
+              data
+            } = res;
+            if (data.code === 200) {
+              that.$message({
+                message: "操作成功",
+                type: "success"
               });
+              // that.loadFloor();
+            } else {
+              that.$message({
+                message: data.msg,
+                type: "warning"
+              });
+            }
           });
+      }
+
+      // 检查是否符合条件
+      that.isComplete(() => {
+        const layerData = that.mapEditor.getSaveData();
+        if (that.floorFinishStatus === "完成") {
+          // 点击发布，判断地图是否已保存且状态为完成
+          if (that.compareData(layerData, that.activeFloorData)) {
+            floorFinish(1);
+            that.floorFinishStatus = "未完成";
+          } else {
+            that.saveDataCallBack(() => {
+              floorFinish(1);
+              that.floorFinishStatus = "未完成";
+            });
+          }
+        } else if (that.compareData(layerData, that.activeFloorData)) {
+          floorFinish(2);
+          that.floorFinishStatus = "完成";
         } else {
           that.saveDataCallBack(() => {
-            that
-              .ajax({
-                method: "post",
-                url: that.apis.floorUnFinishById + that.activeFloorData.floorData
-                  .properties
-                  .id,
-                data: {}
-              })
-              .then((res) => {
-                const {
-                  data
-                } = res;
-                if (data.code === 200) {
-                  that.$message({
-                    message: "操作成功",
-                    type: "success"
-                  });
-                  that.loadFloor();
-                } else {
-                  that.$message({
-                    message: data.msg,
-                    type: "warning"
-                  });
-                }
-              });
+            floorFinish(2);
+            that.floorFinishStatus = "完成";
           });
         }
       });
@@ -797,21 +773,34 @@ export default {
     previewClick() {
       var that = this;
       that.saveDataCallBack(() => {
-        // todo
+        that.loadFloor();
       });
     },
     // 保存数据后的回调
     saveDataCallBack(fn) {
       var that = this;
       var obj = {};
-      that.mapLoading = true;
+      // that.mapLoading = true;
       const layerData = that.mapEditor.getSaveData();
-      layerData.imageData.data = encodeURIComponent(layerData.imageData.data);
+      that.activeFloorData.floorData.properties.name = layerData.floorData.properties.name;
+      that.activeFloorData.floorData.properties.id = layerData.floorData.properties.id;
+      that.activeFloorData.floorData.geometry.coordinates = JSON.parse(JSON.stringify(
+        layerData.floorData.geometry.coordinates
+      ));
+      that.activeFloorData.imageData.data = layerData.imageData.data;
+      that.activeFloorData.imageData.extent = JSON.stringify(layerData.imageData.extent);
+      that.activeFloorData.layerData = JSON.parse(JSON.stringify(layerData.layerData));
+
+      // console.log("---------", that.compareData(layerData, that.activeFloorData));
+      // console.log(layerData, that.activeFloorData);
+      const layerDataCopy = JSON.parse(JSON.stringify(layerData));
+      layerDataCopy.imageData.data = encodeURIComponent(layerData.imageData.data);
+
       obj.id = that.buildingFloorsObj.id;
       obj.name = that.buildingFloorsObj.name;
       obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
       obj.floors = {};
-      obj.floors[that.activeFloorData.floorData.properties.floors] = layerData;
+      obj.floors[that.activeFloorData.floorData.properties.floors] = layerDataCopy;
       that
         .ajax({
           method: "post",
@@ -826,7 +815,7 @@ export default {
           } = res;
           if (data.code === 200) {
             fn();
-            that.loadFloor();
+            // that.loadFloor();
           } else {
             that.$message({
               message: data.msg,
@@ -839,14 +828,28 @@ export default {
     saveData() {
       var that = this;
       var obj = {};
-      that.mapLoading = true;
+      // that.mapLoading = true;
       const layerData = that.mapEditor.getSaveData();
-      layerData.imageData.data = encodeURIComponent(layerData.imageData.data);
+      // console.log("**************", layerData)
+      that.activeFloorData.floorData.properties.name = layerData.floorData.properties.name;
+      that.activeFloorData.floorData.properties.id = layerData.floorData.properties.id;
+      that.activeFloorData.floorData.geometry.coordinates = JSON.parse(JSON.stringify(
+        layerData.floorData.geometry.coordinates
+      ));
+      that.activeFloorData.imageData.data = layerData.imageData.data;
+      that.activeFloorData.imageData.extent = JSON.stringify(layerData.imageData.extent);
+      that.activeFloorData.layerData = JSON.parse(JSON.stringify(layerData.layerData));
+
+
+
+      const layerDataCopy = JSON.parse(JSON.stringify(layerData));
+      layerDataCopy.imageData.data = encodeURIComponent(layerData.imageData.data);
+      // console.log("-----%%%%%%----", that.compareData(layerData, that.activeFloorData));
       obj.id = that.buildingFloorsObj.id;
       obj.name = that.buildingFloorsObj.name;
       obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
       obj.floors = {};
-      obj.floors[that.activeFloorData.floorData.properties.floors] = layerData;
+      obj.floors[that.activeFloorData.floorData.properties.floors] = layerDataCopy;
       that
         .ajax({
           method: "post",
@@ -865,7 +868,7 @@ export default {
               type: "success"
             });
 
-            that.loadFloor();
+            // that.loadFloor();
           } else {
             that.$message({
               message: data.msg,
@@ -1668,10 +1671,10 @@ export default {
           const right = [res.lowerRightCornerLongitude, res
             .lowerRightCornerLatitude
           ];
-          that.mapEditor.setImageData({
-            data: imgUrl,
-            extent: [left[0], right[1], right[0], left[1]]
-          });
+          // that.mapEditor.setImageData({
+          //   data: imgUrl,
+          //   extent: [left[0], right[1], right[0], left[1]]
+          // });
           that.hasUnderPainting = true;
           const uuid = that.utils.getUUID();
           that.mapEditor.setBuildData({
@@ -1689,15 +1692,27 @@ export default {
               ]
             },
             properties: {
-              id: uuid,
-              name: "",
-              floors: 1,
+              id: that.activeFloorData.floorData.properties.id,
+              name: `${that.activeFloorData.floorData.properties.floors}`,
+              floors: that.activeFloorData.floorData.properties.floors,
               styleID: null,
               width: 2,
               fillColor: "rgba(217,237,253,.1)",
               borderColor: "rgba(0,153,255,.5)"
             }
           });
+
+
+          const img = new Image();
+          img.src = imgUrl;
+          img.onload = () => {
+            const data = that.mapEditor.defaultImageData(img);
+            that.mapEditor.setImageData({
+              data: data.data,
+              extent: data.extent
+            });
+            that.saveDataCallBack(() => {});
+          };
           // that.saveDataCallBack(() => {});
         }
         // 如果没有经纬度信息，判断有没有轮廓信息
@@ -1736,9 +1751,9 @@ export default {
               ]
             },
             properties: {
-              id: uuid,
-              name: "",
-              floors: 1,
+              id: that.activeFloorData.floorData.properties.id,
+              name: `${that.activeFloorData.floorData.properties.floors}`,
+              floors: that.activeFloorData.floorData.properties.floors,
               styleID: null,
               width: 2,
               fillColor: "rgba(217,237,253,.1)",
@@ -1911,6 +1926,7 @@ export default {
           }
         };
         const layerData = that.mapEditor.getSaveData();
+        // console.log("---------", layerData);
         let oldfloor = "";
         if (that.activeFloorArrCache.length >= 2) {
           oldfloor = that.activeFloorArrCache[that.activeFloorArrCache.length - 2];
