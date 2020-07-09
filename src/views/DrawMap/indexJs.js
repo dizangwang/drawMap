@@ -346,8 +346,7 @@ export default {
           if (JSON.stringify(data1[key]) !== "{}") {
             if (data1[key].geometry) {
               if (JSON.stringify(data1[key].geometry.coordinates) !== JSON.stringify(
-                data2[
-                  key].geometry.coordinates
+                data2[key].geometry.coordinates
               )) {
                 i += 1;
               }

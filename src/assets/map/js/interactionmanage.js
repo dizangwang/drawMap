@@ -142,6 +142,14 @@ export class InterCtionManage {
 
 
 
+        this.throttleFunc = this.throttle(((event) => {
+            // console.log(1);
+            if (this.isRotate)
+                this._onRotateMapDrag(event);
+
+            if (this._filter.editImage)
+                this.freshImage();
+        }), 50);
 
         this.rotate_drag = this.mapEditor.ol.map.on('pointerdrag', event => {
 
@@ -167,15 +175,32 @@ export class InterCtionManage {
                 return;
             }
 
-            if (this.isRotate)
-                this._onRotateMapDrag(event);
 
+            this.throttleFunc.bind(this)(event);
 
-            if (this._filter.editImage) {
-                this.freshImage();
-            }
         })
+    }
 
+    throttle(fn, interval = 500) {
+        let timer = null;
+        let firstTime = true;
+
+        return function (arg) {
+            if (firstTime) {
+                // 第一次加载
+                fn(arg);
+                return firstTime = false;
+            }
+            if (timer) {
+                // 定时器正在执行中，跳过
+                return;
+            }
+            timer = setTimeout(() => {
+                clearTimeout(timer);
+                timer = null;
+                fn(arg);
+            }, interval);
+        };
     }
 
     freshImage() {
