@@ -151,7 +151,8 @@ export default {
       if (layerData.imageData.data) {
         if (that.adjustImageWord === "调整平面图") {
           that.mapEditor.setLayerDisplay("build", true);
-          that.mapEditor.editImage(layerData.imageData.data, layerData.imageData.extent);
+          that.mapEditor.editImage(layerData.imageData.data, layerData.imageData.extent, that
+            .imgFix);
           that.adjustImageWord = "完成调整";
         } else {
           that.mapEditor.setLayerDisplay("build", false);
@@ -772,15 +773,21 @@ export default {
     },
     previewClick() {
       var that = this;
-      that.saveDataCallBack(() => {
+      const layerData = that.mapEditor.getSaveData();
+      if (that.compareData(layerData, that.activeFloorData)) {
         that.loadFloor();
-      });
+      } else {
+        that.saveDataCallBack(() => {
+          that.loadFloor();
+        });
+      }
     },
     // 保存数据后的回调
     saveDataCallBack(fn) {
       var that = this;
       var obj = {};
-      // that.mapLoading = true;
+      that.mapLoading = true;
+      that.loadingText = "数据保存中...";
       const layerData = that.mapEditor.getSaveData();
       that.activeFloorData.floorData.properties.name = layerData.floorData.properties.name;
       that.activeFloorData.floorData.properties.id = layerData.floorData.properties.id;
@@ -813,6 +820,7 @@ export default {
           const {
             data
           } = res;
+          that.mapLoading = false;
           if (data.code === 200) {
             fn();
             // that.loadFloor();
@@ -828,7 +836,8 @@ export default {
     saveData() {
       var that = this;
       var obj = {};
-      // that.mapLoading = true;
+      that.mapLoading = true;
+      that.loadingText = "数据保存中...";
       const layerData = that.mapEditor.getSaveData();
       // console.log("**************", layerData)
       that.activeFloorData.floorData.properties.name = layerData.floorData.properties.name;
@@ -862,6 +871,7 @@ export default {
           const {
             data
           } = res;
+          that.mapLoading = false;
           if (data.code === 200) {
             that.$message({
               message: "保存成功",
@@ -1653,6 +1663,8 @@ export default {
     setFloorInfoSuccess(id) {
       var that = this;
       var imgUrl = "";
+      that.mapLoading = true;
+      that.loadingText = "数据保存中...";
       that.getFloorInfoById(id).then((res) => {
         imgUrl = `/files/img/${res.planarGraph}`;
         if (res.upperLeftCornerLongitude && res.upperLeftCornerLatitude && res
@@ -1706,7 +1718,7 @@ export default {
           const img = new Image();
           img.src = imgUrl;
           img.onload = () => {
-            const data = that.mapEditor.defaultImageData(img);
+            const data = that.mapEditor.defaultImageData(img, that.imgFix);
             that.mapEditor.setImageData({
               data: data.data,
               extent: data.extent
@@ -1770,7 +1782,7 @@ export default {
             const img = new Image();
             img.src = imgUrl;
             img.onload = () => {
-              const data = that.mapEditor.defaultImageData(img);
+              const data = that.mapEditor.defaultImageData(img, that.imgFix);
               that.mapEditor.setImageData({
                 data: data.data,
                 extent: data.extent
@@ -1989,6 +2001,7 @@ export default {
     loadFloor() {
       var that = this;
       that.mapLoading = true;
+      that.loadingText = "数据加载中...";
       that
         .ajax({
           method: "get",

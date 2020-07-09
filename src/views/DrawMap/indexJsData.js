@@ -243,5 +243,9 @@ export default {
   // 缓存楼层变动
   activeFloorArrCache: [],
   // map加载时loading
-  mapLoading: false
+  mapLoading: false,
+  // loading文字
+  loadingText: "数据加载中...",
+  // 图片大小
+  imgFix: 1000
 };

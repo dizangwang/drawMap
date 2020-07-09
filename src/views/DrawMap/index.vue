@@ -4,7 +4,11 @@
     <div class="handlerFor">
       <span class="titleName">
         <el-popover placement="bottom-start" content="返回上一页" trigger="hover">
-          <i slot="reference" onclick="window.history.back()" class="iconCommon historybackWhiteIcon historyBack"></i>
+          <i
+            slot="reference"
+            onclick="window.history.back()"
+            class="iconCommon historybackWhiteIcon historyBack"
+          ></i>
         </el-popover>矢量地图编辑器
       </span>
       <span>
@@ -478,7 +482,12 @@
       </div>
       <!-- element-loading-text="数据更新并加载中..."  v-loading="mapLoading" -->
 
-      <div class="rightHandlerCon" element-loading-text="数据加载中..."  v-loading="mapLoading"  :style="{ height: height }">
+      <div
+        class="rightHandlerCon"
+        :element-loading-text="loadingText"
+        v-loading="mapLoading"
+        :style="{ height: height }"
+      >
         <div
           v-show="!hasUnderPainting"
           class="noUnderPaint center"
