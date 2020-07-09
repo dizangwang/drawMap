@@ -288,11 +288,15 @@ export default {
     },
     // 对比geo数据判断数据是否保存 true:数据一致  false:数据有差异
     compareData(param1, param2) {
+      var that = this;
       // console.log("compareData", param1, param2);
       var data1 = param1;
       var data2 = param2;
       var keys = Object.keys(data1);
       var i = 0;
+      if (that.mapLoading) {
+        return true;
+      }
 
       keys.forEach((key) => {
         if (key === "imageData") {
@@ -311,7 +315,6 @@ export default {
                 data2[key].extent = JSON.parse(data2[key].extent);
               }
 
-
               if (JSON.stringify(data2[key].extent) !== JSON.stringify(data1[key].extent)) {
                 i += 1;
               }
@@ -321,9 +324,28 @@ export default {
         if (key === "floorData") {
           if (JSON.stringify(data1[key]) !== "{}") {
             if (data1[key].geometry) {
-              if (JSON.stringify(data1[key].geometry.coordinates) !== JSON.stringify(
-                data2[key].geometry.coordinates
-              )) {
+              let coo1 = "";
+              let coo2 = "";
+              if (data1[key].geometry.coordinates) {
+                coo1 = JSON.parse(JSON.stringify(data1[key].geometry.coordinates));
+                coo1[0].forEach((gc1, gcnum1) => {
+                  coo1[0][gcnum1][0] = (+gc1[0]).toFixed(7);
+                  coo1[0][gcnum1][1] = (+gc1[1]).toFixed(7);
+                });
+                coo1 = JSON.stringify(coo1);
+              }
+              if (data2[key].geometry) {
+                if (data2[key].geometry.coordinates) {
+                  coo2 = JSON.parse(JSON.stringify(data2[key].geometry.coordinates));
+                  coo2[0].forEach((gc2, gcnum2) => {
+                    coo2[0][gcnum2][0] = (+gc2[0]).toFixed(7);
+                    coo2[0][gcnum2][1] = (+gc2[1]).toFixed(7);
+                  });
+                  coo2 = JSON.stringify(coo2);
+                }
+              }
+
+              if (coo1 !== coo2) {
                 i += 1;
               }
             }
@@ -494,7 +516,6 @@ export default {
           });
         }
       });
-      // console.log("i", i);
       return i === 0;
     },
 
@@ -789,16 +810,10 @@ export default {
       that.mapLoading = true;
       that.loadingText = "数据保存中...";
       const layerData = that.mapEditor.getSaveData();
-      that.activeFloorData.floorData.properties.name = layerData.floorData.properties.name;
-      that.activeFloorData.floorData.properties.id = layerData.floorData.properties.id;
-      const geometry = {
-        coordinates: "",
-        type: "Polygon"
-      };
-      geometry.coordinates = JSON.parse(JSON.stringify(
-        layerData.floorData.geometry.coordinates
-      ));
-      that.activeFloorData.floorData.geometry = geometry;
+      that.activeFloorData.floorData = JSON.parse(JSON.stringify(layerData.floorData));
+
+
+
       // that.activeFloorData.floorData.geometry.coordinates = JSON.parse(JSON.stringify(
       //   layerData.floorData.geometry.coordinates
       // ));
@@ -848,16 +863,7 @@ export default {
       that.loadingText = "数据保存中...";
       const layerData = that.mapEditor.getSaveData();
       // console.log("**************", layerData)
-      that.activeFloorData.floorData.properties.name = layerData.floorData.properties.name;
-      that.activeFloorData.floorData.properties.id = layerData.floorData.properties.id;
-      const geometry = {
-        coordinates: "",
-        type: "Polygon"
-      };
-      geometry.coordinates = JSON.parse(JSON.stringify(
-        layerData.floorData.geometry.coordinates
-      ));
-      that.activeFloorData.floorData.geometry = geometry;
+      that.activeFloorData.floorData = JSON.parse(JSON.stringify(layerData.floorData));
       that.activeFloorData.imageData.data = layerData.imageData.data;
       that.activeFloorData.imageData.extent = JSON.stringify(layerData.imageData.extent);
       that.activeFloorData.layerData = JSON.parse(JSON.stringify(layerData.layerData));
