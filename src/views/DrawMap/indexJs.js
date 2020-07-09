@@ -791,9 +791,17 @@ export default {
       const layerData = that.mapEditor.getSaveData();
       that.activeFloorData.floorData.properties.name = layerData.floorData.properties.name;
       that.activeFloorData.floorData.properties.id = layerData.floorData.properties.id;
-      that.activeFloorData.floorData.geometry.coordinates = JSON.parse(JSON.stringify(
+      const geometry = {
+        coordinates: "",
+        type: "Polygon"
+      };
+      geometry.coordinates = JSON.parse(JSON.stringify(
         layerData.floorData.geometry.coordinates
       ));
+      that.activeFloorData.floorData.geometry = geometry;
+      // that.activeFloorData.floorData.geometry.coordinates = JSON.parse(JSON.stringify(
+      //   layerData.floorData.geometry.coordinates
+      // ));
       that.activeFloorData.imageData.data = layerData.imageData.data;
       that.activeFloorData.imageData.extent = JSON.stringify(layerData.imageData.extent);
       that.activeFloorData.layerData = JSON.parse(JSON.stringify(layerData.layerData));
@@ -842,9 +850,14 @@ export default {
       // console.log("**************", layerData)
       that.activeFloorData.floorData.properties.name = layerData.floorData.properties.name;
       that.activeFloorData.floorData.properties.id = layerData.floorData.properties.id;
-      that.activeFloorData.floorData.geometry.coordinates = JSON.parse(JSON.stringify(
+      const geometry = {
+        coordinates: "",
+        type: "Polygon"
+      };
+      geometry.coordinates = JSON.parse(JSON.stringify(
         layerData.floorData.geometry.coordinates
       ));
+      that.activeFloorData.floorData.geometry = geometry;
       that.activeFloorData.imageData.data = layerData.imageData.data;
       that.activeFloorData.imageData.extent = JSON.stringify(layerData.imageData.extent);
       that.activeFloorData.layerData = JSON.parse(JSON.stringify(layerData.layerData));
