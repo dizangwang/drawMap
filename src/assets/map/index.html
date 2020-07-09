@@ -280,9 +280,9 @@
             ///编辑图片轮廓
             document.getElementById("editImage").onclick = () => {
                 /*已有图片extent时直接传。没有的时候传null*/
-                mapEditor.editImage("../img/t1.png",null);   
+                mapEditor.editImage("../img/t1.png", null);
             }
-            ///编辑图片轮廓
+            ///取消图片轮廓
             document.getElementById("cancelEditImage").onclick = () => {
                 console.log(mapEditor.cancelEditImage());
 
@@ -296,6 +296,18 @@
                     // mapEditor.setImageData({
                     // data: "../img/poi.png",//图片路径
                     // extent: o.extent,
+                }
+            }
+
+            ///获取图片默认信息
+            document.getElementById("defaultImageData").onclick = () => {
+                let img = new Image();
+                img.src = "../img/t1.png";
+                img.onload = () => {
+                    let data = mapEditor.defaultImageData(img);
+                    console.log(data);
+
+                    mapEditor.editImage(data.data, data.extent);
                 }
             }
 
@@ -339,6 +351,7 @@
             <input type="button" value="设置缩放级别" id="setZoom">
             <input type="button" value="编辑图片位置" id="editImage">
             <input type="button" value="取消编辑图片位置" id="cancelEditImage">
+            <input type="button" value="获取图片默认信息" id="defaultImageData">
 
 
             <!-- 比例尺容器 样式可以改 ID写死 -->

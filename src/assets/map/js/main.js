@@ -182,7 +182,7 @@ export default class MapEditor {
         // });
         this.contextmenu.add("删除要素", () => {
             this.interactionManage.removeSelectFeature();
-        }, "point,path,polygon,image");
+        }, "point,path,polygon");
 
         ///比例尺
         this.ol.control.scaleLine = new ol.control.ScaleLine({
@@ -268,10 +268,57 @@ export default class MapEditor {
         this.interactionManage.drawBox(style);
     }
 
+    ///获取图片默认位置
+    defaultImageData(img,fix=500) {
+
+        let newData = img;
+
+        if (this.ol.layers.buildLayer.getSource().getFeatures().length > 0) {
+            let f = this.ol.layers.buildLayer.getSource().getFeatures()[0].clone();
+            let e;
+
+            ///获取新正方形图片
+            newData = this.getNewImgBase64(img,fix);
+
+            let mapSize = this.ol.map.getSize();
+            var mapExtent = this.ol.map.getView().calculateExtent(mapSize);
+
+            ///每个像素对应的经纬度
+            let w = (mapExtent[2] - mapExtent[0]) / mapSize[0];
+            let h = (mapExtent[3] - mapExtent[1]) / mapSize[1];
+
+            let newWidth = (img.width > img.height) ? img.width : img.height;
+            newWidth = newWidth * 3 / 4
+
+            var p = ol.extent.getCenter(mapExtent);
+            e = [p[0] - newWidth * w / 2, p[1] - newWidth * h / 2, p[0] + newWidth * w / 2, p[1] + newWidth * h / 2]
+            //     let arr = [];
+            //     arr.push([e[0], e[1]]);
+            //     arr.push([e[0], e[3]]);
+            //     arr.push([e[2], e[3]]);
+            //     arr.push([e[2], e[1]]);
+            //     arr.push([e[0], e[1]]);
+            //     let polygon = new ol.geom.Polygon([arr]);
+            //    f .setGeometry(polygon);
+            let p0 = this.transformTo4326(e[0], e[1]);
+            let p1 = this.transformTo4326(e[2], e[3]);
+            let extent = [p0[0], p0[1], p1[0], p1[1]]
+            return {
+                data: newData,
+                extent: extent
+            };
+        }
+    }
+
+
     ///编辑图片
-    editImage(data, ext = null) {
+    editImage(data, ext = null,fix=500) {
         let img = new Image();
         img.src = data;
+        let p0 = this.transformTo3857(ext[0], ext[1]);
+        let p1 = this.transformTo3857(ext[2], ext[3]);
+        ext = [p0[0], p0[1], p1[0], p1[1]]
+
         img.onload = () => {
             let newData = data;
             // this.temImg = data;
@@ -285,7 +332,7 @@ export default class MapEditor {
                 let e;
                 if (ext == null) {
                     ///获取新正方形图片
-                    newData = this.getNewImgBase64(img);
+                    newData = this.getNewImgBase64(img,fix);
 
                     let mapSize = this.ol.map.getSize();
                     var mapExtent = this.ol.map.getView().calculateExtent(mapSize);
@@ -299,11 +346,6 @@ export default class MapEditor {
 
                     var p = ol.extent.getCenter(mapExtent);
                     e = [p[0] - newWidth * w / 2, p[1] - newWidth * h / 2, p[0] + newWidth * w / 2, p[1] + newWidth * h / 2]
-
-                    // let imgW = img.width * 3 / 4;
-                    // let imgH = img.height * 3 / 4;
-                    // e = [p[0] - imgW * w / 2, p[1] - imgH * h / 2, p[0] + imgW * w / 2, p[1] + imgH * h / 2]
-
 
                 } else
                     e = ext;
@@ -352,7 +394,6 @@ export default class MapEditor {
             this.interactionManage._filter.editImage = true;
             this.interactionManage.editImage(newData);
         }
-
     }
 
     // 取消图片编辑
@@ -702,14 +743,17 @@ export default class MapEditor {
         return dataURL;
     }
 
-    getNewImgBase64(img) {
+    getNewImgBase64(img,fix) {
         if (this.canvas == null)
             this.canvas = document.createElement("canvas");
+
+        this.canvas.width = fix;
+        this.canvas.height = fix;
         let dis = Math.sqrt(img.width * img.width + img.height * img.height);
-        this.canvas.width = dis;
-        this.canvas.height = dis;
+        let sacel = fix / dis
         var ctx = this.canvas.getContext("2d");
-        ctx.drawImage(img, (dis - img.width) / 2, (dis - img.height) / 2, img.width, img.height);
+        ctx.drawImage(img, (fix - img.width * sacel) / 2, (fix - img.height * sacel) / 2, img.width * sacel, img.height * sacel);
+
         var dataURL = this.canvas.toDataURL("image/png");
         return dataURL;
     }

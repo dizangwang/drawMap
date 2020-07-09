@@ -148,11 +148,19 @@ export default {
     adjustImage() {
       var that = this;
       const layerData = that.mapEditor.getSaveData();
-
+      // console.log(layerData);
       if (layerData.imageData.data) {
         if (that.adjustImageWord === "调整平面图") {
           that.mapEditor.setLayerDisplay("build", true);
-          that.mapEditor.editImage(layerData.imageData.data, null);
+
+          that.mapEditor.editImage(layerData.imageData.data, layerData.imageData.extent);
+
+          // if(layerData.imageData.extent){
+          //   that.mapEditor.editImage(layerData.imageData.data);
+          // }else{
+          //   that.mapEditor.editImage(layerData.imageData.data, null);
+          // }
+
           that.adjustImageWord = "完成调整";
         } else {
           that.mapEditor.setLayerDisplay("build", false);
@@ -1642,8 +1650,9 @@ export default {
     // 保存楼层信息成功
     setFloorInfoSuccess(id) {
       var that = this;
+      var imgUrl = "";
       that.getFloorInfoById(id).then((res) => {
-        const imgUrl = `/files/img/${res.planarGraph}`;
+        imgUrl = `/files/img/${res.planarGraph}`;
         if (res.upperLeftCornerLongitude && res.upperLeftCornerLatitude && res
           .lowerRightCornerLongitude && res.lowerRightCornerLatitude) {
           that.$message({
@@ -1690,6 +1699,7 @@ export default {
               borderColor: "rgba(0,153,255,.5)"
             }
           });
+          // that.saveDataCallBack(() => {});
         }
         // 如果没有经纬度信息，判断有没有轮廓信息
         if (res.floorOutline) {
@@ -1715,13 +1725,7 @@ export default {
           const small = [smallLng, smallLat];
           const big = [bigLng, bigLat];
 
-          if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res
-            .lowerRightCornerLongitude && !res.lowerRightCornerLatitude) {
-            that.mapEditor.setImageData({
-              data: imgUrl,
-              extent: small.concat(big)
-            });
-          }
+
 
           that.hasUnderPainting = true;
           that.mapEditor.setBuildData({
@@ -1742,14 +1746,33 @@ export default {
               borderColor: "rgba(0,153,255,.5)"
             }
           });
+
+          if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res
+            .lowerRightCornerLongitude && !res.lowerRightCornerLatitude) {
+            // that.mapEditor.setImageData({
+            //   data: imgUrl,
+            //   extent: small.concat(big)
+            // });
+            const img = new Image();
+            img.src = imgUrl;
+            img.onload = () => {
+              const data = that.mapEditor.defaultImageData(img);
+              that.mapEditor.setImageData({
+                data: data.data,
+                extent: data.extent
+              });
+              that.saveDataCallBack(() => {});
+            };
+          } else {
+            that.saveDataCallBack(() => {});
+          }
         }
 
-        if ((res.upperLeftCornerLongitude && res.upperLeftCornerLatitude && res
-          .lowerRightCornerLongitude && res.lowerRightCornerLatitude && res.planarGraph) || (
-          res
-            .floorOutline && res.planarGraph)) {
+        if (res.upperLeftCornerLongitude && res.upperLeftCornerLatitude && res
+          .lowerRightCornerLongitude && res.lowerRightCornerLatitude && !res.floorOutline) {
           that.saveDataCallBack(() => {});
         }
+
         if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res
           .lowerRightCornerLongitude && !res.lowerRightCornerLatitude && !res.floorOutline) {
           that.$message({
