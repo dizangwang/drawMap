@@ -1027,7 +1027,7 @@ export default {
     deleteClick(row) {
       var that = this;
       that
-        .$confirm("是否删除该文件?", "提示", {
+        .$confirm("是否删除该任务?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"

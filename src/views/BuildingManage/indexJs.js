@@ -683,7 +683,7 @@ export default {
       if (that.tableSelectionArr.length === 0) {
         that.$message({
           type: "error",
-          message: "请勾选需要删除的数据"
+          message: "请勾选需要删除的楼宇"
         });
         return;
       }
@@ -808,7 +808,7 @@ export default {
     deleteClick(row) {
       var that = this;
       that
-        .$confirm("是否删除该文件?", "提示", {
+        .$confirm("是否删除该楼宇?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
