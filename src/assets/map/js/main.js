@@ -273,7 +273,8 @@ export default class MapEditor {
         let img = new Image();
         img.src = data;
         img.onload = () => {
-            this.temImg = data;
+            let newData = data;
+            // this.temImg = data;
             this.ol.layers.temLayer = new ol.layer.Vector({
                 source: new ol.source.Vector(),
                 style: Style.buildStyle()
@@ -283,16 +284,26 @@ export default class MapEditor {
                 let f = this.ol.layers.buildLayer.getSource().getFeatures()[0].clone();
                 let e;
                 if (ext == null) {
+                    ///获取新正方形图片
+                    newData = this.getNewImgBase64(img);
+
                     let mapSize = this.ol.map.getSize();
                     var mapExtent = this.ol.map.getView().calculateExtent(mapSize);
+
+                    ///每个像素对应的经纬度
                     let w = (mapExtent[2] - mapExtent[0]) / mapSize[0];
                     let h = (mapExtent[3] - mapExtent[1]) / mapSize[1];
 
-                    let imgW = img.width * 3 / 4;
-                    let imgH = img.height * 3 / 4;
+                    let newWidth = (img.width > img.height) ? img.width : img.height;
+                    newWidth = newWidth * 3 / 4
 
                     var p = ol.extent.getCenter(mapExtent);
-                    e = [p[0] - imgW * w / 2, p[1] - imgH * h / 2, p[0] + imgW * w / 2, p[1] + imgH * h / 2]
+                    e = [p[0] - newWidth * w / 2, p[1] - newWidth * h / 2, p[0] + newWidth * w / 2, p[1] + newWidth * h / 2]
+
+                    // let imgW = img.width * 3 / 4;
+                    // let imgH = img.height * 3 / 4;
+                    // e = [p[0] - imgW * w / 2, p[1] - imgH * h / 2, p[0] + imgW * w / 2, p[1] + imgH * h / 2]
+
 
                 } else
                     e = ext;
@@ -334,12 +345,12 @@ export default class MapEditor {
                 let p1 = this.transformTo4326(e[2], e[3]);
                 let extent = [p0[0], p0[1], p1[0], p1[1]]
                 this.setImageData({
-                    data: data,
+                    data: newData,
                     extent: extent
                 });
             }
             this.interactionManage._filter.editImage = true;
-            this.interactionManage.editImage(data);
+            this.interactionManage.editImage(newData);
         }
 
     }
@@ -474,8 +485,6 @@ export default class MapEditor {
         return data;
     }
 
-
-
     ///设置图层显隐
     setLayerDisplay(layer, display) {
         if (layer == "image") {
@@ -561,8 +570,6 @@ export default class MapEditor {
         let f = source.getFeatureById(id);
         source.removeFeature(f);
     }
-
-
 
     ///根据ID添加要素信息
     addFeatureById(layer, id, k, v) {
@@ -695,6 +702,18 @@ export default class MapEditor {
         return dataURL;
     }
 
+    getNewImgBase64(img) {
+        if (this.canvas == null)
+            this.canvas = document.createElement("canvas");
+        let dis = Math.sqrt(img.width * img.width + img.height * img.height);
+        this.canvas.width = dis;
+        this.canvas.height = dis;
+        var ctx = this.canvas.getContext("2d");
+        ctx.drawImage(img, (dis - img.width) / 2, (dis - img.height) / 2, img.width, img.height);
+        var dataURL = this.canvas.toDataURL("image/png");
+        return dataURL;
+    }
+
     rotateBase64Iamge(img, angle) {
         if (this.canvas == null)
             this.canvas = document.createElement("canvas");
@@ -703,7 +722,7 @@ export default class MapEditor {
         this.canvas.width = img.width;
         this.canvas.height = img.height;
         var ctx = this.canvas.getContext("2d");
-        
+
         let w = this.canvas.width;
         let h = this.canvas.height;
         ctx.translate(w / 2, h / 2); // 1
