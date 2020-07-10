@@ -24,7 +24,7 @@ const ajax = (param) => {
       method: "post",
       url: obj.url,
       data: obj.data,
-      timeout: 20000,
+      timeout: 30000,
       responseType: "json",
       headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
       transformResponse: [function a(param1) {
