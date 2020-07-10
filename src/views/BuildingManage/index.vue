@@ -101,7 +101,8 @@
           v-model="searchForm.buildingName"
           size="mini"
           class="leftInput lf10"
-          style="width:120px"
+          style="width:135px"
+          maxlength="20"
           placeholder="请输入楼宇名称"
         />
         <el-button @click="searchClick" size="mini" class="lf15" type="primary">确定</el-button>
