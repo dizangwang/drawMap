@@ -257,7 +257,7 @@ export default {
               lis.forEach((item) => {
                 const button = item.querySelector("button");
                 const floor = button.getAttribute("data-floor");
-                if (keys.length === 1) {
+                if (keys.length === 1 && that.fromSet) {
                   button.setAttribute("class", " btn-select-floor");
                 }
                 // 楼层比对

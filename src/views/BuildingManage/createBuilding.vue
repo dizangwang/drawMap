@@ -269,6 +269,7 @@ export default {
       that.$refs.formValidate.resetFields();
       that.taskObj = taskObj;
       that.formValidate.taskId = taskObj.id;
+      that.editOutLine = {};
     },
 
     // 上传文件成功回调
