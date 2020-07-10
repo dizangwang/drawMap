@@ -264,9 +264,9 @@ export default {
                 if (floor === key) {
                   button.style.color = "#ffc107";
                   if (keys.length === 1) {
-                    button.setAttribute("class", " btn-select-floor selected");
                     if (that.fromSet) {
                       setTimeout(() => {
+                        button.setAttribute("class", " btn-select-floor selected");
                         button.click();
                       });
                     }
