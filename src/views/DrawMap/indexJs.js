@@ -896,7 +896,16 @@ export default {
               message: "保存成功",
               type: "success"
             });
-
+            that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((
+              floorInfo
+            ) => {
+              that.finishStatus = floorInfo.finishStatus;
+              if (that.finishStatus) {
+                that.floorFinishStatus = "未完成";
+              } else {
+                that.floorFinishStatus = "完成";
+              }
+            });
             // that.loadFloor();
           } else {
             that.$message({
