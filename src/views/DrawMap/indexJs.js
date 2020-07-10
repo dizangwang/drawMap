@@ -1798,6 +1798,10 @@ export default {
             //   data: imgUrl,
             //   extent: small.concat(big)
             // });
+            that.$message({
+              message: "请点击调整底图按钮，根据轮廓进行缩放平移",
+              type: "success"
+            });
             const img = new Image();
             img.src = imgUrl;
             img.onload = () => {
@@ -1821,7 +1825,7 @@ export default {
         if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res
           .lowerRightCornerLongitude && !res.lowerRightCornerLatitude && !res.floorOutline) {
           that.$message({
-            message: "没有对角线经纬度和轮廓信息无法定位底图",
+            message: "当前楼层不具备经纬度信息，将不能发布",
             type: "warning"
           });
         }
