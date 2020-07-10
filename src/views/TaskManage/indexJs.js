@@ -793,7 +793,7 @@ export default {
       });
       ids = arr.join(",");
       that
-        .$confirm("是否批量下架该?", "提示", {
+        .$confirm("是否批量下架?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
@@ -812,7 +812,7 @@ export default {
     underCarriageClick(row) {
       var that = this;
       that
-        .$confirm("是否下架该文件?", "提示", {
+        .$confirm("是否下架该任务?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"

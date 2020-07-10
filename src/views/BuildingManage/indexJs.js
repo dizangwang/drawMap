@@ -418,7 +418,7 @@ export default {
         return;
       }
       that
-        .$confirm("是否批量下架该?", "提示", {
+        .$confirm("是否批量下架?", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
