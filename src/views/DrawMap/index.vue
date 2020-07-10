@@ -67,12 +67,12 @@
                 <div class="line5"></div>路径
               </div>
             </div>
-            <div class="tabItem" @click="tabNum=3" :class="{ tabItemActive: tabNum==3 }">
+            <!-- <div class="tabItem" @click="tabNum=3" :class="{ tabItemActive: tabNum==3 }">
               <div>
                 <i class="iconCommon iconSet bigSize"></i>
                 <div class="line5"></div>设置
               </div>
-            </div>
+            </div>-->
           </div>
           <div style="flex:1;overflow:auto">
             <!-- 绘制模块 -->
