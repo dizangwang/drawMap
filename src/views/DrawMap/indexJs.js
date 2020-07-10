@@ -172,45 +172,58 @@ export default {
       var that = this;
       var lngLatObj = resultInfo.extent;
       // that.mapLoading = true;
-      that.saveDataCallBack(() => {});
-      // 获取楼层的信息更新经纬度的信息
-      that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((res) => {
-        const obj = {
-          floorOutline: res.floorOutline,
-          planarGraph: res.planarGraph,
-          upperLeftCornerLongitude: lngLatObj[0],
-          upperLeftCornerLatitude: lngLatObj[3],
-          lowerRightCornerLongitude: lngLatObj[2],
-          lowerRightCornerLatitude: lngLatObj[1]
-        };
-        let str = "";
-        Object.keys(obj).forEach((item) => {
-          str += `${item}=${obj[item]}&`;
-        });
-        // 更新楼层的信息
-        that
-          .ajax({
-            method: "post",
-            url: that.apis.floorMgrUpdateSettings + that.activeFloorData.floorData.properties
-              .id,
-            data: str
-          })
-          .then((result) => {
-            const {
-              data
-            } = result;
-            if (data.code === 200) {
-              // that.$message({
-              //   message: "提交成功",
-              //   type: "success"
-              // });
-            } else {
-              that.$message({
-                message: data.msg,
-                type: "warning"
-              });
-            }
+      that.saveDataCallBack(() => {
+        // 获取楼层的信息更新经纬度的信息
+        that.mapLoading = true;
+        that.loadingText = "楼层信息更新中...";
+        that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((res) => {
+          that.finishStatus = res.finishStatus;
+          if (that.finishStatus) {
+            that.floorFinishStatus = "未完成";
+          } else {
+            that.floorFinishStatus = "完成";
+          }
+
+
+          const obj = {
+            floorOutline: res.floorOutline,
+            planarGraph: res.planarGraph,
+            upperLeftCornerLongitude: lngLatObj[0],
+            upperLeftCornerLatitude: lngLatObj[3],
+            lowerRightCornerLongitude: lngLatObj[2],
+            lowerRightCornerLatitude: lngLatObj[1]
+          };
+          let str = "";
+          Object.keys(obj).forEach((item) => {
+            str += `${item}=${obj[item]}&`;
           });
+          // 更新楼层的信息
+          that
+            .ajax({
+              method: "post",
+              url: that.apis.floorMgrUpdateSettings + that.activeFloorData.floorData
+                .properties
+                .id,
+              data: str
+            })
+            .then((result) => {
+              const {
+                data
+              } = result;
+              that.mapLoading = false;
+              if (data.code === 200) {
+                // that.$message({
+                //   message: "提交成功",
+                //   type: "success"
+                // });
+              } else {
+                that.$message({
+                  message: data.msg,
+                  type: "warning"
+                });
+              }
+            });
+        });
       });
     },
     isComplete(fn) {
@@ -584,10 +597,12 @@ export default {
     floorMgrPublish() {
       var that = this;
       const layerData = that.mapEditor.getSaveData();
+
       // 点击发布，判断地图是否已保存且状态为完成
       if (that.compareData(layerData, that
         .activeFloorData) && that.floorFinishStatus === "未完成") {
-        // that.mapLoading = true;
+        that.loadingText = "楼层发布中...";
+        that.mapLoading = true;
         that
           .ajax({
             method: "post",
@@ -605,6 +620,7 @@ export default {
                 message: "发布成功",
                 type: "success"
               });
+              that.mapLoading = false;
             } else {
               that.$message({
                 message: data.msg,
@@ -624,6 +640,8 @@ export default {
             cancelButtonText: "取消",
             type: "warning"
           }).then(() => {
+            that.loadingText = "楼层发布中...";
+            that.mapLoading = true;
             that
               .ajax({
                 method: "post",
@@ -646,13 +664,12 @@ export default {
                     })
                     .then((res4) => {
                       const data4 = res4.data;
-                      // that.mapLoading = false;
+                      that.mapLoading = false;
                       if (data4.code === 200) {
                         that.$message({
                           message: "发布成功",
                           type: "success"
                         });
-                        // that.loadFloor();
                       } else {
                         that.$message({
                           message: data4.msg,
@@ -680,6 +697,8 @@ export default {
             cancelButtonText: "取消",
             type: "warning"
           }).then(() => {
+            that.loadingText = "楼层发布中...";
+            that.mapLoading = true;
             that.saveDataCallBack(() => {
               that
                 .ajax({
@@ -692,6 +711,7 @@ export default {
                 .then((res1) => {
                   const data1 = res1.data;
                   if (data1.code === 200) {
+                    that.floorFinishStatus = "未完成";
                     that
                       .ajax({
                         method: "post",
@@ -702,13 +722,12 @@ export default {
                       })
                       .then((res2) => {
                         const data2 = res2.data;
-                        // that.mapLoading = false;
+                        that.mapLoading = false;
                         if (data2.code === 200) {
                           that.$message({
                             message: "发布成功",
                             type: "success"
                           });
-                          // that.loadFloor();
                         } else {
                           that.$message({
                             message: data2.msg,
@@ -726,6 +745,7 @@ export default {
             });
           }).catch(() => {
             // todo
+            that.mapLoading = false;
           });
       }
     },
@@ -733,13 +753,17 @@ export default {
     floorFinishById() {
       var that = this;
       // that.mapLoading = true;
+      that.loadingText = "";
+      that.mapLoading = true;
 
       function floorFinish(flag) {
         let url = "";
         // 1:完成2：未完成
         if (flag === 1) {
+          that.loadingText = "设置楼层完成中...";
           url = that.apis.floorFinishById + that.activeFloorData.floorData.properties.id;
         } else if (flag === 2) {
+          that.loadingText = "设置楼层未完成中...";
           url = that.apis.floorUnFinishById + that.activeFloorData.floorData.properties.id;
         }
         that
@@ -752,12 +776,12 @@ export default {
             const {
               data
             } = res;
+            that.mapLoading = false;
             if (data.code === 200) {
               that.$message({
                 message: "操作成功",
                 type: "success"
               });
-              // that.loadFloor();
             } else {
               that.$message({
                 message: data.msg,
@@ -792,6 +816,7 @@ export default {
         }
       });
     },
+    // 预览
     previewClick() {
       var that = this;
       const layerData = that.mapEditor.getSaveData();
@@ -800,6 +825,16 @@ export default {
       } else {
         that.saveDataCallBack(() => {
           that.loadFloor();
+          that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((
+            floorInfo
+          ) => {
+            that.finishStatus = floorInfo.finishStatus;
+            if (that.finishStatus) {
+              that.floorFinishStatus = "未完成";
+            } else {
+              that.floorFinishStatus = "完成";
+            }
+          });
         });
       }
     },
@@ -846,7 +881,6 @@ export default {
           that.mapLoading = false;
           if (data.code === 200) {
             fn();
-            // that.loadFloor();
           } else {
             that.$message({
               message: data.msg,
@@ -906,7 +940,6 @@ export default {
                 that.floorFinishStatus = "完成";
               }
             });
-            // that.loadFloor();
           } else {
             that.$message({
               message: data.msg,
@@ -1751,7 +1784,9 @@ export default {
               data: data.data,
               extent: data.extent
             });
-            that.saveDataCallBack(() => {});
+            that.saveDataCallBack(() => {
+
+            });
           };
           // that.saveDataCallBack(() => {});
         }
