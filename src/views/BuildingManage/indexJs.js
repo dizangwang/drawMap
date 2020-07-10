@@ -683,7 +683,7 @@ export default {
       if (that.tableSelectionArr.length === 0) {
         that.$message({
           type: "error",
-          message: "请勾选需要删除的楼宇"
+          message: "请先选择需要删除的楼宇"
         });
         return;
       }
