@@ -393,7 +393,7 @@
                             ></el-input>
                           </td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                           <td>分组名称</td>
                           <td>
                             <el-input
@@ -403,7 +403,7 @@
                               placeholder="请输入内容"
                             ></el-input>
                           </td>
-                        </tr>
+                        </tr> -->
                       </table>
                     </el-card>
                   </div>
