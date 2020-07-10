@@ -1800,7 +1800,7 @@ export default {
             // });
             that.$message({
               message: "请点击调整底图按钮，根据轮廓进行缩放平移",
-              type: "success"
+              type: "warning"
             });
             const img = new Image();
             img.src = imgUrl;
