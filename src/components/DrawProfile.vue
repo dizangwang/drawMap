@@ -68,7 +68,11 @@ export default {
       // 是不是已经保存
       isSave: false,
       // 编辑时传过来的数据
-      editOutLine: ""
+      editOutLine: "",
+      // 是否从设置楼层信息过来
+      fromSet: false,
+      // 是否是第一次渲染
+      isFirstPaint: true
     };
   },
   mounted() {
@@ -109,6 +113,7 @@ export default {
       that.floorData = {};
       that.currentFloor = "";
       that.editOutLine = "";
+      that.fromSet = initParam.fromSet;
       that.init(initObj.address, () => {
         // 判断是否传过来轮廓的经纬度
         if (initObj.editOutLine) {
@@ -159,9 +164,16 @@ export default {
             // );
             // setTimeout(function(){
             // 0.0006
-            that.map.panTo(new BMap.Point((bigLng + smallLng) / 2, (bigLat + smallLat) / 2));
+            that.map.panTo(
+              new BMap.Point((bigLng + smallLng) / 2, (bigLat + smallLat) / 2)
+            );
             setTimeout(() => {
-              that.map.panTo(new BMap.Point((bigLng + smallLng) / 2 + 0.0006, (bigLat + smallLat) / 2));
+              that.map.panTo(
+                new BMap.Point(
+                  (bigLng + smallLng) / 2 + 0.0006,
+                  (bigLat + smallLat) / 2
+                )
+              );
             }, 500);
 
             // }, 1000);
@@ -230,10 +242,9 @@ export default {
       that.map.enableScrollWheelZoom(true);
       // 创建室内图实例
 
-
       setTimeout(() => {
         that.indoorManager = new BMapLib.IndoorManager(map, {
-        // 室内图加载完成事件
+          // 室内图加载完成事件
           complete() {
             // 获取地图右侧楼层展示
             var lis = document.querySelectorAll(".floor-select-container li");
@@ -242,7 +253,7 @@ export default {
             that.indoorManager.showIndoorControl();
             // 循环楼层
             keys.forEach((key) => {
-            // 循环地图右侧楼层
+              // 循环地图右侧楼层
               lis.forEach((item) => {
                 const button = item.querySelector("button");
                 const floor = button.getAttribute("data-floor");
@@ -254,9 +265,11 @@ export default {
                   button.style.color = "#ffc107";
                   if (keys.length === 1) {
                     button.setAttribute("class", " btn-select-floor selected");
-                    setTimeout(() => {
-                      button.click();
-                    });
+                    if (that.fromSet) {
+                      setTimeout(() => {
+                        button.click();
+                      });
+                    }
                   }
                 }
               });
@@ -264,7 +277,7 @@ export default {
           },
           // 切换楼层事件
           afterChangeFloor(e) {
-          // 切换时清除所有覆盖物
+            // 切换时清除所有覆盖物
             that.clearAll();
             that.map.clearOverlays();
             // 指定当前楼层
@@ -276,7 +289,7 @@ export default {
             // that.editOutLine
             // 循环楼层
             keys.forEach((key) => {
-            // 循环地图右侧楼层
+              // 循环地图右侧楼层
               lis.forEach((item) => {
                 const button = item.querySelector("button");
                 const floor = button.getAttribute("data-floor");
@@ -290,12 +303,12 @@ export default {
             if (that.cacheOverlays[e.currentFloor]) {
               that.map.addOverlay(that.cacheOverlays[e.currentFloor]);
             } else if (that.editOutLine) {
-            // 如果是编辑
-            // 拿到已经绘制好轮廓的楼层
+              // 如果是编辑
+              // 拿到已经绘制好轮廓的楼层
               const keys1 = Object.keys(that.floorData);
               // 循环楼层
               keys1.forEach((key) => {
-              // 循环地图右侧楼层
+                // 循环地图右侧楼层
                 lis.forEach((item) => {
                   const button = item.querySelector("button");
                   const floor = button.getAttribute("data-floor");
@@ -312,7 +325,6 @@ export default {
             }
           }
         });
-
 
         that.map.addEventListener("click", () => {
           that.indoorManager.showIndoorControl();

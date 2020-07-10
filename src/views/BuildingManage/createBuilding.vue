@@ -255,7 +255,8 @@ export default {
         + that.taskObj.districtName;
       that.$refs.drawProfile.initData({
         address,
-        editOutLine: that.editOutLine
+        editOutLine: that.editOutLine,
+        fromSet: false
       });
     },
 

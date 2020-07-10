@@ -254,7 +254,8 @@ export default {
           that.taskData.provinceName
           + that.taskData.cityName
           + that.taskData.districtName,
-        editOutLine: that.editOutLine
+        editOutLine: that.editOutLine,
+        fromSet: false
       });
     },
 

@@ -397,11 +397,13 @@ export default {
       if (that.drawLineObj) {
         that.$refs.drawProfile.initData({
           address,
-          editOutLine: that.drawLineObj
+          editOutLine: that.drawLineObj,
+          fromSet: true
         });
       } else {
         that.$refs.drawProfile.initData({
-          address
+          address,
+          fromSet: true
         });
       }
     },
