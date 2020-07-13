@@ -298,6 +298,7 @@ export default {
                 message: data.msg,
                 type: "warning"
               });
+              that.mapLoading = false;
             }
           });
       });
@@ -1740,6 +1741,7 @@ export default {
             message: "楼层信息设置成功",
             type: "success"
           });
+          that.mapLoading = false;
           // const left = that.mapEditor.transformTo3857(res.upperLeftCornerLongitude, res
           //   .upperLeftCornerLatitude);
           // const right = that.mapEditor.transformTo3857(res.lowerRightCornerLongitude, res
@@ -1791,7 +1793,7 @@ export default {
               extent: data.extent
             });
             that.saveDataCallBack(() => {
-
+              that.mapLoading = false;
             });
           };
           // that.saveDataCallBack(() => {});
@@ -1860,16 +1862,22 @@ export default {
                 data: data.data,
                 extent: data.extent
               });
-              that.saveDataCallBack(() => {});
+              that.saveDataCallBack(() => {
+                that.mapLoading = false;
+              });
             };
           } else {
-            that.saveDataCallBack(() => {});
+            that.saveDataCallBack(() => {
+              that.mapLoading = false;
+            });
           }
         }
 
         if (res.upperLeftCornerLongitude && res.upperLeftCornerLatitude && res
           .lowerRightCornerLongitude && res.lowerRightCornerLatitude && !res.floorOutline) {
-          that.saveDataCallBack(() => {});
+          that.saveDataCallBack(() => {
+            that.mapLoading = false;
+          });
         }
 
         if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res
@@ -1878,6 +1886,7 @@ export default {
             message: "当前楼层不具备经纬度信息，将不能发布",
             type: "warning"
           });
+          that.mapLoading = false;
         }
       });
 
