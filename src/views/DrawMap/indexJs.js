@@ -1952,8 +1952,12 @@ export default {
             data
           } = res;
           if (data.code === 200) {
-            // todo
             that.allIconsArr = data.data;
+            if (data.data.length >= 11) {
+              that.showIconsArr = data.data.slice(0, 11);
+            } else {
+              that.showIconsArr = data.data;
+            }
           } else {
             that.$message({
               message: data.msg,

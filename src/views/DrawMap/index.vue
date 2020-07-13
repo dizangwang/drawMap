@@ -227,7 +227,7 @@
                           @click="commonIconClick(item,index)"
                           class="iconMgrItem iconMgrItemHover"
                           :class="{iconMgrItemActive:iconActiveNum==(index+1)}"
-                          v-for="(item,index) in allIconsArr"
+                          v-for="(item,index) in showIconsArr"
                           :key="item.id"
                         >
                           <img

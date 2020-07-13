@@ -247,5 +247,7 @@ export default {
   // loading文字
   loadingText: "数据加载中...",
   // 图片大小
-  imgFix: 1000
+  imgFix: 1000,
+  // 用于展示的图标
+  showIconsArr: []
 };
