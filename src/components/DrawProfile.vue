@@ -251,7 +251,7 @@ export default {
             var lis = document.querySelectorAll(".floor-select-container li");
             // 拿到已经绘制好轮廓的楼层
             var keys = Object.keys(that.floorData);
-            that.indoorManager.showIndoorControl();
+            // that.indoorManager.showIndoorControl();
             // 循环楼层
             keys.forEach((key) => {
               // 循环地图右侧楼层
