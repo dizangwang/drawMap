@@ -615,12 +615,12 @@ export default {
             const {
               data
             } = res;
+            that.mapLoading = false;
             if (data.code === 200) {
               that.$message({
                 message: "发布成功",
                 type: "success"
               });
-              that.mapLoading = false;
             } else {
               that.$message({
                 message: data.msg,
@@ -682,10 +682,12 @@ export default {
                     message: data3.msg,
                     type: "warning"
                   });
+                  that.mapLoading = false;
                 }
               });
           }).catch(() => {
             // todo
+            that.mapLoading = false;
           });
         return;
       }
@@ -740,6 +742,7 @@ export default {
                       message: data1.msg,
                       type: "warning"
                     });
+                    that.mapLoading = false;
                   }
                 });
             });
