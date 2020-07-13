@@ -238,6 +238,7 @@ export default {
           message: "楼层缺少底图",
           type: "warning"
         });
+        that.mapLoading = false;
         return;
       }
       // 判断有没有要素数据
@@ -254,6 +255,7 @@ export default {
           message: "楼层至少存在一条要素数据",
           type: "warning"
         });
+        that.mapLoading = false;
         return;
       }
       // 判断是否有对角线经纬度
@@ -267,6 +269,7 @@ export default {
             message: "楼层缺少对角线经纬度信息",
             type: "warning"
           });
+          that.mapLoading = false;
           return;
         }
         if (i >= 3) {
