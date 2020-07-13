@@ -183,8 +183,6 @@ export default {
           } else {
             that.floorFinishStatus = "完成";
           }
-
-
           const obj = {
             floorOutline: res.floorOutline,
             planarGraph: res.planarGraph,
@@ -376,8 +374,6 @@ export default {
         }
         if (key === "layerData") {
           Object.keys(data1[key]).forEach((layer) => {
-            // 判断两个长度是否相等
-
             if (layer === "polygon") {
               if (data1[key][layer].features.length === data2[key][layer].features.length) {
                 const obj1 = {};
@@ -635,7 +631,6 @@ export default {
         return;
       }
 
-
       if (that.compareData(layerData, that
         .activeFloorData) && that.floorFinishStatus === "完成") {
         that
@@ -849,20 +844,19 @@ export default {
     saveDataCallBack(fn) {
       var that = this;
       var obj = {};
-      that.mapLoading = true;
-      that.loadingText = "数据保存中...";
+
       const layerData = that.mapEditor.getSaveData();
+      if (JSON.stringify(layerData.floorData) === "{}") {
+        that.mapLoading = false;
+        return;
+      }
       that.activeFloorData.floorData = JSON.parse(JSON.stringify(layerData.floorData));
-
-
-
       // that.activeFloorData.floorData.geometry.coordinates = JSON.parse(JSON.stringify(
       //   layerData.floorData.geometry.coordinates
       // ));
       that.activeFloorData.imageData.data = layerData.imageData.data;
       that.activeFloorData.imageData.extent = JSON.stringify(layerData.imageData.extent);
       that.activeFloorData.layerData = JSON.parse(JSON.stringify(layerData.layerData));
-
       // console.log("---------", that.compareData(layerData, that.activeFloorData));
       // console.log(layerData, that.activeFloorData);
       const layerDataCopy = JSON.parse(JSON.stringify(layerData));
@@ -873,6 +867,8 @@ export default {
       obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
       obj.floors = {};
       obj.floors[that.activeFloorData.floorData.properties.floors] = layerDataCopy;
+      that.mapLoading = true;
+      that.loadingText = "数据保存中...";
       that
         .ajax({
           method: "post",
@@ -900,17 +896,17 @@ export default {
     saveData() {
       var that = this;
       var obj = {};
-      that.mapLoading = true;
-      that.loadingText = "数据保存中...";
+
       const layerData = that.mapEditor.getSaveData();
       // console.log("**************", layerData)
+      if (JSON.stringify(layerData.floorData) === "{}") {
+        that.mapLoading = false;
+        return;
+      }
       that.activeFloorData.floorData = JSON.parse(JSON.stringify(layerData.floorData));
       that.activeFloorData.imageData.data = layerData.imageData.data;
       that.activeFloorData.imageData.extent = JSON.stringify(layerData.imageData.extent);
       that.activeFloorData.layerData = JSON.parse(JSON.stringify(layerData.layerData));
-
-
-
       const layerDataCopy = JSON.parse(JSON.stringify(layerData));
       layerDataCopy.imageData.data = encodeURIComponent(layerData.imageData.data);
       // console.log("-----%%%%%%----", that.compareData(layerData, that.activeFloorData));
@@ -919,6 +915,8 @@ export default {
       obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
       obj.floors = {};
       obj.floors[that.activeFloorData.floorData.properties.floors] = layerDataCopy;
+      that.mapLoading = true;
+      that.loadingText = "数据保存中...";
       that
         .ajax({
           method: "post",
@@ -1157,12 +1155,10 @@ export default {
       var style = "";
       that.iconActiveNum = "";
       that.drawActiveType = "";
-
       if (styleIndex === "") {
         that.selectedElement.value.fillColor = "";
         return;
       }
-
       if (styleIndex) {
         that.elementStyleList.forEach((item) => {
           if (item.id === styleIndex) {
@@ -1326,7 +1322,6 @@ export default {
       that.dataChartInfoModal = true;
       that.dataChartData = that.mapEditor.getData("polygon");
       // that.dataChartPOIData = that.mapEditor.getData("point");
-
       const arrs = that.mapEditor.getData("point");
       that.dataChartPOIData = arrs.filter((currentValue, index, arr) => currentValue.size !== 31);
     },
@@ -2101,14 +2096,11 @@ export default {
             that.buildingFloorsObj = data.data;
             that.floorArr = [];
             const numArr = [];
-
-
             Object.keys(that.buildingFloorsObj.floors).forEach((floor) => {
               const num = +floor;
               numArr.push(num);
             });
             numArr.sort((a, b) => b - a);
-
             numArr.forEach((item) => {
               const key = `${item}`;
               Object.keys(that.buildingFloorsObj.floors).forEach((floorKey) => {
@@ -2136,7 +2128,6 @@ export default {
                 });
               });
             });
-
             // Object.keys(that.buildingFloorsObj.floors).forEach((key) => {
             //   const floorKey = +key;
             //   let strKey = "";

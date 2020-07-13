@@ -45,11 +45,11 @@ export default {
     slot: "img",
     width: 80
   }
-  // },
-  // {
-  //   title: "名称",
-  //   key: "name"
-  // }
+    // },
+    // {
+    //   title: "名称",
+    //   key: "name"
+    // }
   ],
   // poi搜索
   dataChartDataPoiSearch: "",
