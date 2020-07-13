@@ -440,7 +440,7 @@ export class InterCtionManage {
     }
 
     ///取消绘制
-    cancelDraw() {
+    cancelDraw(t = false) {
 
         this._removeAllInteraction();
 
@@ -450,7 +450,7 @@ export class InterCtionManage {
         this.mapEditor.ol.interactions.select.setActive(true);
 
 
-        if (this._drawFeatureArray.length > 0)
+        if (this._drawFeatureArray.length > 0 && t)
             this.mapEditor.ol.interactions.select.getFeatures().push(this._drawFeatureArray[this._drawFeatureArray.length - 1]);
 
     }

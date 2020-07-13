@@ -53,8 +53,12 @@ export class ContextMenu {
         this.mapEditor.ol.map.getViewport().addEventListener("contextmenu", (e) => {
             e.preventDefault();
             if (this.mapEditor.interactionManage.getSelectFeatures().getLength() == 0) {
-                if (this.mapEditor.ol.interactions.draw.getActive())
-                    this.mapEditor.cancelDraw();
+                if (this.mapEditor.ol.interactions.draw.getActive()) {
+                    if (this.mapEditor.ol.interactions.draw.type_ == "Polygon" || this.mapEditor.ol.interactions.draw.type_ == "Circle")
+                        this.mapEditor.cancelDraw(true);
+                    else
+                        this.mapEditor.cancelDraw();
+                }
                 return;
             }
 

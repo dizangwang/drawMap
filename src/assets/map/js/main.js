@@ -269,7 +269,7 @@ export default class MapEditor {
     }
 
     ///获取图片默认位置
-    defaultImageData(img,fix=500) {
+    defaultImageData(img, fix = 500) {
 
         let newData = img;
 
@@ -278,7 +278,7 @@ export default class MapEditor {
             let e;
 
             ///获取新正方形图片
-            newData = this.getNewImgBase64(img,fix);
+            newData = this.getNewImgBase64(img, fix);
 
             let mapSize = this.ol.map.getSize();
             var mapExtent = this.ol.map.getView().calculateExtent(mapSize);
@@ -312,7 +312,7 @@ export default class MapEditor {
 
 
     ///编辑图片
-    editImage(data, ext = null,fix=500) {
+    editImage(data, ext = null, fix = 500) {
         let img = new Image();
         img.src = data;
         let p0 = this.transformTo3857(ext[0], ext[1]);
@@ -332,7 +332,7 @@ export default class MapEditor {
                 let e;
                 if (ext == null) {
                     ///获取新正方形图片
-                    newData = this.getNewImgBase64(img,fix);
+                    newData = this.getNewImgBase64(img, fix);
 
                     let mapSize = this.ol.map.getSize();
                     var mapExtent = this.ol.map.getView().calculateExtent(mapSize);
@@ -422,8 +422,8 @@ export default class MapEditor {
     }
 
     ///取消绘制
-    cancelDraw() {
-        this.interactionManage.cancelDraw();
+    cancelDraw(t = false) {
+        this.interactionManage.cancelDraw(t);
     }
 
     ///地图放大
@@ -743,7 +743,7 @@ export default class MapEditor {
         return dataURL;
     }
 
-    getNewImgBase64(img,fix) {
+    getNewImgBase64(img, fix) {
         if (this.canvas == null)
             this.canvas = document.createElement("canvas");
 

@@ -1085,6 +1085,24 @@ export default {
     // 图标管理
     commonIconClick(item, index) {
       var that = this;
+      const emptyObj = {
+        id: "",
+        layername: "",
+        value: {
+          borderColor: "",
+          fillColor: "",
+          font: "",
+          fontBorderColor: "",
+          fontFillColor: "",
+          height: "",
+          id: "",
+          name: "",
+          styleID: "",
+          typeID: "",
+          width: ""
+        }
+      };
+      that.selectedElement = emptyObj;
       if (that.iconActiveNum === (index + 1)) {
         that.iconName = "";
         that.iconActiveNum = "";
@@ -1329,6 +1347,24 @@ export default {
     // 路径-绘制要素-直梯
     verticalFloorClick() {
       var that = this;
+      const emptyObj = {
+        id: "",
+        layername: "",
+        value: {
+          borderColor: "",
+          fillColor: "",
+          font: "",
+          fontBorderColor: "",
+          fontFillColor: "",
+          height: "",
+          id: "",
+          name: "",
+          styleID: "",
+          typeID: "",
+          width: ""
+        }
+      };
+      that.selectedElement = emptyObj;
       if (that.drawActiveLine === 1) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -1347,6 +1383,24 @@ export default {
     // 路径-绘制要素-扶梯
     holdFloorClick() {
       var that = this;
+      const emptyObj = {
+        id: "",
+        layername: "",
+        value: {
+          borderColor: "",
+          fillColor: "",
+          font: "",
+          fontBorderColor: "",
+          fontFillColor: "",
+          height: "",
+          id: "",
+          name: "",
+          styleID: "",
+          typeID: "",
+          width: ""
+        }
+      };
+      that.selectedElement = emptyObj;
       if (that.drawActiveLine === 2) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -1365,6 +1419,24 @@ export default {
     // 路径-绘制要素-楼梯
     commonFloorClick() {
       var that = this;
+      const emptyObj = {
+        id: "",
+        layername: "",
+        value: {
+          borderColor: "",
+          fillColor: "",
+          font: "",
+          fontBorderColor: "",
+          fontFillColor: "",
+          height: "",
+          id: "",
+          name: "",
+          styleID: "",
+          typeID: "",
+          width: ""
+        }
+      };
+      that.selectedElement = emptyObj;
       if (that.drawActiveLine === 3) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -1557,6 +1629,24 @@ export default {
     // 绘制线要素
     drawLine() {
       var that = this;
+      const emptyObj = {
+        id: "",
+        layername: "",
+        value: {
+          borderColor: "",
+          fillColor: "",
+          font: "",
+          fontBorderColor: "",
+          fontFillColor: "",
+          height: "",
+          id: "",
+          name: "",
+          styleID: "",
+          typeID: "",
+          width: ""
+        }
+      };
+      that.selectedElement = emptyObj;
       if (that.isDrawLine) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
