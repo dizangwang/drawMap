@@ -998,7 +998,7 @@ export default {
     },
     // 点击选择要素
     selectElementClick() {
-      this.mapEditor.cancelDraw();
+      // this.mapEditor.cancelDraw();
     },
     // 创建样式成功调用方法
     createStyleSuccess() {
