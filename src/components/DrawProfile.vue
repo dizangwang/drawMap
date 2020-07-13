@@ -107,6 +107,7 @@ export default {
       that.searchValue = "";
       that.searchResult = [];
       that.searchResultShow = false;
+      that.isFirstPaint = true;
       that.map = "";
       that.cacheOverlays = {};
       that.indoorManager = "";
@@ -178,7 +179,7 @@ export default {
 
             // }, 1000);
           }, 1700);
-          if (Object.keys(that.floorData).length === 1) {
+          if (Object.keys(that.floorData).length === 1 && that.fromSet) {
             Object.keys(that.floorData).forEach((floorNum) => {
               if (that.floorData[floorNum]) {
                 that.createPolygon(that.floorData[floorNum]);
@@ -263,10 +264,35 @@ export default {
                 // 楼层比对
                 if (floor === key) {
                   button.style.color = "#ffc107";
+                  if (keys.length > 1) {
+                    if (!that.fromSet && keys[0] === "B1") {
+                      if (key === "B1") {
+                        button.setAttribute(
+                          "class",
+                          " btn-select-floor selected"
+                        );
+                        button.click();
+                      }
+                    }
+                  }
                   if (keys.length === 1) {
                     if (that.fromSet) {
                       setTimeout(() => {
-                        button.setAttribute("class", " btn-select-floor selected");
+                        button.setAttribute(
+                          "class",
+                          " btn-select-floor selected"
+                        );
+                        button.click();
+                      });
+                    }
+                    // 如果是从编辑楼宇进来时 如果只有一层楼
+                    if (!that.fromSet && that.isFirstPaint) {
+                      that.isFirstPaint = false;
+                      setTimeout(() => {
+                        button.setAttribute(
+                          "class",
+                          " btn-select-floor selected"
+                        );
                         button.click();
                       });
                     }
@@ -445,6 +471,7 @@ export default {
       // 绘制结束回调方法
       const overlaycomplete = (e) => {
         let targetArr = [];
+        that.isFirstPaint = false;
         Object.keys(e.overlay).forEach((key) => {
           if (
             Object.prototype.toString.call(e.overlay[key]) === "[object Array]"
