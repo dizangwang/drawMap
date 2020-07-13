@@ -1851,9 +1851,10 @@ export default {
             //   extent: small.concat(big)
             // });
             that.$message({
-              message: "请点击调整底图按钮，根据轮廓进行缩放平移",
+              message: "请点击调整平面图，根据轮廓进行调整",
               type: "warning"
             });
+            that.mapLoading = false;
             const img = new Image();
             img.src = imgUrl;
             img.onload = () => {
