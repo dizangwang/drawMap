@@ -299,6 +299,7 @@ export default {
 }
 .areaSelect {
   width: 30%;
+  margin-left:0px;
 }
 .rightLebal {
   width: 90px;

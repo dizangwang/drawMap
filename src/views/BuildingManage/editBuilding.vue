@@ -249,13 +249,27 @@ export default {
     mapOutLineClick() {
       var that = this;
       that.fullScreenModal = true;
-      that.$refs.drawProfile.initData({
-        address:
-          that.taskData.provinceName
-          + that.taskData.cityName
-          + that.taskData.districtName,
-        editOutLine: that.editOutLine,
-        fromSet: false
+      that.$nextTick(() => {
+        setTimeout(() => {
+          if (that.editOutLine) {
+            that.$refs.drawProfile.initData({
+              address:
+              that.taskData.provinceName
+              + that.taskData.cityName
+              + that.taskData.districtName,
+              editOutLine: that.editOutLine,
+              fromSet: false
+            });
+          } else {
+            that.$refs.drawProfile.initData({
+              address:
+              that.taskData.provinceName
+              + that.taskData.cityName
+              + that.taskData.districtName,
+              fromSet: false
+            });
+          }
+        }, 500);
       });
     },
 

@@ -250,13 +250,24 @@ export default {
     mapOutLineClick() {
       var that = this;
       that.fullScreenModal = true;
-      const address = that.taskObj.provinceName
-        + that.taskObj.cityName
-        + that.taskObj.districtName;
-      that.$refs.drawProfile.initData({
-        address,
-        editOutLine: that.editOutLine,
-        fromSet: false
+      that.$nextTick(() => {
+        setTimeout(() => {
+          const address = that.taskObj.provinceName
+            + that.taskObj.cityName
+            + that.taskObj.districtName;
+          if (that.editOutLine) {
+            that.$refs.drawProfile.initData({
+              address,
+              editOutLine: that.editOutLine,
+              fromSet: false
+            });
+          } else {
+            that.$refs.drawProfile.initData({
+              address,
+              fromSet: false
+            });
+          }
+        }, 500);
       });
     },
 
