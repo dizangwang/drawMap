@@ -296,6 +296,7 @@ export default {
                       });
                     }
                     // 如果是从编辑楼宇进来时 如果只有一层楼
+                    // console.log("*****",that.isFirstPaint)
                     if (!that.fromSet && that.isFirstPaint) {
                       that.isFirstPaint = false;
                       setTimeout(() => {
