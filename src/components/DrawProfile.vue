@@ -105,7 +105,10 @@ export default {
     initData(initParam) {
       var that = this;
       if (that.mapId !== "map") {
-        document.getElementById(that.mapId).innerHTML = "";
+        const mapdom = document.getElementById(that.mapId);
+        if (mapdom) {
+          mapdom.innerHTML = "";
+        }
       }
       that.mapId = `map${Math.round(Math.random() * 1000000)}`;
       that.$nextTick(() => {
