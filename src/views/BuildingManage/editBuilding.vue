@@ -250,26 +250,24 @@ export default {
       var that = this;
       that.fullScreenModal = true;
       that.$nextTick(() => {
-        setTimeout(() => {
-          if (that.editOutLine) {
-            that.$refs.drawProfile.initData({
-              address:
+        if (that.editOutLine) {
+          that.$refs.drawProfile.initData({
+            address:
               that.taskData.provinceName
               + that.taskData.cityName
               + that.taskData.districtName,
-              editOutLine: that.editOutLine,
-              fromSet: false
-            });
-          } else {
-            that.$refs.drawProfile.initData({
-              address:
+            editOutLine: that.editOutLine,
+            fromSet: false
+          });
+        } else {
+          that.$refs.drawProfile.initData({
+            address:
               that.taskData.provinceName
               + that.taskData.cityName
               + that.taskData.districtName,
-              fromSet: false
-            });
-          }
-        }, 500);
+            fromSet: false
+          });
+        }
       });
     },
 

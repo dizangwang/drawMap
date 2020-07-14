@@ -103,9 +103,10 @@ export default {
     },
     // 被其他页面调用时，清空数据
     initData(initParam) {
-      // console.log(initParam)
-
       var that = this;
+      if (that.mapId !== "map") {
+        document.getElementById(that.mapId).innerHTML = "";
+      }
       that.mapId = `map${Math.round(Math.random() * 1000000)}`;
       that.$nextTick(() => {
         var initObj = JSON.parse(JSON.stringify(initParam));
