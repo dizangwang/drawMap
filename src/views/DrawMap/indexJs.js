@@ -1684,6 +1684,8 @@ export default {
           styleID: style.id,
           fillColor: style.fillColor,
           borderColor: style.fillColor,
+          fontFillColor: "rgba(255,255,255,1)",
+          fontBorderColor: "rgba(0,0,0,1)",
           borderWidth: 0,
           width: 0
         };
@@ -1740,7 +1742,9 @@ export default {
           styleID: style.id,
           fillColor: style.fillColor,
           borderColor: style.fillColor,
-          width: 0
+          width: 0,
+          fontFillColor: "rgba(255,255,255,1)",
+          fontBorderColor: "rgba(0,0,0,1)"
         };
         that.mapEditor.drawPolygon(obj);
         return;
@@ -1780,7 +1784,9 @@ export default {
           fillColor: style.fillColor,
           borderColor: style.fillColor,
           borderWidth: 0,
-          width: 0
+          width: 0,
+          fontFillColor: "rgba(255,255,255,1)",
+          fontBorderColor: "rgba(0,0,0,1)"
         };
         that.mapEditor.drawCircle(obj);
         return;
