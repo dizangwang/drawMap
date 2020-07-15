@@ -94,6 +94,7 @@ export default {
     // 上传base64编码
     uploadBase64(base64, fn) {
       var that = this;
+      that.mapLoading = true;
       that.loadingText = "上传图片中...";
       that
         .ajax({
@@ -1927,6 +1928,7 @@ export default {
 
           const img = new Image();
           img.src = imgUrl;
+          that.mapLoading = true;
           img.onload = () => {
             const data = that.mapEditor.defaultImageData(img, that.imgFix);
             // console.log("1#######", data)
@@ -1996,6 +1998,7 @@ export default {
             // });
             const img = new Image();
             img.src = imgUrl;
+            that.mapLoading = true;
             img.onload = () => {
               const data = that.mapEditor.defaultImageData(img, that.imgFix);
               // console.log("2#######", data)
@@ -2022,9 +2025,9 @@ export default {
 
         if (res.upperLeftCornerLongitude && res.upperLeftCornerLatitude && res
           .lowerRightCornerLongitude && res.lowerRightCornerLatitude && !res.floorOutline) {
-          that.saveDataCallBack(() => {
-            that.mapLoading = false;
-          });
+          // that.saveDataCallBack(() => {
+          //   that.mapLoading = false;
+          // });
         }
 
         if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res

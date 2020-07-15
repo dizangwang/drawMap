@@ -43,7 +43,7 @@
                     v-if="formValidate.planarGraph"
                     width="100px"
                     height="auto"
-                    style="min-height:30px"
+                    style="min-height:30px;display:block"
                     :src="'/files/img/'+formValidate.planarGraph"
                     alt
                   />
