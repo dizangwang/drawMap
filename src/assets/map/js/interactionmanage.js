@@ -450,8 +450,30 @@ export class InterCtionManage {
         this.mapEditor.ol.interactions.select.setActive(true);
 
 
-        if (this._drawFeatureArray.length > 0 && t)
+        if (this._drawFeatureArray.length > 0 && t) {
             this.mapEditor.ol.interactions.select.getFeatures().push(this._drawFeatureArray[this._drawFeatureArray.length - 1]);
+
+            let f = this._drawFeatureArray[this._drawFeatureArray.length - 1].getProperties();
+            // let layername = "";
+            // let l = this.mapEditor.ol.interactions.select.getLayer(this._drawFeatureArray[this._drawFeatureArray.length - 1]);
+            // if (l == this.mapEditor.ol.layers.buildLayer)
+            //     layername = "建筑物图层";
+            // if (l == this.mapEditor.ol.layers.pointLayer)
+            //     layername = "POI图层";
+            // if (l == this.mapEditor.ol.layers.pathLayer)
+            //     layername = "路径图层";
+            // if (l == this.mapEditor.ol.layers.polygonLayer)
+            //     layername = "多边形图层";
+
+            delete f["geometry"]
+            this.mapEditor.event.selectFeature({
+                layername: "多边形图层",
+                id: this._drawFeatureArray[this._drawFeatureArray.length - 1].getId(),
+                value: f,
+            })
+
+
+        }
 
     }
 
@@ -616,6 +638,19 @@ export class InterCtionManage {
                 if (e.ol_uid == interaction.ol_uid)
                     this.mapEditor.ol.map.removeInteraction(interaction);
         })
+    }
+
+    getDrawAction() {
+        let interaction = this.mapEditor.ol.interactions.draw;
+
+        let b = false
+        let interactions = this.mapEditor.ol.map.getInteractions();
+        interactions.forEach(e => {
+            if (e && interaction && e.ol_uid && interaction.ol_uid && typeof (e.ol_uid) != "undefined" && typeof (interaction.ol_uid) != "undefined")
+                if (e.ol_uid == interaction.ol_uid)
+                    b = true;
+        })
+        return b;
     }
 
     ///开启旋转要素

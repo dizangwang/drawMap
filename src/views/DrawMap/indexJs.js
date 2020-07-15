@@ -1942,6 +1942,13 @@ export default {
               });
             });
           };
+          img.onerror = () => {
+            that.$message({
+              message: "图片加载失败",
+              type: "warning"
+            });
+            that.mapLoading = false;
+          };
           // that.saveDataCallBack(() => {});
         }
         // 如果没有经纬度信息，判断有没有轮廓信息
@@ -2015,6 +2022,13 @@ export default {
                   that.mapLoading = false;
                 });
               });
+            };
+            img.onerror = () => {
+              that.$message({
+                message: "图片加载失败",
+                type: "warning"
+              });
+              that.mapLoading = false;
             };
           } else {
             that.saveDataCallBack(() => {

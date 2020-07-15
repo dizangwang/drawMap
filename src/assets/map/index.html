@@ -287,16 +287,23 @@
                 console.log(mapEditor.cancelEditImage());
 
                 let o = mapEditor.cancelEditImage();
-                let img = new Image();
-                img.src = o.data;
-                img.onload = () => {
-                    ///todo 
-                    ///把img对象 按照他传进来的图片路径替换掉
-                    ///然后用新路径和范围调用这个接口
-                    // mapEditor.setImageData({
-                    // data: "../img/poi.png",//图片路径
-                    // extent: o.extent,
-                }
+                ///todo 
+                ///o.data 调用后端接口将文件路径调用
+                // mapEditor.setImageData({
+                // data: "新路径",
+                // extent: o.extent,
+                //})
+
+                // let img = new Image();
+                // img.src = o.data;
+                // img.onload = () => {
+                //     ///todo 
+                //     ///把img对象 按照他传进来的图片路径替换掉
+                //     ///然后用新路径和范围调用这个接口
+                //     // mapEditor.setImageData({
+                //     // data: "../img/poi.png",//图片路径
+                //     // extent: o.extent,
+                // }
             }
 
             ///获取图片默认信息
