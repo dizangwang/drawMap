@@ -42,7 +42,6 @@ export default {
     that.$nextTick(() => {
       that.initMap(TestData.floors[1]);
     });
-
     window.addEventListener("beforeunload", (ev) => {
       var event = ev;
       // 窗口刷新或关闭的时候进行判断询问
@@ -92,6 +91,47 @@ export default {
     }
   },
   methods: {
+    // 上传base64编码
+    uploadBase64(base64, fn) {
+      var that = this;
+      that.loadingText = "上传图片中...";
+      that
+        .ajax({
+          method: "post",
+          url: that.uploadApis.uploadFiles,
+          data: {
+            file: encodeURIComponent(base64)
+          }
+        })
+        .then((result) => {
+          const {
+            data
+          } = result;
+
+          if (data.code === 200) {
+            fn(data.data.url, data.data.id);
+          } else {
+            that.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          }
+        }).catch((error) => {
+          that.loadingText = "";
+          that.mapLoading = false;
+          if (/413/.test(error)) {
+            that.$message({
+              message: "请求实体太大，图片转换失败，请减小图片分辨率",
+              type: "warning"
+            });
+          } else {
+            that.$message({
+              message: "图片转换失败，请重新设置底图",
+              type: "warning"
+            });
+          }
+        });
+    },
     // 通行设施设置，编辑楼层
     facilityToFloorClick() {
       var that = this;
@@ -157,7 +197,17 @@ export default {
         } else {
           that.mapEditor.setLayerDisplay("build", false);
           const result = that.mapEditor.cancelEditImage();
-          that.updateLngLat(result);
+          // console.log("result",result)
+          // that.uploadBase64(base64,fn)
+          that.uploadBase64(result.data, (url, id) => {
+            that.mapEditor.setImageData({
+              data: url,
+              extent: result.extent
+            });
+
+            that.updateLngLat(result, id);
+          });
+
           that.adjustImageWord = "调整平面图";
         }
       } else {
@@ -168,7 +218,7 @@ export default {
       }
     },
     // 调整结束后更新经纬度信息
-    updateLngLat(resultInfo) {
+    updateLngLat(resultInfo, id) {
       var that = this;
       var lngLatObj = resultInfo.extent;
       // that.mapLoading = true;
@@ -185,7 +235,7 @@ export default {
           }
           const obj = {
             floorOutline: res.floorOutline,
-            planarGraph: res.planarGraph,
+            planarGraph: id,
             upperLeftCornerLongitude: lngLatObj[0],
             upperLeftCornerLatitude: lngLatObj[3],
             lowerRightCornerLongitude: lngLatObj[2],
@@ -1879,12 +1929,15 @@ export default {
           img.src = imgUrl;
           img.onload = () => {
             const data = that.mapEditor.defaultImageData(img, that.imgFix);
-            that.mapEditor.setImageData({
-              data: data.data,
-              extent: data.extent
-            });
-            that.saveDataCallBack(() => {
-              that.mapLoading = false;
+            // console.log("1#######", data)
+            that.uploadBase64(data.data, (url) => {
+              that.mapEditor.setImageData({
+                data: url,
+                extent: data.extent
+              });
+              that.saveDataCallBack(() => {
+                that.mapLoading = false;
+              });
             });
           };
           // that.saveDataCallBack(() => {});
@@ -1941,21 +1994,23 @@ export default {
             //   data: imgUrl,
             //   extent: small.concat(big)
             // });
-            that.$message({
-              message: "请点击调整平面图，根据轮廓进行调整",
-              type: "warning"
-            });
-            that.mapLoading = false;
             const img = new Image();
             img.src = imgUrl;
             img.onload = () => {
               const data = that.mapEditor.defaultImageData(img, that.imgFix);
-              that.mapEditor.setImageData({
-                data: data.data,
-                extent: data.extent
-              });
-              that.saveDataCallBack(() => {
-                that.mapLoading = false;
+              // console.log("2#######", data)
+              that.uploadBase64(data.data, (url) => {
+                that.mapEditor.setImageData({
+                  data: url,
+                  extent: data.extent
+                });
+                that.$message({
+                  message: "请点击调整平面图，根据轮廓进行调整",
+                  type: "warning"
+                });
+                that.saveDataCallBack(() => {
+                  that.mapLoading = false;
+                });
               });
             };
           } else {

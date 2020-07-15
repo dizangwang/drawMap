@@ -102,12 +102,32 @@ export default {
     that.hasUnderPainting = true;
 
     // 处理图片
-    if (!val.imageData.data && val.imageData.id) {
-      const {
-        id
-      } = val.imageData;
-      val.imageData.data = `/files/img/${id}`;
+    // if (!val.imageData.data && val.imageData.id) {
+    //   const {
+    //     id
+    //   } = val.imageData;
+    //   val.imageData.data = `/files/img/${id}`;
+    // }
+    if (val.imageData.data) {
+      const image = new Image();
+      image.src = val.imageData.data;
+      that.mapLoading = true;
+      that.loadingText = "底图加载中...";
+      image.onload = function() {
+        that.mapLoading = false;
+        that.loadingText = "";
+      };
+      image.onerror = function() {
+        that.mapLoading = false;
+        that.loadingText = "";
+        that.$message({
+          message: "底图加载失败",
+          type: "warning"
+        });
+      };
     }
+
+
     // 如果没有经纬度
     if (val.imageData.extent.length === 0 || !val.floorData.geometry) {
       that.$message({

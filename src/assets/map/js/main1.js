@@ -315,11 +315,9 @@ export default class MapEditor {
     editImage(data, ext = null, fix = 500) {
         let img = new Image();
         img.src = data;
-        if (ext != null) {
-            let p0 = this.transformTo3857(ext[0], ext[1]);
-            let p1 = this.transformTo3857(ext[2], ext[3]);
-            ext = [p0[0], p0[1], p1[0], p1[1]]
-        }
+        let p0 = this.transformTo3857(ext[0], ext[1]);
+        let p1 = this.transformTo3857(ext[2], ext[3]);
+        ext = [p0[0], p0[1], p1[0], p1[1]]
 
         img.onload = () => {
             let newData = data;
@@ -761,7 +759,7 @@ export default class MapEditor {
         this.canvas.height = dis;
         let sacel = 1
         var ctx = this.canvas.getContext("2d");
-        ctx.drawImage(img, (dis - img.width * sacel) / 2, (dis - img.height * sacel) / 2, img.width * sacel, img.height * sacel);
+        ctx.drawImage(img, (fix - img.width * sacel) / 2, (fix - img.height * sacel) / 2, img.width * sacel, img.height * sacel);
 
         var dataURL = this.canvas.toDataURL("image/png");
         return dataURL;
