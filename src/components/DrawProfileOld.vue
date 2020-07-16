@@ -10,17 +10,6 @@
       </Poptip>
       <el-button size="mini" class="button" @click="quitClick" type="primary">退出</el-button>
     </div>
-    <div class="middleTopButtonCon" :style="{width:floorConWidth}">
-      <div class="floorNumCon">
-        <div
-          @click="floorNumClick(item)"
-          class="floorNum"
-          v-for="item in floorArr"
-          :key="item"
-          :class="{floorNumActive:item==activeFloorNum,hasFloorData:hasFloorDatafn(item)}"
-        >{{editNum(item)}}</div>
-      </div>
-    </div>
     <div id="r-result">
       <Input
         v-model="searchValue"
@@ -85,63 +74,14 @@ export default {
       // 是否从设置楼层信息过来
       fromSet: false,
       // 是否是第一次渲染
-      isFirstPaint: true,
-      // 楼号
-      floorArr: [],
-      // 当前楼层号
-      activeFloorNum: "",
-      // 有数据的楼层
-      hasDataFloorArr: [],
-      // 包含楼层容器的宽度
-      floorConWidth: ""
+      isFirstPaint: true
     };
   },
   mounted() {
     // 初始化地图
     // this.init();
   },
-  watch: {
-    activeFloorNum(floor) {
-      var that = this;
-      that.map.clearOverlays();
-      if (that.floorData[floor]) {
-        const lngArr = [];
-        const latArr = [];
-        that.floorData[floor].forEach((item) => {
-          lngArr.push(item.lng);
-          latArr.push(item.lat);
-        });
-
-        const bigLng = Math.max(...lngArr);
-        const bigLat = Math.max(...latArr);
-        const smallLng = Math.min(...lngArr);
-        const smallLat = Math.min(...latArr);
-
-        that.map.panTo(
-          new BMap.Point((bigLng + smallLng) / 2, (bigLat + smallLat) / 2)
-        );
-
-        that.createPolygon(that.floorData[floor]);
-      }
-    }
-  },
   methods: {
-    editNum(num) {
-      if (num.indexOf("F") > -1) {
-        return num.replace("F", "");
-      }
-      if (num.indexOf("B") > -1) {
-        return -num.replace("B", "");
-      }
-      return num;
-    },
-    floorNumClick(num) {
-      var that = this;
-      that.activeFloorNum = num;
-    },
-    hasFloorDatafn(item) {
-      return this.hasDataFloorArr.indexOf(item) > -1;
-    },
     // 根据经纬度绘制多边形
     createPolygon(data) {
       var that = this;
@@ -163,21 +103,12 @@ export default {
     },
     // 被其他页面调用时，清空数据
     initData(initParam) {
-      // console.log(JSON.stringify(initParam));
       var that = this;
       if (that.mapId !== "map") {
         const mapdom = document.getElementById(that.mapId);
         if (mapdom) {
           mapdom.innerHTML = "";
         }
-      }
-
-      that.floorArr = [];
-
-      that.activeFloorNum = "";
-      that.hasDataFloorArr = [];
-      if (initParam.floorArr) {
-        that.floorArr = initParam.floorArr;
       }
       that.mapId = `map${Math.round(Math.random() * 1000000)}`;
       that.$nextTick(() => {
@@ -194,10 +125,6 @@ export default {
         that.editOutLine = "";
         that.fromSet = initParam.fromSet;
         that.init(initObj.address, () => {
-          if (that.floorArr.length === 1) {
-            const [num] = that.floorArr;
-            that.activeFloorNum = num;
-          }
           // 判断是否传过来轮廓的经纬度
           if (initObj.editOutLine) {
             that.isSave = true;
@@ -228,7 +155,6 @@ export default {
             // 把值赋值给floorData
             Object.keys(that.floorData).forEach((key) => {
               if (that.floorData[key]) {
-                that.hasDataFloorArr.push(key);
                 // that.floorData[key] = JSON.parse(that.editOutLine[key]);
                 that.floorData[key].forEach((item) => {
                   lngArr.push(item.lng);
@@ -259,12 +185,11 @@ export default {
                   )
                 );
               }, 500);
-            }, 1000);
-            // console.log("&&&&&", that.floorData);
 
-            if (Object.keys(that.floorData).length === 1) {
+              // }, 1000);
+            }, 1700);
+            if (Object.keys(that.floorData).length === 1 && that.fromSet) {
               Object.keys(that.floorData).forEach((floorNum) => {
-                that.activeFloorNum = floorNum;
                 if (that.floorData[floorNum]) {
                   that.createPolygon(that.floorData[floorNum]);
                 }
@@ -274,14 +199,12 @@ export default {
             // 默认渲染F1层
             if (that.floorData.F1) {
               if (that.floorData.F1) {
-                that.activeFloorNum = "F1";
                 that.createPolygon(that.floorData.F1);
               }
             }
             // 如果没有F1层有B1层，就渲染B1层
             if (!that.floorData.F1 && that.floorData.B1) {
               if (that.floorData.B1) {
-                that.activeFloorNum = "B1";
                 that.createPolygon(that.floorData.B1);
               }
             }
@@ -297,11 +220,9 @@ export default {
       // 初始化地图宽高
       that.mapStyle.width = `${window.innerWidth - 35}px`;
       that.mapStyle.height = `${window.innerHeight - 85}px`;
-      that.floorConWidth = `${window.innerWidth - 920}px`;
       window.onresize = () => {
         that.mapStyle.width = `${window.innerWidth - 35}px`;
         that.mapStyle.height = `${window.innerHeight - 85}px`;
-        that.floorConWidth = `${window.innerWidth - 920}px`;
       };
 
       // 创建Map实例
@@ -334,8 +255,122 @@ export default {
       // 开启鼠标滚轮缩放
       that.map.enableScrollWheelZoom(true);
       // 创建室内图实例
-      that.indoorManager = new BMapLib.IndoorManager(that.map);
-      fn();
+
+      setTimeout(() => {
+        that.indoorManager = new BMapLib.IndoorManager(map, {
+          // 室内图加载完成事件
+          complete() {
+            // 获取地图右侧楼层展示
+            var lis = document.querySelectorAll(".floor-select-container li");
+            // 拿到已经绘制好轮廓的楼层
+            var keys = Object.keys(that.floorData);
+            // that.indoorManager.showIndoorControl();
+            // 循环楼层
+            keys.forEach((key) => {
+              // 循环地图右侧楼层
+              lis.forEach((item) => {
+                const button = item.querySelector("button");
+                const floor = button.getAttribute("data-floor");
+                if (keys.length === 1 && that.fromSet) {
+                  button.setAttribute("class", " btn-select-floor");
+                }
+                // 楼层比对
+                if (floor === key) {
+                  button.style.color = "#ffc107";
+                  if (keys.length > 1) {
+                    if (!that.fromSet && keys[0] === "B1") {
+                      if (key === "B1") {
+                        button.setAttribute(
+                          "class",
+                          " btn-select-floor selected"
+                        );
+                        button.click();
+                      }
+                    }
+                  }
+                  if (keys.length === 1) {
+                    if (that.fromSet) {
+                      setTimeout(() => {
+                        button.setAttribute(
+                          "class",
+                          " btn-select-floor selected"
+                        );
+                        button.click();
+                      });
+                    }
+                    // 如果是从编辑楼宇进来时 如果只有一层楼
+                    // console.log("*****",that.isFirstPaint)
+                    if (!that.fromSet && that.isFirstPaint) {
+                      that.isFirstPaint = false;
+                      setTimeout(() => {
+                        button.setAttribute(
+                          "class",
+                          " btn-select-floor selected"
+                        );
+                        button.click();
+                      });
+                    }
+                  }
+                }
+              });
+            });
+          },
+          // 切换楼层事件
+          afterChangeFloor(e) {
+            // 切换时清除所有覆盖物
+            that.clearAll();
+            that.map.clearOverlays();
+            // 指定当前楼层
+            that.currentFloor = e.currentFloor;
+            // 获取地图右侧楼层展示
+            const lis = document.querySelectorAll(".floor-select-container li");
+            // 拿到已经绘制好轮廓的楼层
+            const keys = Object.keys(that.cacheOverlays);
+            // that.editOutLine
+            // 循环楼层
+            keys.forEach((key) => {
+              // 循环地图右侧楼层
+              lis.forEach((item) => {
+                const button = item.querySelector("button");
+                const floor = button.getAttribute("data-floor");
+                // 楼层比对
+                if (floor === key) {
+                  button.style.color = "#ffc107";
+                }
+              });
+            });
+            // 如果图层缓存对象中有当前楼层的数据，就渲染到地图上
+            if (that.cacheOverlays[e.currentFloor]) {
+              that.map.addOverlay(that.cacheOverlays[e.currentFloor]);
+            } else if (that.editOutLine) {
+              // 如果是编辑
+              // 拿到已经绘制好轮廓的楼层
+              const keys1 = Object.keys(that.floorData);
+              // 循环楼层
+              keys1.forEach((key) => {
+                // 循环地图右侧楼层
+                lis.forEach((item) => {
+                  const button = item.querySelector("button");
+                  const floor = button.getAttribute("data-floor");
+                  // 楼层比对
+                  if (floor === key) {
+                    button.style.color = "#ffc107";
+                  }
+                });
+              });
+              // 如果楼层数据中有当前楼层的数据，就绘制到地图上
+              if (that.floorData[e.currentFloor]) {
+                that.createPolygon(that.floorData[e.currentFloor]);
+              }
+            }
+          }
+        });
+
+        that.map.addEventListener("click", () => {
+          that.indoorManager.showIndoorControl();
+        });
+        fn();
+      }, 100);
     },
     // 监听输入框值的变化
     searchValueChange(val) {
@@ -408,22 +443,45 @@ export default {
     // 画折现的方法
     drawClick() {
       var that = this;
-      if (!that.activeFloorNum) {
+      // 判断右侧楼层控件有没有出现
+      var floorShow = document.querySelector(".floor-select-container");
+      if (floorShow) {
+        if (floorShow.style.right !== "20px") {
+          this.$message({
+            message: "请点击需要绘制的室内图",
+            type: "warning"
+          });
+          return;
+        }
+      } else {
         that.$message({
-          message: "请点击需要绘制的楼层",
+          message: "请点击需要绘制的室内图",
           type: "warning"
         });
         return;
       }
-
+      that.clearAll();
       that.map.clearOverlays();
       // 编辑时
       if (that.editOutLine) {
+        const lis = document.querySelectorAll(".floor-select-container li");
         // 拿到已经绘制好轮廓的楼层
         const keys = Object.keys(that.floorData);
+        // 循环楼层
+        keys.forEach((key) => {
+          // 循环地图右侧楼层
+          lis.forEach((item) => {
+            const button = item.querySelector("button");
+            const floor = button.getAttribute("data-floor");
+            // 楼层比对
+            if (floor === key) {
+              button.style.color = "red";
+            }
+          });
+        });
       }
       // 获取当前楼层
-      that.currentFloor = that.activeFloorNum;
+      that.currentFloor = that.indoorManager.getFloor();
       // 绘制结束回调方法
       const overlaycomplete = (e) => {
         let targetArr = [];
@@ -445,11 +503,13 @@ export default {
         });
 
         that.activeLonLatData = targetArr;
-        const { currentFloor } = that;
-
+        let currentFloor = that.indoorManager.getFloor();
+        if (!currentFloor) {
+          // console.log(that.currentFloor);
+          currentFloor = that.currentFloor;
+        }
         that.cacheOverlays[currentFloor] = e.overlay;
         that.floorData[currentFloor] = that.activeLonLatData;
-        that.hasDataFloorArr.push(currentFloor);
         that.isSave = false;
       };
       // 线的样式
@@ -475,6 +535,7 @@ export default {
     // 保存事件
     saveClick() {
       var that = this;
+      // console.log(that.floorData);
       const floorDataCopy = JSON.parse(JSON.stringify(that.floorData));
       const kes = Object.keys(floorDataCopy);
       if (kes.length === 0) {
@@ -502,7 +563,6 @@ export default {
           floorDataCopy[item][index] = convert.gcj02_To_wgs84(gcj.lng, gcj.lat);
         });
       });
-
       that.$emit("save", floorDataCopy);
     },
     // 退出操作
@@ -570,42 +630,5 @@ export default {
   position: absolute;
   top: 30px;
   right: 60px;
-}
-.middleTopButtonCon {
-  position: absolute;
-  top: 30px;
-  right: 350px;
-}
-.floorNumCon {
-  text-align: center;
-  font-size: 0;
-}
-.floorNum {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #c9c9c9;
-  border-radius: 5px;
-  text-align: center;
-  line-height: 28px;
-  background: white;
-
-  display: inline-block;
-  user-select: none;
-  margin-left: 5px;
-  cursor: pointer;
-  line-height: 30px;
-  margin-bottom: 5px;
-  font-size: 12px;
-}
-.floorNum:hover {
-  border-color: #66b1ff;
-}
-.floorNumActive {
-  border-color: #66b1ff;
-  background: #66b1ff;
-  color: white;
-}
-.hasFloorData {
-  color: #ffc107;
 }
 </style>

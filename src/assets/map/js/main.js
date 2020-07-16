@@ -381,8 +381,8 @@ export default class MapEditor {
                         })
                     })
                 });
-                f.setStyle(style);
-
+                // f.setStyle(style);
+                this.ol.layers.buildLayer.getSource().getFeatures()[0].setStyle(style);
                 this.ol.layers.temLayer.getSource().addFeature(f);
 
                 let p0 = this.transformTo4326(e[0], e[1]);
@@ -414,6 +414,7 @@ export default class MapEditor {
                 extent: extent
             });
         }
+        this.ol.layers.buildLayer.getSource().getFeatures()[0].setStyle(Style.buildStyle());
 
         this.ol.map.removeLayer(this.ol.layers.temLayer);
 

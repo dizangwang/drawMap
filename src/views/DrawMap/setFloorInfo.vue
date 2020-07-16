@@ -119,6 +119,7 @@
     <!-- 全屏对话框 -->
 
     <Modal
+      style="min-width:1000px"
       v-model="fullScreenModal"
       footer-hide
       fullscreen
@@ -209,6 +210,8 @@ export default {
       callback();
     };
     return {
+      // 楼层
+      floorNum: "",
       // 用于回显画轮廓
       drawLineObj: "",
       // 楼宇所在的位置
@@ -395,16 +398,25 @@ export default {
       var that = this;
       that.fullScreenModal = true;
       const address = that.location;
+      const floorArr = [];
+      if (that.floorNum > 0) {
+        floorArr.push(`F${that.floorNum}`);
+      }
+      if (that.floorNum < 0) {
+        floorArr.push(`B${-that.floorNum}`);
+      }
       if (that.drawLineObj) {
         that.$refs.drawProfile.initData({
           address,
           editOutLine: that.drawLineObj,
-          fromSet: true
+          fromSet: true,
+          floorArr
         });
       } else {
         that.$refs.drawProfile.initData({
           address,
-          fromSet: true
+          fromSet: true,
+          floorArr
         });
       }
     },
@@ -421,6 +433,8 @@ export default {
       that.formValidate.id = obj.id;
       that.getFloorInfoById(obj.id).then((res) => {
         that.getTaskById(res.taskId);
+        // console.log(res)
+        that.floorNum = res.floorNum;
         that.formValidate.lineData = res.floorOutline;
         that.drawLineObj = "";
         if (res.floorOutline) {

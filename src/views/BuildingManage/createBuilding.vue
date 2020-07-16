@@ -228,27 +228,63 @@ export default {
       that.editOutLine = {};
       Object.keys(lineData).forEach((item, index) => {
         that.editOutLine[item] = JSON.stringify(lineData[item]);
-        let floorNum = "";
+        let floorNum = item;
         if (item.indexOf("F") > -1) {
           floorNum = +item.replace("F", "");
         }
         if (item.indexOf("B") > -1) {
           floorNum = -+item.replace("B", "");
         }
-        if (item.indexOf("M") > -1) {
-          floorNum = -+item.replace("M", "");
-        }
+
         str += `floorOutline[${index}].floor=${floorNum}&`;
         str += `floorOutline[${index}].outline=${JSON.stringify(
           lineData[item]
         )}&`;
       });
+
       that.formValidate.lineData = str;
     },
 
     // 点击创建轮廓
     mapOutLineClick() {
       var that = this;
+      if (
+        that.formValidate.overGroundFloor - that.formValidate.underGroundFloor
+        < 1
+      ) {
+        that.$message({
+          message: "请先填写楼层",
+          type: "warning"
+        });
+        return;
+      }
+      const { overGroundFloor } = that.formValidate;
+      const { underGroundFloor } = that.formValidate;
+
+      function returnMiddle(first, second) {
+        const a = first;
+        let b = second;
+        const att = [];
+        while (a !== b) {
+          if (b) {
+            att.push(b);
+          }
+          b += 1;
+        }
+        if (a) {
+          att.push(a);
+        }
+        att.forEach((item, index) => {
+          if (item > 0) {
+            att[index] = `F${item}`;
+          }
+          if (item < 0) {
+            att[index] = `B${-item}`;
+          }
+        });
+        return att;
+      }
+
       that.fullScreenModal = true;
       that.$nextTick(() => {
         const address = that.taskObj.provinceName
@@ -258,7 +294,8 @@ export default {
           that.$refs.drawProfile.initData({
             address,
             editOutLine: that.editOutLine,
-            fromSet: false
+            fromSet: false,
+            floorArr: returnMiddle(overGroundFloor, underGroundFloor)
           });
         } else {
           that.$refs.drawProfile.initData({
