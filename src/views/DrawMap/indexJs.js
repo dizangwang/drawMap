@@ -27,6 +27,7 @@ export default {
     var that = this;
     that.tabNum = 1;
     that.adjustImageWord = "调整平面图";
+    that.setFloorInfoModal = false;
     that.buildingId = that.$route.params.id;
     that.height = `${window.innerHeight - 75}px`;
     window.onresize = () => {
