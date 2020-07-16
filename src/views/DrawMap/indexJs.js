@@ -280,6 +280,7 @@ export default {
       var that = this;
       var i = 0;
       const layerData = that.mapEditor.getSaveData();
+      // const layerData =that.activeFloorData
       // 判断是否有底图
       if (layerData.imageData.data) {
         i += 1;
@@ -361,9 +362,9 @@ export default {
       var data2 = param2;
       var keys = Object.keys(data1);
       var i = 0;
-      if (that.mapLoading) {
-        return true;
-      }
+      // if (that.mapLoading) {
+      //   return true;
+      // }
 
       keys.forEach((key) => {
         if (key === "imageData") {
@@ -477,6 +478,7 @@ export default {
                   });
                 }
               } else {
+                // console.log("&&&&")
                 i += 1;
               }
             }
@@ -832,6 +834,12 @@ export default {
             } = res;
             that.mapLoading = false;
             if (data.code === 200) {
+              if (flag === 1) {
+                that.floorFinishStatus = "未完成";
+              }
+              if (flag === 2) {
+                that.floorFinishStatus = "完成";
+              }
               that.$message({
                 message: "操作成功",
                 type: "success"
@@ -852,20 +860,20 @@ export default {
           // 点击发布，判断地图是否已保存且状态为完成
           if (that.compareData(layerData, that.activeFloorData)) {
             floorFinish(1);
-            that.floorFinishStatus = "未完成";
+            // that.floorFinishStatus = "未完成";
           } else {
             that.saveDataCallBack(() => {
               floorFinish(1);
-              that.floorFinishStatus = "未完成";
+              // that.floorFinishStatus = "未完成";
             });
           }
         } else if (that.compareData(layerData, that.activeFloorData)) {
           floorFinish(2);
-          that.floorFinishStatus = "完成";
+          // that.floorFinishStatus = "完成";
         } else {
           that.saveDataCallBack(() => {
             floorFinish(2);
-            that.floorFinishStatus = "完成";
+            // that.floorFinishStatus = "完成";
           });
         }
       });
