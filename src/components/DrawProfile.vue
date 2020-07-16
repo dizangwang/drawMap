@@ -297,11 +297,11 @@ export default {
       // 初始化地图宽高
       that.mapStyle.width = `${window.innerWidth - 35}px`;
       that.mapStyle.height = `${window.innerHeight - 85}px`;
-      that.floorConWidth = `${window.innerWidth - 920}px`;
+      that.floorConWidth = `${window.innerWidth - 895}px`;
       window.onresize = () => {
         that.mapStyle.width = `${window.innerWidth - 35}px`;
         that.mapStyle.height = `${window.innerHeight - 85}px`;
-        that.floorConWidth = `${window.innerWidth - 920}px`;
+        that.floorConWidth = `${window.innerWidth - 895}px`;
       };
 
       // 创建Map实例
@@ -591,7 +591,7 @@ export default {
 
   display: inline-block;
   user-select: none;
-  margin-left: 5px;
+  margin-left: 0px;
   cursor: pointer;
   line-height: 30px;
   margin-bottom: 5px;
