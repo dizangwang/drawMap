@@ -34,11 +34,13 @@
                   :action="uploadUrl"
                   :on-success="uploadSuccess"
                   :on-error="uploadError"
+                  :before-upload="beforeAvatarUpload"
                   :show-file-list="false"
                 >
                   <el-button v-if="!formValidate.planarGraph" size="mini" type="primary">
                     <i class="el-icon-upload"></i>点击上传
                   </el-button>
+
                   <img
                     v-if="formValidate.planarGraph"
                     width="100px"
@@ -48,6 +50,9 @@
                     alt
                   />
                 </el-upload>
+                <el-popover placement="top-start" trigger="click" content="底图支持最大像素为5700*5700">
+                  <i slot="reference" class="el-icon-question" style="margin-left:15px"></i>
+                </el-popover>
               </div>
             </el-form-item>
           </td>
@@ -294,6 +299,41 @@ export default {
     });
   },
   methods: {
+    // 上传文件之前
+    beforeAvatarUpload(file) {
+      var that = this;
+      const { type } = file;
+      if (!/image/.test(type)) {
+        that.$message({
+          type: "warning",
+          message: "请上传图片文件"
+        });
+        return false;
+      }
+      const isSize = new Promise((resolve, reject) => {
+        const url = window.URL || window.webkitURL;
+        const img = new Image();
+        img.onload = () => {
+          const ji = img.width * img.height;
+          if (ji > 32490000) {
+            reject();
+          } else {
+            resolve();
+          }
+        };
+        img.src = url.createObjectURL(file);
+      }).then(
+        () => file,
+        () => {
+          that.$message({
+            type: "warning",
+            message: "请上传像素在5700*5700以内的底图"
+          });
+          return Promise.reject();
+        }
+      );
+      return isSize;
+    },
     // 点击上传文件
     uploadFile() {
       document.querySelector("#file").click();
