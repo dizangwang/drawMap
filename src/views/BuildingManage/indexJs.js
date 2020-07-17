@@ -550,6 +550,7 @@ export default {
         });
     },
 
+    // 楼层准备下载
     floorMgrPrepareDownload(id) {
       var that = this;
       that

@@ -86,8 +86,6 @@ export default {
           });
       }, 500);
     } else {
-      // window.history.back();
-      // that.$router.push(to.path);
       next();
     }
   },
@@ -199,17 +197,13 @@ export default {
         } else {
           that.mapEditor.setLayerDisplay("build", false);
           const result = that.mapEditor.cancelEditImage();
-          // console.log("result",result)
-          // that.uploadBase64(base64,fn)
           that.uploadBase64(result.data, (url, id) => {
             that.mapEditor.setImageData({
               data: url,
               extent: result.extent
             });
-
             that.updateLngLat(result, id);
           });
-
           that.adjustImageWord = "调整平面图";
         }
       } else {
@@ -223,7 +217,6 @@ export default {
     updateLngLat(resultInfo, id) {
       var that = this;
       var lngLatObj = resultInfo.extent;
-      // that.mapLoading = true;
       that.saveDataCallBack(() => {
         // 获取楼层的信息更新经纬度的信息
         that.mapLoading = true;
@@ -357,15 +350,10 @@ export default {
     // 对比geo数据判断数据是否保存 true:数据一致  false:数据有差异
     compareData(param1, param2) {
       var that = this;
-      // console.log("compareData", param1, param2);
       var data1 = param1;
       var data2 = param2;
       var keys = Object.keys(data1);
       var i = 0;
-      // if (that.mapLoading) {
-      //   return true;
-      // }
-
       keys.forEach((key) => {
         if (key === "imageData") {
           Object.keys(data1[key]).forEach((imgKey) => {
@@ -374,7 +362,6 @@ export default {
                 i += 1;
               }
             }
-
             if (data2[key].extent !== null) {
               if (typeof data1[key].extent === "string") {
                 data1[key].extent = JSON.parse(data1[key].extent);
@@ -382,7 +369,6 @@ export default {
               if (typeof data2[key].extent === "string") {
                 data2[key].extent = JSON.parse(data2[key].extent);
               }
-
               if (JSON.stringify(data2[key].extent) !== JSON.stringify(data1[key].extent)) {
                 i += 1;
               }
@@ -412,12 +398,10 @@ export default {
                   coo2 = JSON.stringify(coo2);
                 }
               }
-
               if (coo1 !== coo2) {
                 i += 1;
               }
             }
-
             Object.keys(data1[key].properties).forEach((pro) => {
               if (data1[key].properties[pro] !== data2[key].properties[pro]) {
                 i += 1;
@@ -478,7 +462,6 @@ export default {
                   });
                 }
               } else {
-                // console.log("&&&&")
                 i += 1;
               }
             }
@@ -739,7 +722,6 @@ export default {
                 }
               });
           }).catch(() => {
-            // todo
             that.mapLoading = false;
           });
         return;
@@ -800,7 +782,6 @@ export default {
                 });
             });
           }).catch(() => {
-            // todo
             that.mapLoading = false;
           });
       }
@@ -808,7 +789,6 @@ export default {
     // 设置楼层完成
     floorFinishById() {
       var that = this;
-      // that.mapLoading = true;
       that.loadingText = "";
       that.mapLoading = true;
 
@@ -850,6 +830,8 @@ export default {
                 type: "warning"
               });
             }
+          }).catch(() => {
+            that.mapLoading = false;
           });
       }
 
@@ -860,20 +842,16 @@ export default {
           // 点击发布，判断地图是否已保存且状态为完成
           if (that.compareData(layerData, that.activeFloorData)) {
             floorFinish(1);
-            // that.floorFinishStatus = "未完成";
           } else {
             that.saveDataCallBack(() => {
               floorFinish(1);
-              // that.floorFinishStatus = "未完成";
             });
           }
         } else if (that.compareData(layerData, that.activeFloorData)) {
           floorFinish(2);
-          // that.floorFinishStatus = "完成";
         } else {
           that.saveDataCallBack(() => {
             floorFinish(2);
-            // that.floorFinishStatus = "完成";
           });
         }
       });
@@ -911,14 +889,9 @@ export default {
         return;
       }
       that.activeFloorData.floorData = JSON.parse(JSON.stringify(layerData.floorData));
-      // that.activeFloorData.floorData.geometry.coordinates = JSON.parse(JSON.stringify(
-      //   layerData.floorData.geometry.coordinates
-      // ));
       that.activeFloorData.imageData.data = layerData.imageData.data;
       that.activeFloorData.imageData.extent = JSON.stringify(layerData.imageData.extent);
       that.activeFloorData.layerData = JSON.parse(JSON.stringify(layerData.layerData));
-      // console.log("---------", that.compareData(layerData, that.activeFloorData));
-      // console.log(layerData, that.activeFloorData);
       const layerDataCopy = JSON.parse(JSON.stringify(layerData));
       layerDataCopy.imageData.data = encodeURIComponent(layerData.imageData.data);
 
@@ -950,6 +923,8 @@ export default {
               type: "warning"
             });
           }
+        }).catch(() => {
+          that.mapLoading = false;
         });
     },
     // 保存数据
@@ -958,7 +933,6 @@ export default {
       var obj = {};
 
       const layerData = that.mapEditor.getSaveData();
-      // console.log("**************", layerData)
       if (JSON.stringify(layerData.floorData) === "{}") {
         that.mapLoading = false;
         return;
@@ -969,7 +943,6 @@ export default {
       that.activeFloorData.layerData = JSON.parse(JSON.stringify(layerData.layerData));
       const layerDataCopy = JSON.parse(JSON.stringify(layerData));
       layerDataCopy.imageData.data = encodeURIComponent(layerData.imageData.data);
-      // console.log("-----%%%%%%----", that.compareData(layerData, that.activeFloorData));
       obj.id = that.buildingFloorsObj.id;
       obj.name = that.buildingFloorsObj.name;
       obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
@@ -1011,6 +984,8 @@ export default {
               type: "warning"
             });
           }
+        }).catch(() => {
+          that.mapLoading = false;
         });
     },
     // 监听样式搜索框变动-筛选样式列表
@@ -1399,7 +1374,6 @@ export default {
       var that = this;
       that.dataChartInfoModal = true;
       that.dataChartData = that.mapEditor.getData("polygon");
-      // that.dataChartPOIData = that.mapEditor.getData("point");
       const arrs = that.mapEditor.getData("point");
       that.dataChartPOIData = arrs.filter((currentValue, index, arr) => currentValue.size !== 31);
     },
@@ -1605,8 +1579,6 @@ export default {
           setTimeout(() => {
             that.mapEditor.addFeatureById("polygon", e.id, "height", that.elementHeight);
             that.mapEditor.addFeatureById("polygon", e.id, "width", 1);
-            // that.mapEditor.addFeatureById("polygon", e.id, "borderColor", e.value
-            //   .fillColor);
             if (that.preDrawStyle) {
               that.mapEditor.addFeatureById("polygon", e.id, "styleID", that.preDrawStyle);
             }
@@ -1638,8 +1610,6 @@ export default {
           that.selectedElement = e;
           setTimeout(() => {
             that.mapEditor.addFeatureById("polygon", e.id, "width", 1);
-            // that.mapEditor.addFeatureById("polygon", e.id, "borderColor", e.value
-            //   .fillColor);
             that.mapEditor.addFeatureById("polygon", e.id, "height", that.elementHeight);
             if (that.preDrawStyle) {
               that.mapEditor.addFeatureById("polygon", e.id, "styleID", that.preDrawStyle);
@@ -1893,20 +1863,12 @@ export default {
             type: "success"
           });
           that.mapLoading = false;
-          // const left = that.mapEditor.transformTo3857(res.upperLeftCornerLongitude, res
-          //   .upperLeftCornerLatitude);
-          // const right = that.mapEditor.transformTo3857(res.lowerRightCornerLongitude, res
-          //   .lowerRightCornerLatitude);
           const left = [res.upperLeftCornerLongitude, res
             .upperLeftCornerLatitude
           ];
           const right = [res.lowerRightCornerLongitude, res
             .lowerRightCornerLatitude
           ];
-          // that.mapEditor.setImageData({
-          //   data: imgUrl,
-          //   extent: [left[0], right[1], right[0], left[1]]
-          // });
           that.hasUnderPainting = true;
           const uuid = that.utils.getUUID();
           that.mapEditor.setBuildData({
@@ -1940,7 +1902,6 @@ export default {
           that.mapLoading = true;
           img.onload = () => {
             const data = that.mapEditor.defaultImageData(img, that.imgFix);
-            // console.log("1#######", data)
             that.uploadBase64(data.data, (url) => {
               that.mapEditor.setImageData({
                 data: url,
@@ -1958,7 +1919,6 @@ export default {
             });
             that.mapLoading = false;
           };
-          // that.saveDataCallBack(() => {});
         }
         // 如果没有经纬度信息，判断有没有轮廓信息
         if (res.floorOutline) {
@@ -1969,8 +1929,6 @@ export default {
           floorOutline.forEach((item) => {
             lngArr.push(+item.lng);
             latArr.push(+item.lat);
-            // coordinates.push(that.mapEditor.transformTo3857(item.lng, item
-            //   .lat));
             coordinates.push([item.lng, item.lat]);
           });
           const uuid = that.utils.getUUID();
@@ -1979,13 +1937,8 @@ export default {
           const bigLat = Math.max(...latArr);
           const smallLng = Math.min(...lngArr);
           const smallLat = Math.min(...latArr);
-          // const small = that.mapEditor.transformTo3857(smallLng, smallLat);
-          // const big = that.mapEditor.transformTo3857(bigLng, bigLat);
           const small = [smallLng, smallLat];
           const big = [bigLng, bigLat];
-
-
-
           that.hasUnderPainting = true;
           that.mapEditor.setBuildData({
             type: "Feature",
@@ -2008,16 +1961,11 @@ export default {
 
           if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res
             .lowerRightCornerLongitude && !res.lowerRightCornerLatitude) {
-            // that.mapEditor.setImageData({
-            //   data: imgUrl,
-            //   extent: small.concat(big)
-            // });
             const img = new Image();
             img.src = imgUrl;
             that.mapLoading = true;
             img.onload = () => {
               const data = that.mapEditor.defaultImageData(img, that.imgFix);
-              // console.log("2#######", data)
               that.uploadBase64(data.data, (url) => {
                 that.mapEditor.setImageData({
                   data: url,
@@ -2046,12 +1994,12 @@ export default {
           }
         }
 
-        if (res.upperLeftCornerLongitude && res.upperLeftCornerLatitude && res
-          .lowerRightCornerLongitude && res.lowerRightCornerLatitude && !res.floorOutline) {
-          // that.saveDataCallBack(() => {
-          //   that.mapLoading = false;
-          // });
-        }
+        // if (res.upperLeftCornerLongitude && res.upperLeftCornerLatitude && res
+        //   .lowerRightCornerLongitude && res.lowerRightCornerLatitude && !res.floorOutline) {
+        //   // that.saveDataCallBack(() => {
+        //   //   that.mapLoading = false;
+        //   // });
+        // }
 
         if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res
           .lowerRightCornerLongitude && !res.lowerRightCornerLatitude && !res.floorOutline) {
@@ -2062,7 +2010,6 @@ export default {
           that.mapLoading = false;
         }
       });
-
       that.setFloorInfoModal = false;
     },
 
@@ -2197,7 +2144,6 @@ export default {
           }
         };
         const layerData = that.mapEditor.getSaveData();
-        // console.log("---------", layerData);
         let oldfloor = "";
         if (that.activeFloorArrCache.length >= 2) {
           oldfloor = that.activeFloorArrCache[that.activeFloorArrCache.length - 2];
@@ -2309,20 +2255,6 @@ export default {
                 });
               });
             });
-            // Object.keys(that.buildingFloorsObj.floors).forEach((key) => {
-            //   const floorKey = +key;
-            //   let strKey = "";
-            //   if (floorKey > 0) {
-            //     strKey = `F${floorKey}`;
-            //   } else {
-            //     strKey = `B${-floorKey}`;
-            //   }
-            //   that.floorArr.push({
-            //     id: that.buildingFloorsObj.floors[key].floorData.properties.id,
-            //     label: strKey,
-            //     value: key
-            //   });
-            // });
             if (!that.activeFloor) {
               if (that.buildingFloorsObj.floors["1"]) {
                 that.activeFloor = "1";

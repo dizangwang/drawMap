@@ -476,29 +476,20 @@ export default {
                   const promise = new Promise((resolve) => {
                     // 根据楼宇id获取
                     that.getFloorOutlineByBuildingId(item.id, (resultData) => {
-                      // console.log("####",resultData);
                       records[index].floors = resultData;
                       that.downloadTaskObjArr[indexNum].downloadBuildingArrs = records;
-                      // const obj = {};
-                      // obj.index = indexNum;
-                      // obj.data = resultData;
-                      // resolve(obj);
                       resolve();
                     });
                   });
                   promiseArr.push(promise);
                 });
-                // console.log(indexNum + 1, that.downloadTaskObjArr.length)
                 // 执行所有promise
                 Promise.all(promiseArr).then((result) => {
                   // 当执行到最后一个时执行floorMgrGetDownloadFlag方法
-
                   if ((indexNum + 1) === that.downloadTaskObjArr.length) {
-                    // console.log("&&&&", indexNum + 1)
                     that.floorMgrGetDownloadFlag();
                   }
                 }).catch((error) => {
-                  // todo
                   // console.log(error)
                 });
               } else if (that.downloadTaskObjArr.length === 1) {
@@ -689,7 +680,6 @@ export default {
           } = res;
           if (data.code === 200) {
             that.taskTypes = data.data;
-            // that.setTaskTypes(data.data);
           } else {
             that.$message({
               message: data.msg,
@@ -884,7 +874,6 @@ export default {
         return;
       }
       that.downloadTaskObjArr = that.tableSelectionArr;
-      //  that.getBuildingByTaskId();
       that.formatModal = true;
     },
     // 表格操作栏-按钮-发布--点击事件

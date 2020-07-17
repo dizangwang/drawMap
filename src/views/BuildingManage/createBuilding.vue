@@ -241,7 +241,6 @@ export default {
           lineData[item]
         )}&`;
       });
-
       that.formValidate.lineData = str;
     },
 
@@ -260,7 +259,7 @@ export default {
       }
       const { overGroundFloor } = that.formValidate;
       const { underGroundFloor } = that.formValidate;
-
+      // 根据两个数字求出其中间的数字
       function returnMiddle(first, second) {
         const a = first;
         let b = second;

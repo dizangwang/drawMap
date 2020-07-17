@@ -394,7 +394,6 @@ export default {
     lineSave(lineData) {
       var that = this;
       var str = "";
-      //  console.log(lineData)
       that.drawLineObj = {};
       Object.keys(lineData).forEach((item, index) => {
         that.drawLineObj[item] = JSON.stringify(lineData[item]);
@@ -408,26 +407,6 @@ export default {
         if (item.indexOf("M") > -1) {
           floorNum = -+item.replace("M", "");
         }
-
-        //   const lngArr = [];
-        //   const latArr = [];
-        //   lineData[item].forEach((item) => {
-        //     lngArr.push(+item.lng);
-        //     latArr.push(+item.lat);
-        //   });
-
-        //   // 获取最大经纬度   最小经纬度
-        //   const bigLng = Math.max(...lngArr);
-        //   const bigLat = Math.max(...latArr);
-        //   const smallLng = Math.min(...lngArr);
-        //   const smallLat = Math.min(...latArr);
-        //   console.log(bigLng,bigLat,smallLng,smallLat)
-
-        // that.formValidate.upperLeftCornerLongitude=smallLng;
-        // that.formValidate.upperLeftCornerLatitude=bigLat;
-        // that.formValidate.lowerRightCornerLongitude=bigLng;
-        // that.formValidate.lowerRightCornerLatitude=smallLat;
-
         str += `floorOutline=${JSON.stringify(lineData[item])}&`;
       });
       that.formValidate.lineData = str;
@@ -464,7 +443,6 @@ export default {
     // 被外部调用时初始化方法
     init(obj) {
       var that = this;
-
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
       });
@@ -473,7 +451,6 @@ export default {
       that.formValidate.id = obj.id;
       that.getFloorInfoById(obj.id).then((res) => {
         that.getTaskById(res.taskId);
-        // console.log(res)
         that.floorNum = res.floorNum;
         that.formValidate.lineData = res.floorOutline;
         that.drawLineObj = "";
@@ -486,7 +463,6 @@ export default {
           }
           that.drawLineObj = newObj;
         }
-        // console.log(" res.planarGraph", res.planarGraph);
         that.formValidate.planarGraph = res.planarGraph;
         that.formValidate.upperLeftCornerLongitude = res.upperLeftCornerLongitude === null
           ? ""
@@ -575,7 +551,6 @@ export default {
             }
           });
           str += that.formValidate.lineData;
-          // console.log("999",str)
           that
             .ajax({
               method: "post",

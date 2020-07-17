@@ -46,6 +46,7 @@
 </template>
 
 <script>
+// 下面注释不可删除
 /* global BMap howso BMAP_ANCHOR_TOP_LEFT BMapLib BMAP_DRAWING_POLYGON :true */
 export default {
   name: "DrawProfile",
@@ -96,10 +97,7 @@ export default {
       floorConWidth: ""
     };
   },
-  mounted() {
-    // 初始化地图
-    // this.init();
-  },
+  mounted() {},
   watch: {
     activeFloorNum(floor) {
       var that = this;
@@ -111,16 +109,13 @@ export default {
           lngArr.push(item.lng);
           latArr.push(item.lat);
         });
-
         const bigLng = Math.max(...lngArr);
         const bigLat = Math.max(...latArr);
         const smallLng = Math.min(...lngArr);
         const smallLat = Math.min(...latArr);
-
         that.map.panTo(
           new BMap.Point((bigLng + smallLng) / 2, (bigLat + smallLat) / 2)
         );
-
         that.createPolygon(that.floorData[floor]);
       }
     }
@@ -163,7 +158,6 @@ export default {
     },
     // 被其他页面调用时，清空数据
     initData(initParam) {
-      // console.log(JSON.stringify(initParam));
       var that = this;
       if (that.mapId !== "map") {
         const mapdom = document.getElementById(that.mapId);
@@ -171,9 +165,7 @@ export default {
           mapdom.innerHTML = "";
         }
       }
-
       that.floorArr = [];
-
       that.activeFloorNum = "";
       that.hasDataFloorArr = [];
       if (initParam.floorArr) {
@@ -229,7 +221,6 @@ export default {
             Object.keys(that.floorData).forEach((key) => {
               if (that.floorData[key]) {
                 that.hasDataFloorArr.push(key);
-                // that.floorData[key] = JSON.parse(that.editOutLine[key]);
                 that.floorData[key].forEach((item) => {
                   lngArr.push(item.lng);
                   latArr.push(item.lat);
@@ -241,13 +232,6 @@ export default {
               const bigLat = Math.max(...latArr);
               const smallLng = Math.min(...lngArr);
               const smallLat = Math.min(...latArr);
-              // console.log(bigLng,smallLng,bigLat,smallLat)
-              // that.map.centerAndZoom(
-              //   new BMap.Point((bigLng + smallLng) / 2, (bigLat + smallLat) / 2),
-              //   18
-              // );
-              // setTimeout(function(){
-              // 0.0006
               that.map.panTo(
                 new BMap.Point((bigLng + smallLng) / 2, (bigLat + smallLat) / 2)
               );
@@ -260,8 +244,6 @@ export default {
                 );
               }, 500);
             }, 1000);
-            // console.log("&&&&&", that.floorData);
-
             if (Object.keys(that.floorData).length === 1) {
               Object.keys(that.floorData).forEach((floorNum) => {
                 that.activeFloorNum = floorNum;
@@ -306,8 +288,10 @@ export default {
 
       // 创建Map实例
       const map = new BMap.Map(that.mapId, { enableMapClick: false });
-      // console.log("&&&&&&&&&&&&");
       that.map = map;
+
+      // 下面代码是为了拾取经纬度
+
       // that.map.addEventListener("click", (e) => {
       //   //console.log("百度坐标",e.point.lng + "," + e.point.lat);
       //   const convert = new howso.CoordConvert();
@@ -324,13 +308,7 @@ export default {
       that.map.addControl(topLeftLontrol);
       that.map.addControl(topLeftNavigation);
       that.map.setMinZoom(17);
-      // 如果有这个参数，就进行定位
-      // if (area) {
       that.map.centerAndZoom(area, 15);
-      // } else {
-      //   // 初始化地图,设置中心点坐标和地图级别
-      //   map.centerAndZoom(new BMap.Point(116.340739, 40.03592), 19);
-      // }
       // 开启鼠标滚轮缩放
       that.map.enableScrollWheelZoom(true);
       // 创建室内图实例
@@ -341,8 +319,6 @@ export default {
     searchValueChange(val) {
       var that = this;
       that.searchValue = val.target.value;
-      // console.log(val);
-      // 如果选中的值和搜索框中的值是一样的，就不进行搜索
       if (that.clickedTitle === that.searchValue) {
         return;
       }
@@ -415,7 +391,6 @@ export default {
         });
         return;
       }
-
       that.map.clearOverlays();
       // 编辑时
       if (that.editOutLine) {
@@ -443,10 +418,8 @@ export default {
             }
           }
         });
-
         that.activeLonLatData = targetArr;
         const { currentFloor } = that;
-
         that.cacheOverlays[currentFloor] = e.overlay;
         that.floorData[currentFloor] = that.activeLonLatData;
         that.hasDataFloorArr.push(currentFloor);
@@ -502,7 +475,6 @@ export default {
           floorDataCopy[item][index] = convert.gcj02_To_wgs84(gcj.lng, gcj.lat);
         });
       });
-
       that.$emit("save", floorDataCopy);
     },
     // 退出操作
