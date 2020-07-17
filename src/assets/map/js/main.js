@@ -372,7 +372,7 @@ export default class MapEditor {
                         width: 1
                     }),
                     fill: new ol.style.Fill({
-                        color: 'rgba(247,254,255,1.0)'
+                        color: 'rgba(247,254,255,0.0)'
                     }),
                     text: new ol.style.Text({
                         font: 'normal 12px 微软雅黑',
@@ -450,11 +450,12 @@ export default class MapEditor {
     setBuildStyle(id, style) {
         let f = this.ol.layers.buildLayer.getSource().getFeatureById(id);
         if (typeof (f) != "undefined") {
-            // this.interactionManage.clearSelectFeatures();
+            this.interactionManage.clearSelectFeatures();
             f.setStyle(Style.objToBuildStyle(style));
             f.set("borderColor", style.borderColor);
             f.set("width", style.width);
             f.set("fillColor", style.fillColor);
+            this.ol.interactions.select.getFeatures().push(f);
         }
     }
 
@@ -462,7 +463,7 @@ export default class MapEditor {
     setPointStyle(id, style) {
         let f = this.ol.layers.pointLayer.getSource().getFeatureById(id);
         if (typeof (f) != "undefined") {
-            // this.interactionManage.clearSelectFeatures();
+            this.interactionManage.clearSelectFeatures();
             f.set("img", style.img);
             f.set("size", style.size);
 
@@ -476,6 +477,8 @@ export default class MapEditor {
                     src: this.getBase64Image(img)
                 }));
             }
+            this.ol.interactions.select.getFeatures().push(f);
+
         }
     }
 
@@ -483,10 +486,12 @@ export default class MapEditor {
     setPathStyle(id, style) {
         let f = this.ol.layers.pathLayer.getSource().getFeatureById(id);
         if (typeof (f) != "undefined") {
-            // this.interactionManage.clearSelectFeatures();
+            this.interactionManage.clearSelectFeatures();
             f.setStyle(Style.objToPathStyle(style));
             f.set("width", style.width);
             f.set("color", style.color);
+            this.ol.interactions.select.getFeatures().push(f);
+
         }
     }
 
@@ -494,7 +499,7 @@ export default class MapEditor {
     setPolygonStyle(id, style) {
         let f = this.ol.layers.polygonLayer.getSource().getFeatureById(id);
         if (typeof (f) != "undefined") {
-            // this.interactionManage.clearSelectFeatures();
+            this.interactionManage.clearSelectFeatures();
             f.setStyle(Style.objToPolygonStyle(style));
             f.set("name", style.name);
             f.set("borderColor", style.borderColor);
@@ -503,6 +508,8 @@ export default class MapEditor {
             f.set("font", style.font);
             f.set("fontFillColor", style.fontFillColor);
             f.set("fontBorderColor", style.fontBorderColor);
+            this.ol.interactions.select.getFeatures().push(f);
+
         }
     }
 

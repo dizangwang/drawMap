@@ -44,6 +44,11 @@
                 console.log(e);
             })
 
+            // ///点击
+            // mapEditor.click(() => {
+            //     console.log("点击点击点击点击点击点击点击")
+            // })
+
             ///绘制点
             document.getElementById("drawpoint").onclick = () => {
                 mapEditor.drawPoint({
@@ -211,7 +216,7 @@
             ///设置底图数据
             document.getElementById("setImageData").onclick = () => {
                 mapEditor.setImageData({
-                    data: "../img/poi.png",
+                    data: "../img/1.png",
                     extent: [118.783, 32.04, 118.786, 32.042]
                 });
             }
