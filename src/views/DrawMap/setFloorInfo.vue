@@ -625,4 +625,7 @@ export default {
   font-weight: bolder;
   cursor: pointer;
 }
+img {
+  background: url("../../assets/images/common/loading.gif") no-repeat center;
+}
 </style>
