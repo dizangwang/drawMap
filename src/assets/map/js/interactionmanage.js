@@ -100,8 +100,9 @@ export class InterCtionManage {
                     })
                 }
             } else {
-                if (typeof (this.mapEditor.event.selectFeature) != "undefined")
+                if (typeof (this.mapEditor.event.selectFeature) != "undefined") {
                     this.mapEditor.event.selectFeature(null)
+                }
             }
         })
 
@@ -110,6 +111,11 @@ export class InterCtionManage {
         this.imageModifyIndex = null;
 
         this.rotate_click = this.mapEditor.ol.map.on('click', event => {
+
+
+            // if (typeof (this.mapEditor.event.click) != "undefined") {
+            //     this.mapEditor.event.click();
+            // }
 
             if (this.isRotate)
                 this._onRotateMapClick(event);
@@ -595,6 +601,11 @@ export class InterCtionManage {
     selectFeature(fun) {
         this.mapEditor.event.selectFeature = fun;
     }
+
+    // click(fun) {
+    //     this.mapEditor.event.click = fun;
+
+    // }
 
     ///绘制要素回调
     drawFeature(fun) {
