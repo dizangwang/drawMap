@@ -294,10 +294,10 @@ export default {
 
       // that.map.addEventListener("click", (e) => {
       //   //console.log("百度坐标",e.point.lng + "," + e.point.lat);
-      //   const convert = new howso.CoordConvert();
-      //   const gcj = convert.bd09_To_gcj02(e.point.lng, e.point.lat);
-      //   console.log("wgs坐标", convert.gcj02_To_wgs84(gcj.lng, gcj.lat));
-      //  // console.log(that.map.getZoom());
+      //   // const convert = new howso.CoordConvert();
+      //   // const gcj = convert.bd09_To_gcj02(e.point.lng, e.point.lat);
+      //   // console.log("wgs坐标", convert.gcj02_To_wgs84(gcj.lng, gcj.lat));
+      //   console.log(that.map.getZoom());
       // });
       // 左上角，添加默认缩放平移控件
       const topLeftNavigation = new BMap.NavigationControl();
@@ -307,10 +307,11 @@ export default {
       });
       that.map.addControl(topLeftLontrol);
       that.map.addControl(topLeftNavigation);
-      that.map.setMinZoom(17);
+      // that.map.setMinZoom(17);
+      // that.map.setMaxZoom(19);
       that.map.centerAndZoom(area, 15);
       // 开启鼠标滚轮缩放
-      that.map.enableScrollWheelZoom(true);
+      that.map.enableScrollWheelZoom();
       // 创建室内图实例
       that.indoorManager = new BMapLib.IndoorManager(that.map);
       fn();
