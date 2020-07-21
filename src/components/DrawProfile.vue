@@ -116,6 +116,7 @@ export default {
         that.map.panTo(
           new BMap.Point((bigLng + smallLng) / 2, (bigLat + smallLat) / 2)
         );
+        that.map.setZoom(17);
         that.createPolygon(that.floorData[floor]);
       }
     }
@@ -235,6 +236,7 @@ export default {
               that.map.panTo(
                 new BMap.Point((bigLng + smallLng) / 2, (bigLat + smallLat) / 2)
               );
+              that.map.setZoom(17);
               setTimeout(() => {
                 that.map.panTo(
                   new BMap.Point(
@@ -242,6 +244,7 @@ export default {
                     (bigLat + smallLat) / 2
                   )
                 );
+                that.map.setZoom(17);
               }, 500);
             }, 1000);
             if (Object.keys(that.floorData).length === 1) {
@@ -308,7 +311,6 @@ export default {
       that.map.addControl(topLeftLontrol);
       that.map.addControl(topLeftNavigation);
       // that.map.setMinZoom(17);
-      // that.map.setMaxZoom(19);
       that.map.centerAndZoom(area, 15);
       // 开启鼠标滚轮缩放
       that.map.enableScrollWheelZoom();
