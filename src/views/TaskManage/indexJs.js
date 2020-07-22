@@ -285,10 +285,12 @@ export default {
             that.downloadLoading = false;
             that.downloadTaskObjArrCopy = JSON.parse(JSON.stringify(that.downloadTaskObjArr));
             if (result) {
+              // 循环需要下载的任务
               that.downloadTaskObjArrCopy.forEach((element, num) => {
                 let taskRedNum = 0;
                 let taskGreenNum = 0;
                 if (that.downloadTaskObjArrCopy[num].downloadBuildingArrs) {
+                  // 循环任务下的楼宇
                   that.downloadTaskObjArrCopy[num].downloadBuildingArrs.forEach((item,
                     ind) => {
                     const itemCopy = JSON.parse(JSON.stringify(item));
@@ -297,6 +299,7 @@ export default {
                     } = itemCopy;
                     let redNum = 0;
                     let greenNum = 0;
+                    // 循环楼宇下的楼层
                     floors.forEach((it, index) => {
                       if (result[it.id]) {
                         itemCopy.floors[index].isRed = true;
