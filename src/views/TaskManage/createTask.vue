@@ -172,11 +172,15 @@ export default {
     // 初始化方法
     init() {
       var that = this;
+      // 清空表单
       that.$refs.formValidate.resetFields();
+      // 循环表单中的字段清空
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
       });
+      // 获取所有任务类型
       that.getAllTypes();
+      // 获取省份
       that.getAreasWithPid("", (data) => {
         that.provinceList = data;
       });
@@ -264,6 +268,7 @@ export default {
 
       // 校验规则
       that.$refs.formValidate.validate((valid) => {
+        // 校验成功后
         if (valid) {
           that
             .ajax({

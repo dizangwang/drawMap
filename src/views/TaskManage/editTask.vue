@@ -182,14 +182,20 @@ export default {
     init(id) {
       var that = this;
       that.id = id;
+      // 获取所有任务类型
       that.getAllTypes();
+      // 清空表单
       that.$refs.formValidate.resetFields();
+      // 循环表单字段
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
       });
+      // 获取省份
       that.getAreasWithPid("", (data) => {
         that.provinceList = data;
+        // 省份列表渲染完毕
         that.$nextTick(() => {
+          // 根据id获取任务详情
           that.getTaskById(id);
         });
       });
@@ -359,7 +365,7 @@ export default {
 }
 .areaSelect {
   width: 30%;
-  margin-left:0px;
+  margin-left: 0px;
 }
 .rightLebal {
   width: 90px;

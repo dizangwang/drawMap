@@ -1,8 +1,3 @@
-import {
-  mapActions,
-  mapGetters
-} from "vuex";
-
 // 创建任务组件
 import CreateTask from "./createTask.vue";
 
@@ -131,8 +126,11 @@ export default {
   },
   mounted() {
     var that = this;
+    // 获取所有任务类型
     that.getAllTypes();
+    // 触发搜索事件
     that.searchClick();
+    // 获取省份列表
     that.getAreasWithPid("", (data) => {
       that.provinceList = data;
     });
@@ -141,6 +139,7 @@ export default {
     that.utils.localstorageSet("buildObj", "");
     // 动态调整容器长度
     that.tableHeight = window.innerHeight - 135;
+    // 窗口变动时修改表格的高度
     window.onresize = () => {
       that.tableHeight = window.innerHeight - 135;
     };
@@ -175,7 +174,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setTaskTypes"]),
     // 取消任务下载
     taskDownloadCancle() {
       var that = this;
