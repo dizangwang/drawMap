@@ -1,8 +1,3 @@
-import {
-  mapActions,
-  mapGetters
-} from "vuex";
-
 // 创建任务组件
 import CreateBuilding from "./createBuilding.vue";
 
@@ -11,9 +6,6 @@ import EditBuilding from "./editBuilding.vue";
 
 export default {
   name: "Login",
-  computed: {
-    ...mapGetters(["userInfo", "taskTypes"])
-  },
   components: {
     CreateBuilding,
     EditBuilding
@@ -171,31 +163,35 @@ export default {
   },
   mounted() {
     var that = this;
+    // 获取任务id
     that.taskId = that.$route.params.id;
     if (that.taskId) {
+      // 修改列值
       that.Taskcolumns.splice(1, 1);
+      // 获取任务详情
       that.getTaskById(that.taskId, (taskObj) => {
         that.taskObj = taskObj;
-        that.getAllTypes();
+        // 查询
         that.searchClick();
       });
     } else {
-      that.getAllTypes();
+      // 查询
       that.searchClick();
     }
+    // 获取省份
     that.getAreasWithPid("", (data) => {
       that.provinceList = data;
     });
 
     // 清空缓存中的楼宇信息
     that.utils.localstorageSet("buildObj", "");
+    // 表格高度
     that.tableHeight = window.innerHeight - 135;
     window.onresize = () => {
       that.tableHeight = window.innerHeight - 135;
     };
   },
   methods: {
-    ...mapActions(["setTaskTypes"]),
 
     // 根据任务id获取详情
     getTaskById(id, fn) {
@@ -286,31 +282,6 @@ export default {
           } = res;
           if (data.code === 200) {
             fn(data.data);
-          } else {
-            that.$message({
-              message: data.msg,
-              type: "warning"
-            });
-          }
-        });
-    },
-
-    // 获取任务类型放到vuex中
-    getAllTypes() {
-      var that = this;
-      that
-        .ajax({
-          method: "get",
-          url: that.apis.getAllTypes,
-          data: {}
-        })
-        .then((res) => {
-          const {
-            data
-          } = res;
-          if (data.code === 200) {
-            that.taskTypeList = data.data;
-            that.setTaskTypes(data.data);
           } else {
             that.$message({
               message: data.msg,
