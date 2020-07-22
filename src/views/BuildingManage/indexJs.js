@@ -801,6 +801,7 @@ export default {
       var that = this;
       that.editBuildingModal = true;
       that.$nextTick(() => {
+        // 调用编辑楼宇组件的初始化方法
         that.$refs.editTask.init(row);
       });
     },
@@ -810,6 +811,7 @@ export default {
       var that = this;
       that.createBuildingModal = true;
       that.$nextTick(() => {
+        // 调用创建楼宇组件的初始化方法
         that.$refs.createBuilding.init(that.taskObj);
       });
     }
