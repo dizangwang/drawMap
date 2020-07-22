@@ -68,12 +68,6 @@ export default {
         name: [
           { required: true, message: "请填写样式名称", trigger: "change" }
         ],
-        // borderWidth: [
-        //   { required: true, message: "请填写边框宽度", trigger: "change" }
-        // ],
-        // borderColor: [
-        //   { required: true, message: "请选择边框颜色", trigger: "change" }
-        // ],
         fillColor: [
           { required: true, message: "请选择填充颜色", trigger: "change" }
         ]

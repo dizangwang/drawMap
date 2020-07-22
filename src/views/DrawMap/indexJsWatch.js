@@ -14,25 +14,6 @@ export default {
       default:
     }
   },
-  goFloorArr(flrArr) {
-    // var that = this;
-    // const arr = [];
-
-    // that.floorArr.forEach((item) => {
-    //   if (flrArr.includes(item.value)) {
-    //     arr.push(item.label);
-    //   }
-    // });
-    // if (that.floorArr.length === flrArr.length) {
-    //   that.goFloorNumCheckAll = true;
-    // } else {
-    //   that.goFloorNumCheckAll = false;
-    // }
-
-    // that.facilityToFloor = arr.join(",");
-    // that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "floor", that
-    //   .facilityToFloor);
-  },
   facilityGroup(group) {
     var that = this;
     setTimeout(() => {
@@ -57,7 +38,6 @@ export default {
     if (num !== 1) {
       that.iconActiveNum = "";
     }
-    // that.mapEditor.cancelDraw();
   },
   activeFloor(afl) {
     if (afl) {
@@ -100,24 +80,16 @@ export default {
       return;
     }
     that.hasUnderPainting = true;
-
-    // 处理图片
-    // if (!val.imageData.data && val.imageData.id) {
-    //   const {
-    //     id
-    //   } = val.imageData;
-    //   val.imageData.data = `/files/img/${id}`;
-    // }
     if (val.imageData.data) {
       const image = new Image();
       image.src = val.imageData.data;
       that.mapLoading = true;
       that.loadingText = "底图加载中...";
-      image.onload = function() {
+      image.onload = function () {
         that.mapLoading = false;
         that.loadingText = "";
       };
-      image.onerror = function() {
+      image.onerror = function () {
         that.mapLoading = false;
         that.loadingText = "";
         that.$message({
@@ -143,20 +115,5 @@ export default {
         i += 1;
       }
     });
-    // 判断有没有对角线经纬度
-    // that.getFloorInfoById(val.floorData.properties.id).then((floorInfo) => {
-    //   // 如果包含对角线经纬度信息
-    //   if (floorInfo.lowerRightCornerLatitude && floorInfo.lowerRightCornerLongitude
-    //     && floorInfo.upperLeftCornerLatitude && floorInfo.upperLeftCornerLongitude) {
-    //     if (i > 0) {
-    //      // that.floorFinishStatus = "完成";
-    //     }
-    //   } else {
-    //     that.$message({
-    //       message: "当前楼层缺少对角线经纬度信息",
-    //       type: "warning"
-    //     });
-    //   }
-    // });
   }
 };

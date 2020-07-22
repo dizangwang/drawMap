@@ -188,20 +188,25 @@ export default {
     adjustImage() {
       var that = this;
       const layerData = that.mapEditor.getSaveData();
+      // 判断楼层有没有底图
       if (layerData.imageData.data) {
         if (that.adjustImageWord === "调整平面图") {
+          // 设置建筑轮廓显示
           that.mapEditor.setLayerDisplay("build", true);
           that.mapEditor.editImage(layerData.imageData.data, layerData.imageData.extent, that
             .imgFix);
           that.adjustImageWord = "完成调整";
         } else {
+          // 设置建筑轮廓隐藏
           that.mapEditor.setLayerDisplay("build", false);
           const result = that.mapEditor.cancelEditImage();
+          // 上传变换的base64
           that.uploadBase64(result.data, (url, id) => {
             that.mapEditor.setImageData({
               data: url,
               extent: result.extent
             });
+            // 更新楼层信息
             that.updateLngLat(result, id);
           });
           that.adjustImageWord = "调整平面图";
@@ -355,6 +360,7 @@ export default {
       var keys = Object.keys(data1);
       var i = 0;
       keys.forEach((key) => {
+        // 对比图片信息
         if (key === "imageData") {
           Object.keys(data1[key]).forEach((imgKey) => {
             if (data1[key].data !== null && data2[key].data !== null) {
@@ -375,6 +381,7 @@ export default {
             }
           });
         }
+        // 对比楼层信息
         if (key === "floorData") {
           if (JSON.stringify(data1[key]) !== "{}") {
             if (data1[key].geometry) {
@@ -383,6 +390,7 @@ export default {
               if (data1[key].geometry.coordinates) {
                 coo1 = JSON.parse(JSON.stringify(data1[key].geometry.coordinates));
                 coo1[0].forEach((gc1, gcnum1) => {
+                  // 因为gis获取的经纬度与数据库的经纬度会在最后几位有差别所以只对比小数点后7位
                   coo1[0][gcnum1][0] = (+gc1[0]).toFixed(7);
                   coo1[0][gcnum1][1] = (+gc1[1]).toFixed(7);
                 });
@@ -392,6 +400,7 @@ export default {
                 if (data2[key].geometry.coordinates) {
                   coo2 = JSON.parse(JSON.stringify(data2[key].geometry.coordinates));
                   coo2[0].forEach((gc2, gcnum2) => {
+                    // 因为gis获取的经纬度与数据库的经纬度会在最后几位有差别所以只对比小数点后7位
                     coo2[0][gcnum2][0] = (+gc2[0]).toFixed(7);
                     coo2[0][gcnum2][1] = (+gc2[1]).toFixed(7);
                   });
@@ -433,6 +442,7 @@ export default {
                       let geometry1 = coordinates1;
                       geometry1.forEach((geo1, gnum1) => {
                         geometry1[gnum1].forEach((geo11, gnum11) => {
+                          // 因为gis获取的经纬度与数据库的经纬度会在最后几位有差别所以只对比小数点后7位
                           geometry1[gnum1][gnum11][0] = (+geo11[0]).toFixed(7);
                           geometry1[gnum1][gnum11][1] = (+geo11[1]).toFixed(7);
                         });
@@ -442,6 +452,7 @@ export default {
 
                       geometry2.forEach((geo2, gnum2) => {
                         geometry2[gnum2].forEach((geo22, gnum22) => {
+                          // 因为gis获取的经纬度与数据库的经纬度会在最后几位有差别所以只对比小数点后7位
                           geometry2[gnum2][gnum22][0] = (+geo22[0]).toFixed(7);
                           geometry2[gnum2][gnum22][1] = (+geo22[1]).toFixed(7);
                         });
@@ -487,6 +498,7 @@ export default {
                       let geometry1 = coordinates1;
                       geometry1.forEach((geo1, gnum1) => {
                         geometry1[gnum1].forEach((geo11, gnum11) => {
+                          // 因为gis获取的经纬度与数据库的经纬度会在最后几位有差别所以只对比小数点后7位
                           geometry1[gnum1][gnum11] = (+geo11).toFixed(7);
                         });
                       });
@@ -495,6 +507,7 @@ export default {
 
                       geometry2.forEach((geo2, gnum2) => {
                         geometry2[gnum2].forEach((geo22, gnum22) => {
+                          // 因为gis获取的经纬度与数据库的经纬度会在最后几位有差别所以只对比小数点后7位
                           geometry2[gnum2][gnum22] = (+geo22).toFixed(7);
                         });
                       });
@@ -538,11 +551,12 @@ export default {
                       const properties2 = obj2[fitem].properties;
 
                       let geometry1 = coordinates1;
+                      // 因为gis获取的经纬度与数据库的经纬度会在最后几位有差别所以只对比小数点后7位
                       geometry1[0] = (+geometry1[0]).toFixed(7);
                       geometry1[1] = (+geometry1[1]).toFixed(7);
                       geometry1 = JSON.stringify(geometry1);
                       let geometry2 = coordinates2;
-
+                      // 因为gis获取的经纬度与数据库的经纬度会在最后几位有差别所以只对比小数点后7位
                       geometry2[0] = (+geometry2[0]).toFixed(7);
                       geometry2[1] = (+geometry2[1]).toFixed(7);
                       geometry2 = JSON.stringify(geometry2);
@@ -860,9 +874,11 @@ export default {
     previewClick() {
       var that = this;
       const layerData = that.mapEditor.getSaveData();
+      // 判断图层有没有变动如果没有则重新加载楼层
       if (that.compareData(layerData, that.activeFloorData)) {
         that.loadFloor();
       } else {
+        // 判断图层有没有变动如果有则保存后重新加载楼层
         that.saveDataCallBack(() => {
           that.loadFloor();
           that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((
@@ -882,19 +898,21 @@ export default {
     saveDataCallBack(fn) {
       var that = this;
       var obj = {};
-
+      // 如果当前图层数据的楼层信息 为空对象说明 此时还没有经纬度信息无法绘制
       const layerData = that.mapEditor.getSaveData();
+      // 如果当前图层数据的楼层信息 为空对象说明 此时还没有经纬度信息无法绘制
       if (JSON.stringify(layerData.floorData) === "{}") {
         that.mapLoading = false;
         return;
       }
+      // 保存的时候直接把当前图层数据赋值给当前楼层数据
       that.activeFloorData.floorData = JSON.parse(JSON.stringify(layerData.floorData));
       that.activeFloorData.imageData.data = layerData.imageData.data;
       that.activeFloorData.imageData.extent = JSON.stringify(layerData.imageData.extent);
       that.activeFloorData.layerData = JSON.parse(JSON.stringify(layerData.layerData));
       const layerDataCopy = JSON.parse(JSON.stringify(layerData));
       layerDataCopy.imageData.data = encodeURIComponent(layerData.imageData.data);
-
+      // 进行参数组装
       obj.id = that.buildingFloorsObj.id;
       obj.name = that.buildingFloorsObj.name;
       obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
@@ -931,18 +949,21 @@ export default {
     saveData() {
       var that = this;
       var obj = {};
-
+      // 获取当前图层数据
       const layerData = that.mapEditor.getSaveData();
+      // 如果当前图层数据的楼层信息 为空对象说明 此时还没有经纬度信息无法绘制
       if (JSON.stringify(layerData.floorData) === "{}") {
         that.mapLoading = false;
         return;
       }
+      // 保存的时候直接把当前图层数据赋值给当前楼层数据
       that.activeFloorData.floorData = JSON.parse(JSON.stringify(layerData.floorData));
       that.activeFloorData.imageData.data = layerData.imageData.data;
       that.activeFloorData.imageData.extent = JSON.stringify(layerData.imageData.extent);
       that.activeFloorData.layerData = JSON.parse(JSON.stringify(layerData.layerData));
       const layerDataCopy = JSON.parse(JSON.stringify(layerData));
       layerDataCopy.imageData.data = encodeURIComponent(layerData.imageData.data);
+      // 进行参数组装
       obj.id = that.buildingFloorsObj.id;
       obj.name = that.buildingFloorsObj.name;
       obj.floorsCounts = that.buildingFloorsObj.floorsCounts;
@@ -968,6 +989,7 @@ export default {
               message: "保存成功",
               type: "success"
             });
+            // 保存成功后，获取状态进行展示
             that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((
               floorInfo
             ) => {
@@ -1038,6 +1060,7 @@ export default {
     createStyleSuccess() {
       this.createStyleModal = false;
       this.editStyleModal = false;
+      // 重新获取样式列表
       this.getElementStyles();
     },
     // 样式勾选变动监听
@@ -1138,6 +1161,7 @@ export default {
         }
       };
       that.selectedElement = emptyObj;
+      // 如果当前选中，那就取消绘制
       if (that.iconActiveNum === (index + 1)) {
         that.iconName = "";
         that.iconActiveNum = "";
@@ -1148,6 +1172,7 @@ export default {
       that.iconName = item.name;
       that.iconActiveNum = index + 1;
       that.drawActiveType = "";
+      // 调用gis绘制图标
       that.mapEditor.drawPoint({
         img: item.imgPath,
         size: 30
@@ -1156,6 +1181,7 @@ export default {
     // 全选楼梯变动监听
     goFloorNumAllChange(isAll) {
       var that = this;
+      // 判断是不是全选
       if (isAll) {
         that.floorArr.forEach((item) => {
           that.goFloorArr.push(item.value);
@@ -1175,6 +1201,7 @@ export default {
     // 编辑样式
     editStyleClick() {
       var that = this;
+      // 判断有没有选中
       if (that.styleTableSelectedArr.length === 0) {
         that.$message({
           message: "请选择要编辑的样式",
@@ -1182,6 +1209,7 @@ export default {
         });
         return;
       }
+      // 判断有没有多选
       if (that.styleTableSelectedArr.length > 1) {
         that.$message({
           message: "只能选择一个要编辑的样式",
@@ -1191,6 +1219,7 @@ export default {
       }
       that.editStyleModal = true;
       that.$nextTick(() => {
+        // 调用编辑样式组件的初始化方法
         that.$refs.editStyle.init(that.styleTableSelectedArr[0]);
       });
     },
@@ -1199,10 +1228,11 @@ export default {
       var that = this;
       that.createStyleModal = true;
       that.$nextTick(() => {
+        // 调用创建样式组件的初始化方法
         that.$refs.createStyle.init();
       });
     },
-    // 监听样式选择器变动
+    // 监听样式选择器变动，重新给选中的元素赋值
     styleSelectChange(styleIndex) {
       var that = this;
       var style = "";
@@ -1278,7 +1308,7 @@ export default {
         that.selectedElement.value.color = style.borderColor;
       }
     },
-    // 监听要素color变动
+    // 监听要素color变动，重新给选中的元素赋值
     drawSelectedColorChange(col) {
       var that = this;
       var color = col;
@@ -1322,7 +1352,7 @@ export default {
         that.selectedElement.value.color = color;
       }
     },
-    // 监听要素name变动
+    // 监听要素name变动，重新给选中的元素赋值
     drawSelectedNameInput(name) {
       var that = this;
       that.iconActiveNum = "";
@@ -1373,8 +1403,11 @@ export default {
     getAllData() {
       var that = this;
       that.dataChartInfoModal = true;
+      // 获取面元素的数据
       that.dataChartData = that.mapEditor.getData("polygon");
+      // 获取点元素的数据
       const arrs = that.mapEditor.getData("point");
+      // 过滤poi的数据
       that.dataChartPOIData = arrs.filter((currentValue, index, arr) => currentValue.size !== 31);
     },
 
@@ -1399,12 +1432,14 @@ export default {
         }
       };
       that.selectedElement = emptyObj;
+      // 如果当前选中则取消绘制
       if (that.drawActiveLine === 1) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
         that.mapEditor.cancelDraw();
         return;
       }
+      // 绘制楼梯
       that.mapEditor.drawPoint({
         img: "./icon/verticalFloor.png",
         size: 31
@@ -1435,6 +1470,7 @@ export default {
         }
       };
       that.selectedElement = emptyObj;
+      // 如果当前选中则取消绘制
       if (that.drawActiveLine === 2) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -1442,6 +1478,7 @@ export default {
         return;
       }
       that.isDrawfacibility = true;
+      // 绘制楼梯
       that.mapEditor.drawPoint({
         img: "./icon/holdFloor.png",
         size: 31
@@ -1471,6 +1508,7 @@ export default {
         }
       };
       that.selectedElement = emptyObj;
+      // 如果当前选中则取消绘制
       if (that.drawActiveLine === 3) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
@@ -1479,6 +1517,7 @@ export default {
       }
       that.floorNumTitle = "通行设施设置-楼梯";
       that.isDrawfacibility = true;
+      // 绘制楼梯
       that.mapEditor.drawPoint({
         img: "./icon/floor.png",
         size: 31
@@ -1495,6 +1534,7 @@ export default {
         container: "mapInDoor",
         data: mapData
       });
+      // 设置建筑物轮廓隐藏
       that.mapEditor.setLayerDisplay("build", false);
       // /选择要素回调事件
       that.mapEditor.selectFeature((e) => {
@@ -1515,6 +1555,7 @@ export default {
             width: ""
           }
         };
+        // 如果当前选择的元素为null
         if (!e) {
           that.selectedElement = emptyObj;
           that.facilityTypeTarget = emptyObj;
@@ -1540,7 +1581,8 @@ export default {
         that.isLineLayerSeleced = false;
         if (e.layername === "POI图层") {
           that.isPoiSelected = true;
-          if (e.value.size === 31 || /\/icon\//.test(e.value.img)) {
+          // 如果图标的size等于31说明是楼梯元素
+          if (e.value.size === 31) {
             that.facilityTypeTarget = e;
             that.facilityToFloor = that.facilityTypeTarget.value.targetFloor;
             that.facilityGroup = that.facilityTypeTarget.value.group;
@@ -1575,7 +1617,7 @@ export default {
         if (e.layername === "多边形图层") {
           that.selectedElement = e;
           that.selectedElement.value.height = that.elementHeight;
-
+          // 更改元素属性
           setTimeout(() => {
             that.mapEditor.addFeatureById("polygon", e.id, "height", that.elementHeight);
             that.mapEditor.addFeatureById("polygon", e.id, "width", 1);
@@ -1637,8 +1679,10 @@ export default {
     // 初始化地图
     initMap(mapData) {
       var that = this;
+      // 初始化地图
       that.newMap(mapData);
       that.activeFloor = "";
+      // 加载楼层信息
       that.loadFloor();
     },
     // 地图放大
@@ -1676,15 +1720,20 @@ export default {
           width: ""
         }
       };
+      // 设置当前元素为空的元素
       that.selectedElement = emptyObj;
+      // 判断是不是在画线元素，如果是
       if (that.isDrawLine) {
+        // 清空线元素
         that.drawActiveLine = "";
         that.isDrawLine = false;
+        // 取消绘制
         that.mapEditor.cancelDraw();
         return;
       }
       that.isDrawLine = true;
       that.drawActiveLine = "";
+      // 绘制线元素
       that.mapEditor.drawPath({
         width: 5,
         color: "#0000FF"
@@ -1695,19 +1744,23 @@ export default {
       var that = this;
       var obj = {};
       var style = "";
+      // 如果当前是按钮是绘制状态，那么结束绘制
       if (that.drawActiveType === 1) {
         that.drawActiveType = "";
         that.iconActiveNum = "";
         that.mapEditor.cancelDraw();
         return;
       }
+      // 设置为选中状态
       that.drawActiveType = 1;
+      // 清空图标选中状态
       that.iconActiveNum = "";
       that.elementStyleList.forEach((item) => {
         if (item.id === that.preDrawStyle) {
           style = item;
         }
       });
+      // 如果样式存在
       if (style) {
         obj = {
           name: "",
@@ -1719,9 +1772,11 @@ export default {
           borderWidth: 0,
           width: 0
         };
+        // 调用gis绘制
         that.mapEditor.drawBox(obj);
         return;
       }
+      // 如果没有样式，按默认样式绘制
       that.mapEditor.drawBox({
         name: "",
         width: 1,
@@ -1752,20 +1807,25 @@ export default {
       var that = this;
       var obj = {};
       var style = "";
+      // 如果当前是按钮是绘制状态，那么结束绘制
       if (that.drawActiveType === 3) {
         that.drawActiveType = "";
         that.iconActiveNum = "";
         that.mapEditor.cancelDraw();
         return;
       }
+      // 清空图标选中状态
       that.iconActiveNum = "";
       that.selectedElement.id = "";
+      // 设置为选中状态
       that.drawActiveType = 3;
+      // 循环样式列表
       that.elementStyleList.forEach((item) => {
         if (item.id === that.preDrawStyle) {
           style = item;
         }
       });
+      // 如果样式存在
       if (style) {
         obj = {
           name: "",
@@ -1776,9 +1836,11 @@ export default {
           fontFillColor: "rgba(255,255,255,1)",
           fontBorderColor: "rgba(0,0,0,1)"
         };
+        // 调用gis绘制
         that.mapEditor.drawPolygon(obj);
         return;
       }
+      // 如果没有样式，按默认样式绘制
       that.mapEditor.drawPolygon({
         name: "",
         width: 1,
@@ -1794,19 +1856,26 @@ export default {
       var that = this;
       var obj = {};
       var style = "";
+      // 如果当前是按钮是绘制状态，那么结束绘制
       if (that.drawActiveType === 2) {
         that.drawActiveType = "";
         that.iconActiveNum = "";
         that.mapEditor.cancelDraw();
         return;
       }
+      // 清空图标选中状态
       that.iconActiveNum = "";
+      // 设置为选中状态
       that.drawActiveType = 2;
+      // 循环样式列表
       that.elementStyleList.forEach((item) => {
+        // 如果当前选中的样式id和当前循环的id先等
         if (item.id === that.preDrawStyle) {
+          // 把样式相关属性赋值给style
           style = item;
         }
       });
+      // 如果样式存在
       if (style) {
         obj = {
           name: "",
@@ -1818,9 +1887,11 @@ export default {
           fontFillColor: "rgba(255,255,255,1)",
           fontBorderColor: "rgba(0,0,0,1)"
         };
+        // 调用gis绘制圆形
         that.mapEditor.drawCircle(obj);
         return;
       }
+      // 如果没有样式，按默认样式绘制
       that.mapEditor.drawCircle({
         name: "",
         width: 1,
@@ -1834,14 +1905,16 @@ export default {
     // 取消绘制
     canceldraw() {
       var that = this;
+      // 调用gis取消绘制
       that.mapEditor.cancelDraw();
       that.drawActiveType = "";
     },
-    // 设置楼层信息
+    // 点击-设置楼层信息
     setFloorInfoClick() {
       var that = this;
       that.setFloorInfoModal = true;
       that.$nextTick(() => {
+        // 调用设置楼层组件的初始化方法
         that.$refs.setFloorInfo.init({
           id: that.activeFloorData.floorData.properties.id
         });
@@ -1854,8 +1927,11 @@ export default {
       var imgUrl = "";
       that.mapLoading = true;
       that.loadingText = "数据保存中...";
+      // 获取楼层信息
       that.getFloorInfoById(id).then((res) => {
+        // 拼装图片url
         imgUrl = `/files/img/${res.planarGraph}`;
+        // 如果楼层中有对角线经纬度信息
         if (res.upperLeftCornerLongitude && res.upperLeftCornerLatitude && res
           .lowerRightCornerLongitude && res.lowerRightCornerLatitude) {
           that.$message({
@@ -1870,7 +1946,7 @@ export default {
             .lowerRightCornerLatitude
           ];
           that.hasUnderPainting = true;
-          const uuid = that.utils.getUUID();
+          // 设置轮廓信息
           that.mapEditor.setBuildData({
             type: "Feature",
             geometry: {
@@ -1895,23 +1971,26 @@ export default {
               borderColor: "rgba(0,153,255,.5)"
             }
           });
-
-
           const img = new Image();
           img.src = imgUrl;
           that.mapLoading = true;
           img.onload = () => {
+            // 获取图片的默认位置
             const data = that.mapEditor.defaultImageData(img, that.imgFix);
+            // 上传base64编码
             that.uploadBase64(data.data, (url) => {
+              // 设置底图
               that.mapEditor.setImageData({
                 data: url,
                 extent: data.extent
               });
+              // 保存当前图层信息
               that.saveDataCallBack(() => {
                 that.mapLoading = false;
               });
             });
           };
+          // 图片加载失败
           img.onerror = () => {
             that.$message({
               message: "图片加载失败",
@@ -1926,12 +2005,12 @@ export default {
           const coordinates = [];
           const lngArr = [];
           const latArr = [];
+          // 轮廓的路径
           floorOutline.forEach((item) => {
             lngArr.push(+item.lng);
             latArr.push(+item.lat);
             coordinates.push([item.lng, item.lat]);
           });
-          const uuid = that.utils.getUUID();
           // 获取最大经纬度   最小经纬度
           const bigLng = Math.max(...lngArr);
           const bigLat = Math.max(...latArr);
@@ -1940,6 +2019,7 @@ export default {
           const small = [smallLng, smallLat];
           const big = [bigLng, bigLat];
           that.hasUnderPainting = true;
+          // 设置轮廓
           that.mapEditor.setBuildData({
             type: "Feature",
             geometry: {
@@ -1958,15 +2038,18 @@ export default {
               borderColor: "rgba(0,153,255,.5)"
             }
           });
-
+          // 如果没有对角线经纬度
           if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res
             .lowerRightCornerLongitude && !res.lowerRightCornerLatitude) {
             const img = new Image();
             img.src = imgUrl;
             that.mapLoading = true;
             img.onload = () => {
+              // 获取图片的默认位置
               const data = that.mapEditor.defaultImageData(img, that.imgFix);
+              // 上传base64编码
               that.uploadBase64(data.data, (url) => {
+                // 设置底层图片
                 that.mapEditor.setImageData({
                   data: url,
                   extent: data.extent
@@ -1975,11 +2058,13 @@ export default {
                   message: "请点击调整平面图，根据轮廓进行调整",
                   type: "warning"
                 });
+                // 保存相关信息
                 that.saveDataCallBack(() => {
                   that.mapLoading = false;
                 });
               });
             };
+            // 图片加载失败
             img.onerror = () => {
               that.$message({
                 message: "图片加载失败",
@@ -1988,6 +2073,7 @@ export default {
               that.mapLoading = false;
             };
           } else {
+            // 保存当前图层信息
             that.saveDataCallBack(() => {
               that.mapLoading = false;
             });
@@ -2000,7 +2086,7 @@ export default {
         //   //   that.mapLoading = false;
         //   // });
         // }
-
+        // 如果没有经纬度信息
         if (!res.upperLeftCornerLongitude && !res.upperLeftCornerLatitude && !res
           .lowerRightCornerLongitude && !res.lowerRightCornerLatitude && !res.floorOutline) {
           that.$message({
@@ -2077,9 +2163,11 @@ export default {
           } = res;
           if (data.code === 200) {
             that.allIconsArr = data.data;
+            // 如果图标个数大于等于11，则截取前11个 来保证展示好看
             if (data.data.length >= 11) {
               that.showIconsArr = data.data.slice(0, 11);
             } else {
+              // 如果不到11个则展示所有
               that.showIconsArr = data.data;
             }
           } else {
@@ -2143,14 +2231,21 @@ export default {
             width: ""
           }
         };
+        // 获取地图的图层信息
         const layerData = that.mapEditor.getSaveData();
+        // 以前的楼层
         let oldfloor = "";
+        // 缓存楼层变动数组如果长度大于等于2
         if (that.activeFloorArrCache.length >= 2) {
+          // 以前的楼层等于缓存楼层变动数组的最后一个
           oldfloor = that.activeFloorArrCache[that.activeFloorArrCache.length - 2];
         } else {
+          // 如果小于2
           [oldfloor] = that.activeFloorArrCache;
         }
+        // 当前的楼层先等于以前的楼层
         that.activeFloor = oldfloor;
+        // 判断图层有没有变动，如果有变动
         if (!that.compareData(layerData, that.activeFloorData)) {
           that
             .$confirm("绘制内容尚未保存", "提示", {
@@ -2159,31 +2254,48 @@ export default {
               type: "warning",
               distinguishCancelAndClose: true,
               callback(action, instance) {
+                // 点击“保存后离开”
                 if (action === "confirm") {
+                  // 保存数据
                   that.saveData();
+                  // 清空目标对象
                   that.selectedElement = emptyObj;
+                  // 清空路径对象
                   that.facilityTypeTarget = emptyObj;
                   that.adjustImageWord = "调整平面图";
+                  // 赋值当前楼层
                   that.activeFloor = e;
+                  // 赋值当前楼层数据
                   that.activeFloorData = that.buildingFloorsObj.floors[e];
                 }
+                // 点击“离开”
                 if (action === "cancel") {
+                  // 清空目标对象
                   that.selectedElement = emptyObj;
+                  // 清空路径对象
                   that.facilityTypeTarget = emptyObj;
                   that.adjustImageWord = "调整平面图";
+                  // 赋值当前楼层
                   that.activeFloor = e;
+                  // 赋值当前楼层数据
                   that.activeFloorData = that.buildingFloorsObj.floors[e];
                 }
+                // 点击“关闭”
                 if (action === "close") {
+                  // 还是指向当前楼层
                   that.activeFloor = oldfloor;
                 }
               }
             });
         } else {
+          // 清空目标对象
           that.selectedElement = emptyObj;
+          // 清空路径对象
           that.facilityTypeTarget = emptyObj;
           that.adjustImageWord = "调整平面图";
+          // 赋值当前楼层
           that.activeFloor = e;
+          // 赋值当前楼层数据
           that.activeFloorData = that.buildingFloorsObj.floors[e];
         }
       });
@@ -2192,9 +2304,11 @@ export default {
     // 全选楼层
     floorCheck() {
       var that = this;
+      // 如果到达的楼层数等于所有楼层数，那么清空到达楼层
       if (that.floorArr.length === that.goFloorArr.length) {
         that.goFloorArr = [];
       } else {
+        // 如果不等于，那么先清空到达楼层，再重新把所有楼层都赋值给到达楼层
         that.goFloorArr = [];
         that.floorArr.forEach((item) => {
           that.goFloorArr.push(item.value);
@@ -2219,18 +2333,25 @@ export default {
             data
           } = res;
           if (data.code === 200) {
+            // 排序好的楼层
             const floors = [];
             that.buildingFloorsObj = data.data;
+            // 最终排序好的楼层
             that.floorArr = [];
+            // 楼层楼号缓存数组
             const numArr = [];
+            // 循环楼层
             Object.keys(that.buildingFloorsObj.floors).forEach((floor) => {
               const num = +floor;
               numArr.push(num);
             });
+            // 对楼层进行倒序排序
             numArr.sort((a, b) => b - a);
+            // 循环楼层
             numArr.forEach((item) => {
               const key = `${item}`;
               Object.keys(that.buildingFloorsObj.floors).forEach((floorKey) => {
+                // 排序好的楼层等于返回的楼层
                 if (floorKey === key) {
                   const obj = {};
                   obj[floorKey] = that.buildingFloorsObj.floors[floorKey];
@@ -2238,11 +2359,12 @@ export default {
                 }
               });
             });
-
+            // 排序好的新楼层数组循环
             floors.forEach((item) => {
               Object.keys(item).forEach((key) => {
                 const floorKey = +key;
                 let strKey = "";
+                // 把阿拉伯数字转成通用楼层展示
                 if (floorKey > 0) {
                   strKey = `F${floorKey}`;
                 } else {
@@ -2255,7 +2377,9 @@ export default {
                 });
               });
             });
+            // 判断有没有目标楼层，如果没有
             if (!that.activeFloor) {
+              // 判断有没有一层，有的话默认展示一层，如果没有展示负一层
               if (that.buildingFloorsObj.floors["1"]) {
                 that.activeFloor = "1";
                 that.activeFloorData = that.buildingFloorsObj.floors[that.activeFloor];
