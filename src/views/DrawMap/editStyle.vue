@@ -10,28 +10,11 @@
             </el-form-item>
           </td>
         </tr>
-        <!-- <tr>
-          <td class="required rightLebal">边框宽度：</td>
-          <td>
-            <el-form-item size="mini" label-width="0" prop="borderWidth">
-              <el-input-number v-model="formValidate.borderWidth" size="small" :min="0" :max="100" />
-            </el-form-item>
-          </td>
-        </tr>
-        <tr>
-          <td class="required rightLebal">边框颜色：</td>
-          <td>
-            <el-form-item size="mini" label-width="0" prop="borderColor">
-              <el-color-picker  show-alpha size="medium " v-model="formValidate.borderColor"></el-color-picker>
-            </el-form-item>
-          </td>
-        </tr> -->
-
         <tr>
           <td class="required rightLebal">填充颜色：</td>
           <td>
             <el-form-item size="mini" label-width="0" prop="fillColor">
-              <el-color-picker  show-alpha size="medium " v-model="formValidate.fillColor"></el-color-picker>
+              <el-color-picker show-alpha size="medium " v-model="formValidate.fillColor"></el-color-picker>
             </el-form-item>
           </td>
         </tr>
@@ -45,22 +28,21 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
-
 export default {
-  name: "Header",
-  computed: {
-    ...mapGetters(["userInfo", "taskTypes"])
-  },
-
+  name: "EditStyle",
   data() {
     return {
       // 表单字段对象
       formValidate: {
+        // 样式id
         id: "",
+        // 样式名称
         name: "",
+        // 边框颜色
         borderColor: "",
+        // 边框宽度
         borderWidth: 0,
+        // 填充颜色
         fillColor: ""
       },
       // 校验规则
@@ -74,11 +56,11 @@ export default {
       }
     };
   },
-  mounted() {},
   methods: {
     // 初始化方法
     init(obj) {
       var that = this;
+      // 清空表单
       that.$refs.formValidate.resetFields();
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = obj[key];
@@ -97,6 +79,7 @@ export default {
       // 校验规则
       that.$refs.formValidate.validate((valid) => {
         if (valid) {
+          // 默认设置
           that.formValidate.borderWidth = 1;
           that.formValidate.borderColor = that.formValidate.fillColor;
           that
@@ -112,6 +95,7 @@ export default {
                   message: "提交成功",
                   type: "success"
                 });
+                // 传值给父组件
                 that.$emit("success");
               } else {
                 that.$message({

@@ -120,23 +120,23 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
-
 export default {
-  name: "Header",
-  // computed: {
-  //   ...mapGetters(["userInfo", "taskTypes"])
-  // },
-
+  name: "CreateTask",
   data() {
     return {
       // 表单字段对象
       formValidate: {
+        // 任务名称
         taskName: "",
+        // 省份id
         provinceId: "",
+        // 城市id
         cityId: "",
+        // 区县id
         districtId: "",
+        // 备注
         comment: "",
+        // 类型id
         taskTypeId: ""
       },
 
@@ -167,7 +167,6 @@ export default {
       }
     };
   },
-  mounted() {},
   methods: {
     // 初始化方法
     init() {
@@ -190,7 +189,7 @@ export default {
     cancelClick() {
       this.$emit("cancel");
     },
-    // 获取任务类型放到vuex中
+    // 获取任务类型
     getAllTypes() {
       var that = this;
       that
@@ -216,11 +215,14 @@ export default {
     cityChange(id) {
       var that = this;
       if (id) {
+        // 获取区县列表
         that.getAreasWithPid(id, (data) => {
           that.districtList = data;
         });
+        // 清空区县
         that.formValidate.districtId = "";
       } else {
+        // 清空区县
         that.formValidate.districtId = "";
       }
     },
@@ -229,13 +231,18 @@ export default {
     provinceChange(id) {
       var that = this;
       if (id) {
+        // 获取城市列表
         that.getAreasWithPid(id, (data) => {
           that.cityList = data;
         });
+        // 清空城市
         that.formValidate.cityId = "";
+        // 清空区县
         that.formValidate.districtId = "";
       } else {
+        // 清空城市
         that.formValidate.cityId = "";
+        // 清空区县
         that.formValidate.districtId = "";
       }
     },

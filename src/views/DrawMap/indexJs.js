@@ -1,7 +1,3 @@
-import {
-  mapActions,
-  mapGetters
-} from "vuex";
 import SetFloorInfo from "./setFloorInfo.vue";
 import CreateStyle from "./createStyle.vue";
 import EditStyle from "./editStyle.vue";
@@ -11,10 +7,7 @@ import Data from "./indexJsData";
 import Watch from "./indexJsWatch";
 
 export default {
-  name: "ChartShowControl",
-  computed: {
-    ...mapGetters(["userInfo"])
-  },
+  name: "DrawMap",
   components: {
     SetFloorInfo,
     CreateStyle,
@@ -25,29 +18,41 @@ export default {
   },
   mounted() {
     var that = this;
+    // 设置选中的tab
     that.tabNum = 1;
+    // 初始化adjustImageWord
     that.adjustImageWord = "调整平面图";
     that.setFloorInfoModal = false;
+    // 获取楼宇的id
     that.buildingId = that.$route.params.id;
+    // 设置高度
     that.height = `${window.innerHeight - 75}px`;
+    // 动态设置高度
     window.onresize = () => {
       that.height = `${window.innerHeight - 75}px`;
     };
+    // 楼宇对象
     that.buildObj = {
       id: that.buildingId
     };
+    // 获取图标
     that.getIcons();
+    // 获取元素样式
     that.getElementStyles();
+    // 获取标注样式
     that.getLabelStyles();
     // 初始化地图
     that.$nextTick(() => {
       that.initMap(TestData.floors[1]);
     });
+    // 绑定beforeunload事件，窗口在退出时进行询问
     window.addEventListener("beforeunload", (ev) => {
       var event = ev;
       // 窗口刷新或关闭的时候进行判断询问
       if (/drawMap/g.test(window.location.hash)) {
+        // 获取当前图层数据
         const layerData = that.mapEditor.getSaveData();
+        // 进行数据对比，如果图层数据和数据库数据不一致进行弹窗询问
         if (!that.compareData(layerData, that.activeFloorData)) {
           event.preventDefault();
           event.returnValue = "绘制内容尚未保存,确定要离开此页面吗？";
@@ -59,9 +64,13 @@ export default {
   // 导航离开该组件的对应路由时调用
   beforeRouteLeave(to, from, next) {
     var that = this;
+    // 获取当前图层数据
     const layerData = that.mapEditor.getSaveData();
+    // 如果数据不一致
     if (!that.compareData(layerData, that.activeFloorData)) {
+      // 停止页面跳转
       next(false);
+      // 弹窗进行询问
       setTimeout(() => {
         that
           .$confirm("绘制内容尚未保存", "提示", {
@@ -70,22 +79,27 @@ export default {
             type: "warning",
             distinguishCancelAndClose: true,
             callback(action, instance) {
+              // 点击了 保存后离开
               if (action === "confirm") {
                 that.saveDataCallBack(() => {
                   that.$message({
                     message: "保存成功",
                     type: "success"
                   });
+                  // 进行跳转
                   next();
                 });
               }
+              // 点击了 离开
               if (action === "cancel") {
+                // 进行跳转
                 next();
               }
             }
           });
       }, 500);
     } else {
+      // 进行跳转
       next();
     }
   },
@@ -93,6 +107,7 @@ export default {
     // 上传base64编码
     uploadBase64(base64, fn) {
       var that = this;
+      // 设置等待信息
       that.mapLoading = true;
       that.loadingText = "上传图片中...";
       that
@@ -117,6 +132,7 @@ export default {
             });
           }
         }).catch((error) => {
+          // 处理异常
           that.loadingText = "";
           that.mapLoading = false;
           if (/413/.test(error)) {
@@ -139,6 +155,7 @@ export default {
       if (that.facilityToFloor) {
         const arr = that.facilityToFloor.split(",");
         const newArr = [];
+        // 楼层转换
         arr.forEach((item) => {
           if (item.indexOf("F") > -1) {
             newArr.push(`${item.replace("F", "")}`);
@@ -147,6 +164,7 @@ export default {
             newArr.push(`${-item.replace("B", "")}`);
           }
         });
+        // 赋值
         that.goFloorArr = newArr;
       } else {
         // 清空楼层选择
@@ -156,6 +174,7 @@ export default {
     // 通行设施设置，点击楼层
     floorClick(item) {
       var that = this;
+      // 如果到达楼层里面有当前值，那么删除，如果没有那么push
       if (that.goFloorArr.indexOf(item) > -1) {
         that.goFloorArr.splice(that.goFloorArr.indexOf(item), 1);
       } else {
@@ -165,6 +184,7 @@ export default {
     // 判断是否给楼层加高亮
     isFloorActive(value) {
       var that = this;
+      // 判断到达楼层里有没有当前值
       if (that.goFloorArr.indexOf(value) > -1) {
         return true;
       }
@@ -174,12 +194,15 @@ export default {
     floorOkClick() {
       var that = this;
       const arr = [];
+      // 循环楼层
       that.floorArr.forEach((item) => {
+        // 判断到达楼层里面有没有当前值，有的话把label放入arr
         if (that.goFloorArr.includes(item.value)) {
           arr.push(item.label);
         }
       });
       that.facilityToFloor = arr.join(",");
+      // 设置元素属性
       that.mapEditor.addFeatureById("point", that.facilityTypeTarget.id, "targetFloor", that
         .facilityToFloor);
       that.goFloorNumModal = false;
@@ -274,6 +297,7 @@ export default {
         });
       });
     },
+    // 判断是否达到了完成的条件
     isComplete(fn) {
       var that = this;
       var i = 0;

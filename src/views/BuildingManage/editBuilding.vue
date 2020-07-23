@@ -237,9 +237,6 @@ export default {
         if (item.indexOf("B") > -1) {
           floorNum = -+item.replace("B", "");
         }
-        if (item.indexOf("M") > -1) {
-          floorNum = -+item.replace("M", "");
-        }
         str += `floorOutline[${index}].floor=${floorNum}&`;
         str += `floorOutline[${index}].outline=${JSON.stringify(
           lineData[item]

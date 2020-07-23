@@ -137,15 +137,11 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
 // 引入地图轮廓信息
 import DrawProfile from "../../components/DrawProfile.vue";
 
 export default {
-  name: "Header",
-  computed: {
-    ...mapGetters(["userInfo"])
-  },
+  name: "SetFloorInfo",
   components: {
     DrawProfile
   },
@@ -158,6 +154,7 @@ export default {
       }
       callback();
     };
+    // 校验对角线
     var validateLngLat1 = (rule, value, callback) => {
       var that = this;
       if (
@@ -172,6 +169,7 @@ export default {
       }
       callback();
     };
+    // 校验对角线
     var validateLngLat2 = (rule, value, callback) => {
       var that = this;
       if (
@@ -186,6 +184,7 @@ export default {
       }
       callback();
     };
+    // 校验对角线
     var validateLngLat3 = (rule, value, callback) => {
       var that = this;
       if (
@@ -200,6 +199,7 @@ export default {
       }
       callback();
     };
+    // 校验对角线
     var validateLngLat4 = (rule, value, callback) => {
       var that = this;
       if (
@@ -362,6 +362,7 @@ export default {
         .then((res) => {
           const { data } = res;
           if (data.code === 200) {
+            // 拼装地点
             that.location = data.data.provinceName
               + data.data.cityName
               + data.data.districtName;
@@ -371,6 +372,7 @@ export default {
     // 清除轮廓信息
     clearOutLineData() {
       var that = this;
+      // 如果轮廓数据是空的停止程序
       if (that.formValidate.lineData === "") {
         return;
       }
@@ -385,6 +387,7 @@ export default {
             type: "success",
             message: "轮廓数据已清空!"
           });
+          // 清空轮廓数据
           that.formValidate.lineData = "";
         })
         .catch(() => {
@@ -409,17 +412,16 @@ export default {
       Object.keys(lineData).forEach((item, index) => {
         that.drawLineObj[item] = JSON.stringify(lineData[item]);
         let floorNum = "";
+        // 对数值进行转化
         if (item.indexOf("F") > -1) {
           floorNum = +item.replace("F", "");
         }
         if (item.indexOf("B") > -1) {
           floorNum = -+item.replace("B", "");
         }
-        if (item.indexOf("M") > -1) {
-          floorNum = -+item.replace("M", "");
-        }
         str += `floorOutline=${JSON.stringify(lineData[item])}&`;
       });
+      // 赋值
       that.formValidate.lineData = str;
     },
 
@@ -430,6 +432,7 @@ export default {
       // 赋值位置
       const address = that.location;
       const floorArr = [];
+      // 对数值进行转化
       if (that.floorNum > 0) {
         floorArr.push(`F${that.floorNum}`);
       }
@@ -457,6 +460,7 @@ export default {
     // 被外部调用时初始化方法
     init(obj) {
       var that = this;
+      // 清空表单数据
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
       });
@@ -547,6 +551,7 @@ export default {
 
     // 点击取消事件
     cancelClick() {
+      // 向父组件传值
       this.$emit("cancel");
     },
 

@@ -10,23 +10,6 @@
             </el-form-item>
           </td>
         </tr>
-        <!-- <tr>
-          <td class="required rightLebal">边框宽度：</td>
-          <td>
-            <el-form-item size="mini" label-width="0" prop="borderWidth">
-              <el-input-number v-model="formValidate.borderWidth" size="small" :min="0" :max="100" />
-            </el-form-item>
-          </td>
-        </tr>
-        <tr>
-          <td class="required rightLebal">边框颜色：</td>
-          <td>
-            <el-form-item size="mini" label-width="0" prop="borderColor">
-              <el-color-picker show-alpha size="medium " v-model="formValidate.borderColor"></el-color-picker>
-            </el-form-item>
-          </td>
-        </tr> -->
-
         <tr>
           <td class="required rightLebal">填充颜色：</td>
           <td>
@@ -45,21 +28,19 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
-
 export default {
-  name: "Header",
-  computed: {
-    ...mapGetters(["userInfo", "taskTypes"])
-  },
-
+  name: "CreateStyle",
   data() {
     return {
       // 表单字段对象
       formValidate: {
+        // 名称
         name: "",
+        // 边框颜色
         borderColor: "",
+        // 边框宽度
         borderWidth: 0,
+        // 填充颜色
         fillColor: ""
       },
       // 校验规则
@@ -73,11 +54,11 @@ export default {
       }
     };
   },
-  mounted() {},
   methods: {
     // 初始化方法
     init() {
       var that = this;
+      // 清空表单
       that.$refs.formValidate.resetFields();
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
@@ -96,6 +77,7 @@ export default {
       // 校验规则
       that.$refs.formValidate.validate((valid) => {
         if (valid) {
+          // 默认设置
           that.formValidate.borderWidth = 1;
           that.formValidate.borderColor = that.formValidate.fillColor;
           that

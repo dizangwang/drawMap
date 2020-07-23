@@ -5,10 +5,7 @@ import CreateTask from "./createTask.vue";
 import EditTask from "./editTask.vue";
 
 export default {
-  name: "Login",
-  // computed: {
-  //   ...mapGetters(["userInfo", "taskTypes"])
-  // },
+  name: "TaskManage",
   components: {
     CreateTask,
     EditTask
@@ -84,12 +81,19 @@ export default {
       Taskdata: [],
       // 搜索列表数据的参数对象
       searchForm: {
+        // 城市
         city: "",
+        // 当前页码
         current: 1,
+        // 区县
         district: "",
+        // 省份
         province: "",
+        // 记录数
         size: 10,
+        // 任务名称
         taskName: "",
+        // 类型id
         taskTypeId: ""
       },
       // 返回的记录总条数
@@ -218,10 +222,12 @@ export default {
     downFloorClick() {
       var that = this;
       var taskIds = [];
+      // 构建参数id数组
       that.downloadTaskObjArr.forEach((item) => {
         taskIds.push(item.id);
       });
       that.leftBottomTaskDownShow = false;
+      // 执行下载方法
       that.utils.postDownload({
         url: window.location.origin + that.apis.floorMgrFinishDownload,
         data: {
@@ -287,35 +293,48 @@ export default {
             if (result) {
               // 循环需要下载的任务
               that.downloadTaskObjArrCopy.forEach((element, num) => {
+                // 任务红色颜色计数器
                 let taskRedNum = 0;
+                // 任务绿色颜色计数器
                 let taskGreenNum = 0;
                 if (that.downloadTaskObjArrCopy[num].downloadBuildingArrs) {
                   // 循环任务下的楼宇
                   that.downloadTaskObjArrCopy[num].downloadBuildingArrs.forEach((item,
                     ind) => {
+                    // 复制
                     const itemCopy = JSON.parse(JSON.stringify(item));
                     const {
                       floors
                     } = itemCopy;
+                    // 红色的计数器
                     let redNum = 0;
+                    // 绿色的计数器
                     let greenNum = 0;
                     // 循环楼宇下的楼层
                     floors.forEach((it, index) => {
+                      // 如果返回值里有这个楼层id
                       if (result[it.id]) {
+                        // 设置这个楼层颜色为红色
                         itemCopy.floors[index].isRed = true;
+                        // 增加一个红色的原因
                         itemCopy.floors[index].isRedReason = result[it.id];
                         redNum += 1;
                         taskRedNum += 1;
                       } else {
+                        // 设置这个楼层颜色为绿色
                         itemCopy.floors[index].isGreen = true;
                         greenNum += 1;
                         taskGreenNum += 1;
                       }
                     });
+                    // 给当前楼宇红色数值赋值
                     itemCopy.redNum = redNum;
+                    // 给当前楼宇绿色数值赋值
                     itemCopy.greenNum = greenNum;
+                    // 重新赋值
                     that.downloadTaskObjArrCopy[num].downloadBuildingArrs[ind] = itemCopy;
                   });
+                  // 给任务的红色绿色属性赋值
                   that.downloadTaskObjArrCopy[num].redNum = taskRedNum;
                   that.downloadTaskObjArrCopy[num].greenNum = taskGreenNum;
                 }
@@ -338,16 +357,18 @@ export default {
                       floors.forEach((it, index) => {
                         greenNum += 1;
                         taskGreenNum += 1;
+                        // 设置这个楼层颜色为绿色
                         itemCopy.floors[index].isGreen = true;
                       });
                     }
-
+                    // 给当前楼宇红色数值赋值
                     itemCopy.redNum = redNum;
+                    // 给当前楼宇绿色数值赋值
                     itemCopy.greenNum = greenNum;
                     that.downloadTaskObjArrCopy[num].downloadBuildingArrs[ind] = itemCopy;
                   });
                 }
-
+                // 给任务的红色绿色属性赋值
                 that.downloadTaskObjArrCopy[num].redNum = taskRedNum;
                 that.downloadTaskObjArrCopy[num].greenNum = taskGreenNum;
               });
@@ -362,6 +383,7 @@ export default {
           }
         })
         .catch((error) => {
+          // 如果超时
           if (/timeout/gi.test(error)) {
             that.isTimeout = true;
             that.$message({
@@ -404,7 +426,7 @@ export default {
               }
             });
             that.floorForDownloadArr = arr;
-
+            // 进行下载前的准备
             if (arr.length > 0) {
               that.floorMgrPrepareDownload(arr.join(","));
             } else {
@@ -611,6 +633,7 @@ export default {
     goTaskBuilding(row) {
       var that = this;
       that.utils.localstorageSet("taskObj", row);
+      // 跳转
       that.$router.push({
         path: `/buildingManage/${row.id}`
       });
@@ -619,11 +642,14 @@ export default {
     cityChange(id) {
       var that = this;
       if (id) {
+        // 获取区县列表
         that.getAreasWithPid(id, (data) => {
           that.districtList = data;
         });
+        // 清空选中区县
         that.searchForm.district = "";
       } else {
+        // 清空选中区县
         that.searchForm.district = "";
       }
     },
@@ -631,12 +657,15 @@ export default {
     provinceChange(id) {
       var that = this;
       if (id) {
+        // 获取城市列表
         that.getAreasWithPid(id, (data) => {
           that.cityList = data;
         });
+        // 清空城市区县
         that.searchForm.city = "";
         that.searchForm.district = "";
       } else {
+        // 清空城市区县
         that.searchForm.city = "";
         that.searchForm.district = "";
       }
@@ -666,7 +695,7 @@ export default {
           }
         });
     },
-    // 获取任务类型放到vuex中
+    // 获取任务类型
     getAllTypes() {
       var that = this;
       that
@@ -1037,6 +1066,7 @@ export default {
       var that = this;
       that.editTaskModal = true;
       that.$nextTick(() => {
+        // 初始化编辑任务组件
         that.$refs.editTask.init(row.id);
       });
     },
@@ -1045,6 +1075,7 @@ export default {
       var that = this;
       that.createTaskModal = true;
       that.$nextTick(() => {
+        // 初始化创建任务组件
         that.$refs.createTask.init();
       });
     }

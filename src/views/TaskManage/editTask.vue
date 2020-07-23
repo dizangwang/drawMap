@@ -120,23 +120,23 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
-
 export default {
-  name: "Header",
-  // computed: {
-  //   ...mapGetters(["userInfo", "taskTypes"])
-  // },
-
+  name: "EditTask",
   data() {
     return {
       // 表单数据
       formValidate: {
+        // 任务名称
         taskName: "",
+        // 省id
         provinceId: "",
+        // 城市id
         cityId: "",
+        // 区县id
         districtId: "",
+        // 备注
         comment: "",
+        // 类型id
         taskTypeId: ""
       },
 
@@ -176,7 +176,6 @@ export default {
       detailData: {}
     };
   },
-  mounted() {},
   methods: {
     // 初始化编辑任务
     init(id) {
@@ -236,6 +235,7 @@ export default {
           const { data } = res;
           if (data.code === 200) {
             const detailData = data.data;
+            // 给表单赋值
             that.detailData = detailData;
             that.formValidate.taskName = detailData.taskName;
             that.formValidate.comment = detailData.comment;
@@ -271,6 +271,7 @@ export default {
 
     // 点击取消事件
     cancelClick() {
+      // 向父组件传值
       this.$emit("cancel");
     },
 
@@ -278,11 +279,14 @@ export default {
     cityChange(id) {
       var that = this;
       if (id) {
+        // 获取区县列表
         that.getAreasWithPid(id, (data) => {
           that.districtList = data;
         });
+        // 清空区县
         that.formValidate.districtId = "";
       } else {
+        // 清空区县
         that.formValidate.districtId = "";
       }
     },
@@ -291,15 +295,21 @@ export default {
     provinceChange(id) {
       var that = this;
       if (id) {
+        // 清空城市
         that.formValidate.cityId = "";
+        // 清空区县
         that.formValidate.districtId = "";
+        // 获取城市列表
         that.getAreasWithPid(id, (data) => {
           that.cityList = data;
           that.cityId = that.detailData.cityId;
         });
       } else {
+        // 给城市id赋值
         that.cityId = that.detailData.cityId;
+        // 清空城市
         that.formValidate.cityId = "";
+        // 清空区县
         that.formValidate.districtId = "";
       }
     },
@@ -344,6 +354,7 @@ export default {
                   message: "更新成功",
                   type: "success"
                 });
+                // 先父组件传值
                 that.$emit("success");
               } else {
                 that.$message({
