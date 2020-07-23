@@ -225,12 +225,19 @@ export default {
       uploadUrl: "",
       // 表单字段
       formValidate: {
+        // 轮廓信息
         lineData: "",
+        // 楼宇id
         id: "",
+        // 图片id
         planarGraph: "",
+        // 左上角经度
         upperLeftCornerLongitude: "",
+        // 左上角纬度
         upperLeftCornerLatitude: "",
+        // 右下角经度
         lowerRightCornerLongitude: "",
+        // 右下角纬度
         lowerRightCornerLatitude: ""
       },
       // 上级传过来的任务对象
@@ -284,6 +291,7 @@ export default {
     that.utils.parseGeson(that, "file").then((res) => {
       if (res.code === 200) {
         const { data } = res;
+        // 组装数据
         let str = "";
         Object.keys(data).forEach((item, index) => {
           str += `floorOutline[${index}].floor=${item}&`;
@@ -294,6 +302,7 @@ export default {
           });
           str += `floorOutline=${JSON.stringify(arr)}&`;
         });
+        // 赋值
         that.formValidate.lineData = str;
       }
     });
@@ -303,6 +312,7 @@ export default {
     beforeAvatarUpload(file) {
       var that = this;
       const { type } = file;
+      // 检查文件格式
       if (!/image/.test(type)) {
         that.$message({
           type: "warning",
@@ -310,6 +320,7 @@ export default {
         });
         return false;
       }
+      // 检查文件分辨率
       const isSize = new Promise((resolve, reject) => {
         const url = window.URL || window.webkitURL;
         const img = new Image();
@@ -416,6 +427,7 @@ export default {
     mapOutLineClick() {
       var that = this;
       that.fullScreenModal = true;
+      // 赋值位置
       const address = that.location;
       const floorArr = [];
       if (that.floorNum > 0) {
@@ -425,6 +437,7 @@ export default {
         floorArr.push(`B${-that.floorNum}`);
       }
       if (that.drawLineObj) {
+        // 调用绘制轮廓插件
         that.$refs.drawProfile.initData({
           address,
           editOutLine: that.drawLineObj,
@@ -432,6 +445,7 @@ export default {
           floorArr
         });
       } else {
+        // 调用绘制轮廓插件
         that.$refs.drawProfile.initData({
           address,
           fromSet: true,
@@ -447,9 +461,12 @@ export default {
         that.formValidate[key] = "";
       });
       that.drawLineObj = "";
+      // 清空表单
       that.$refs.formValidate.resetFields();
       that.formValidate.id = obj.id;
+      // 获取楼层信息
       that.getFloorInfoById(obj.id).then((res) => {
+        // 获取任务信息
         that.getTaskById(res.taskId);
         that.floorNum = res.floorNum;
         that.formValidate.lineData = res.floorOutline;
@@ -519,6 +536,8 @@ export default {
         });
       }
     },
+
+    // 上传失败
     uploadError() {
       this.$message({
         message: "文件上传失败",
@@ -534,8 +553,10 @@ export default {
     // 提交表单事件
     handleSubmit() {
       var that = this;
+      // 校验表单
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
+          // 拼装请求参数
           const obj = {
             planarGraph: "",
             upperLeftCornerLongitude: "",
@@ -543,7 +564,6 @@ export default {
             lowerRightCornerLongitude: "",
             lowerRightCornerLatitude: ""
           };
-
           let str = "";
           Object.keys(obj).forEach((item) => {
             if (that.formValidate[item]) {
@@ -564,6 +584,7 @@ export default {
                   message: "提交成功",
                   type: "success"
                 });
+                // 把数据传给父组件
                 that.$emit("success", that.formValidate.id);
               } else {
                 that.$message({
