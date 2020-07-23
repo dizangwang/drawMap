@@ -73,14 +73,12 @@ export default {
       {
         title: "楼宇楼层",
         slot: "floor"
-
       },
       {
         title: "完成状态",
         slot: "progress",
         tooltip: true
       },
-
       {
         title: "楼宇操作",
         slot: "action",
@@ -187,6 +185,7 @@ export default {
     that.utils.localstorageSet("buildObj", "");
     // 表格高度
     that.tableHeight = window.innerHeight - 135;
+    // 动态设置表格高度
     window.onresize = () => {
       that.tableHeight = window.innerHeight - 135;
     };
@@ -208,6 +207,7 @@ export default {
             data
           } = res;
           if (data.code === 200) {
+            // 赋值任务详情
             const detailData = data.data;
             fn(detailData);
           }
@@ -292,6 +292,7 @@ export default {
             data
           } = res;
           if (data.code === 200) {
+            // 回调函数
             fn(data.data);
           } else {
             that.$message({
@@ -306,6 +307,7 @@ export default {
     createBuildingSuccess() {
       var that = this;
       that.createBuildingModal = false;
+      // 执行搜索
       that.search();
     },
 
@@ -313,6 +315,7 @@ export default {
     updateTaskSuccess() {
       var that = this;
       that.editBuildingModal = false;
+      // 执行搜索
       that.search();
     },
 
@@ -335,27 +338,34 @@ export default {
     // 勾选表格下拉框事件
     tableSelectionChange(e) {
       var that = this;
+      // 赋值
       that.tableSelectionArr = e;
     },
 
     // 分页器-页码变动
     pageChange(num) {
       var that = this;
+      // 赋值当前页码
       that.searchForm.current = num;
+      // 搜索
       that.search();
     },
 
     // 分页器-展示记录数变动
     pageSizeChange(num) {
       var that = this;
+      // 展示记录数变动赋值
       that.searchForm.size = num;
+      // 执行搜索
       that.search();
     },
 
     // 点击搜索按钮
     searchClick() {
       var that = this;
+      // 重置当前页码为1
       that.searchForm.current = 1;
+      // 执行搜索
       that.search();
     },
 
@@ -412,6 +422,7 @@ export default {
             arr.push(item.id);
           });
           ids = arr.join(",");
+          // 执行下架
           that.buildingMgrUnPublish(ids);
         })
         .catch(() => {
@@ -432,6 +443,7 @@ export default {
           type: "warning"
         })
         .then(() => {
+          // 执行下架
           that.buildingMgrUnPublish(row.id);
         })
         .catch(() => {
@@ -445,6 +457,7 @@ export default {
     // 顶部操作栏-按钮-发布--点击事件
     publishBatchClick() {
       var that = this;
+      // 判断有没有勾选楼宇
       if (that.tableSelectionArr.length === 0) {
         that.$message({
           type: "error",
@@ -461,22 +474,27 @@ export default {
       that.dataTypeBatchModal = false;
       let ids = "";
       const arr = [];
+      // 拼装ids
       that.tableSelectionArr.forEach((item) => {
         arr.push(item.id);
       });
       ids = arr.join(",");
+      // 执行发布
       that.publishBuilding(ids, that.radioBatchPublish);
     },
 
     // 表格操作栏-按钮-下载-弹窗-确定--点击事件
     downOkClick() {
       var that = this;
+      // 声明promise数组
       var promiseArr = [];
       that.formatModal = false;
+      // 循环需要下载的楼宇
       that.buildingForDownloadArr.forEach((item, index) => {
         const promise = new Promise(((resolve) => {
           that.getFloorOutlineByBuildingId(item.id, (data) => {
             if (data) {
+              // 拼装楼宇下的楼层
               that.buildingForDownloadArr[index].floors = data;
             }
             resolve(data);
@@ -487,6 +505,7 @@ export default {
 
       // 执行所有promise
       Promise.all(promiseArr).then((result) => {
+        // 执行单层下载准备接口
         that.floorMgrGetDownloadFlag();
       });
     },
@@ -508,6 +527,7 @@ export default {
             // 获取flag
             that.downloadFlag = data.msg;
             const arr = [];
+            // 获取楼层id
             that.buildingForDownloadArr.forEach((item, index) => {
               if (item.floors) {
                 item.floors.forEach((it, ind) => {

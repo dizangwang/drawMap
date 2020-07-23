@@ -188,9 +188,11 @@ export default {
     // 清除轮廓信息
     clearOutLineData() {
       var that = this;
+      // 如果轮廓信息为空
       if (that.formValidate.lineData === "") {
         return;
       }
+      // 如果有轮廓信息，进行询问
       that
         .$confirm("是否确认清空轮廓数据?", "提示", {
           confirmButtonText: "确定",
@@ -198,13 +200,16 @@ export default {
           type: "warning"
         })
         .then(() => {
+          // 点击了  确定
           that.$message({
             type: "success",
             message: "轮廓数据已清空!"
           });
+          // 清空轮廓数据
           that.formValidate.lineData = "";
         })
         .catch(() => {
+          // 点击了 取消
           that.$message({
             type: "info",
             message: "已取消清空"
@@ -215,6 +220,7 @@ export default {
     // 地图轮廓退出
     lineQuit() {
       var that = this;
+      // 设置全屏展示为false
       that.fullScreenModal = false;
     },
 
@@ -222,22 +228,26 @@ export default {
     lineSave(lineData) {
       var that = this;
       var str = "";
+      // 设置编辑轮廓信息为空对象
       that.editOutLine = {};
+      // 循环传过来的对象
       Object.keys(lineData).forEach((item, index) => {
         that.editOutLine[item] = JSON.stringify(lineData[item]);
         let floorNum = item;
+        // 进行楼层转换
         if (item.indexOf("F") > -1) {
           floorNum = +item.replace("F", "");
         }
         if (item.indexOf("B") > -1) {
           floorNum = -+item.replace("B", "");
         }
-
+        // 拼装参数
         str += `floorOutline[${index}].floor=${floorNum}&`;
         str += `floorOutline[${index}].outline=${JSON.stringify(
           lineData[item]
         )}&`;
       });
+      // 赋值
       that.formValidate.lineData = str;
     },
 

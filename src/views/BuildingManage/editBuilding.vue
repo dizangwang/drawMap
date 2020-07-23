@@ -193,6 +193,7 @@ export default {
     // 清除轮廓信息
     clearOutLineData() {
       var that = this;
+      // 如果没有轮廓信息
       if (that.formValidate.lineData === "") {
         return;
       }
@@ -203,6 +204,7 @@ export default {
           type: "warning"
         })
         .then(() => {
+          // 点击了  确定
           that.$message({
             type: "success",
             message: "轮廓数据已清空!"
@@ -210,6 +212,7 @@ export default {
           that.formValidate.lineData = "";
         })
         .catch(() => {
+          // 点击了 取消
           that.$message({
             type: "info",
             message: "已取消清空"
@@ -220,6 +223,7 @@ export default {
     // 地图轮廓退出
     lineQuit() {
       var that = this;
+      // 设置fullScreenModal为false
       that.fullScreenModal = false;
     },
 
@@ -227,27 +231,32 @@ export default {
     lineSave(lineData) {
       var that = this;
       var str = "";
+      // 设置编辑楼层为空对象
       that.editOutLine = {};
       Object.keys(lineData).forEach((item, index) => {
         that.editOutLine[item] = JSON.stringify(lineData[item]);
         let floorNum = "";
+        // 楼层转换
         if (item.indexOf("F") > -1) {
           floorNum = +item.replace("F", "");
         }
         if (item.indexOf("B") > -1) {
           floorNum = -+item.replace("B", "");
         }
+        // 拼装参数
         str += `floorOutline[${index}].floor=${floorNum}&`;
         str += `floorOutline[${index}].outline=${JSON.stringify(
           lineData[item]
         )}&`;
       });
+      // 赋值
       that.formValidate.lineData = str;
     },
 
     // 点击创建轮廓
     mapOutLineClick() {
       var that = this;
+      // 判断地上楼层与地下楼层之和是否为0
       if (
         that.formValidate.overGroundFloor - that.formValidate.underGroundFloor
         < 1
@@ -407,6 +416,7 @@ export default {
           const { data } = res;
           if (data.code === 200) {
             const detailData = data.data;
+            // 对表单信息进行赋值
             that.formValidate.id = detailData.id;
             that.formValidate.taskId = detailData.taskId;
             that.formValidate.buildingName = detailData.buildingName;
@@ -423,6 +433,7 @@ export default {
 
     // 点击取消事件
     cancelClick() {
+      // 给父组件传值
       this.$emit("cancel");
     },
 
