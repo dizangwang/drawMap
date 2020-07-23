@@ -554,16 +554,21 @@ export default {
       const convert = new howso.CoordConvert();
       kes.forEach((item) => {
         const { length } = floorDataCopy[item];
+        // 拿到第一组经纬度
         const first = floorDataCopy[item][0];
+        // 拿到最后一组经纬度
         const last = floorDataCopy[item][floorDataCopy[item].length - 1];
+        // 判断最后一项和第一项的经纬度是否相同如果不相同则把第一项push到数组中
         if (first.lng !== last.lng || first.lat !== last.lat) {
           floorDataCopy[item].push(floorDataCopy[item][0]);
         }
+        // 经纬度转换
         floorDataCopy[item].forEach((floor, index) => {
           const gcj = convert.bd09_To_gcj02(floor.lng, floor.lat);
           floorDataCopy[item][index] = convert.gcj02_To_wgs84(gcj.lng, gcj.lat);
         });
       });
+      // 把值传到父组件
       that.$emit("save", floorDataCopy);
     },
     // 退出操作

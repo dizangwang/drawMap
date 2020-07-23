@@ -220,10 +220,12 @@ export default {
       var num = 0;
       var totalFloor = +row.totalFloor;
       var finishedFloor = +row.finishedFloor;
+      // 如果楼层总数或者完成的楼层数为0则返回值为0
       if (totalFloor === 0 || finishedFloor === 0) {
         num = 0;
         return num;
       }
+      // 完成的楼层除以总楼层数乘以100
       num = Math.round((finishedFloor / totalFloor) * 100);
       return num;
     },
@@ -232,6 +234,7 @@ export default {
     goDrawMap(row) {
       var that = this;
       that.utils.localstorageSet("buildObj", row);
+      // 跳转
       that.$router.push({
         path: `/drawMap/${row.id}`
       });
@@ -241,11 +244,14 @@ export default {
     cityChange(id) {
       var that = this;
       if (id) {
+        // 获取城市列表
         that.getAreasWithPid(id, (data) => {
           that.districtList = data;
         });
+        // 清空区域列表
         that.searchForm.district = "";
       } else {
+        // 清空区域列表
         that.searchForm.district = "";
       }
     },
@@ -254,13 +260,18 @@ export default {
     provinceChange(id) {
       var that = this;
       if (id) {
+        // 获取城市列表
         that.getAreasWithPid(id, (data) => {
           that.cityList = data;
         });
+        // 清空城市列表
         that.searchForm.city = "";
+        // 清空区县列表
         that.searchForm.district = "";
       } else {
+        // 清空城市列表
         that.searchForm.city = "";
+        // 清空区县列表
         that.searchForm.district = "";
       }
     },
@@ -539,6 +550,7 @@ export default {
             data
           } = res;
           if (data.code === 200) {
+            // 下载楼宇
             that.downFloorClick();
           } else {
             that.$message({
@@ -562,10 +574,12 @@ export default {
     downFloorClick() {
       var that = this;
       var buildIds = [];
+      // 拼装楼宇id
       that.buildingForDownloadArr.forEach((item) => {
         buildIds.push(item.id);
       });
       that.leftBottomTaskDownShow = false;
+      // 执行下载方法
       that.utils.postDownload({
         url: window.location.origin + that.apis.floorMgrFinishDownload,
         data: {
@@ -606,6 +620,7 @@ export default {
     downloadClick(row) {
       var that = this;
       that.formatModal = true;
+      // 单个下载的楼宇
       that.buildingForDownloadArr = [row];
     },
 
@@ -629,6 +644,7 @@ export default {
         });
         return;
       }
+      // 需要下载的楼宇
       that.buildingForDownloadArr = that.tableSelectionArr;
       that.formatModal = true;
     },
@@ -636,6 +652,7 @@ export default {
     // 表格操作栏-按钮-发布--点击事件
     publishClick(row) {
       var that = this;
+      // 赋值楼宇id
       that.publishId = row.id;
       that.dataTypeModal = true;
     },
@@ -644,6 +661,7 @@ export default {
     publishOkClick() {
       var that = this;
       that.dataTypeModal = false;
+      // 发布楼宇
       that.publishBuilding(that.publishId, that.radioPublish);
     },
 
@@ -661,6 +679,7 @@ export default {
       }
       let ids = "";
       const arr = [];
+      // 拼装参数
       that.tableSelectionArr.forEach((item) => {
         arr.push(item.id);
       });
@@ -672,6 +691,7 @@ export default {
           type: "warning"
         })
         .then(() => {
+          // 批量删除
           that.deleteTask(ids);
         })
         .catch(() => {
@@ -704,6 +724,7 @@ export default {
               type: "success",
               message: "发布成功!"
             });
+            // 搜索
             that.search();
           } else {
             that.$message({
@@ -735,6 +756,7 @@ export default {
               type: "success",
               message: "下架成功!"
             });
+            // 搜索
             that.search();
           } else {
             that.$message({
@@ -766,6 +788,7 @@ export default {
               type: "success",
               message: "删除成功!"
             });
+            // 搜索
             that.search();
           } else {
             that.$message({
@@ -786,6 +809,7 @@ export default {
           type: "warning"
         })
         .then(() => {
+          // 删除任务
           that.deleteTask(row.id);
         })
         .catch(() => {
