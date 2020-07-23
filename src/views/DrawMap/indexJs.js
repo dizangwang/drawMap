@@ -1,9 +1,16 @@
+// 设置楼层信息组件
 import SetFloorInfo from "./setFloorInfo.vue";
+// 创建样式组件
 import CreateStyle from "./createStyle.vue";
+// 编辑样式组件
 import EditStyle from "./editStyle.vue";
+// 引入gis
 import MapEditor from "../../assets/map/js/main";
+// 引入数据
 import TestData from "../../assets/map/data/data";
+// data
 import Data from "./indexJsData";
+// watch
 import Watch from "./indexJsWatch";
 
 export default {
@@ -210,6 +217,7 @@ export default {
     // 调整底图
     adjustImage() {
       var that = this;
+      // 获取图层信息
       const layerData = that.mapEditor.getSaveData();
       // 判断楼层有没有底图
       if (layerData.imageData.data) {
@@ -249,6 +257,7 @@ export default {
         // 获取楼层的信息更新经纬度的信息
         that.mapLoading = true;
         that.loadingText = "楼层信息更新中...";
+        // 获取楼层信息
         that.getFloorInfoById(that.activeFloorData.floorData.properties.id).then((res) => {
           that.finishStatus = res.finishStatus;
           if (that.finishStatus) {
@@ -256,6 +265,7 @@ export default {
           } else {
             that.floorFinishStatus = "完成";
           }
+          // 拼装参数
           const obj = {
             floorOutline: res.floorOutline,
             planarGraph: id,
@@ -386,19 +396,26 @@ export default {
       keys.forEach((key) => {
         // 对比图片信息
         if (key === "imageData") {
+          // 循环图片信息
           Object.keys(data1[key]).forEach((imgKey) => {
+            // 当图片都存在的时候
             if (data1[key].data !== null && data2[key].data !== null) {
+              // 如果两者不相等
               if (data1[key].data !== data2[key].data) {
                 i += 1;
               }
             }
+            // 如果经纬度信息存在
             if (data2[key].extent !== null) {
+              // 如果extent的类型为字符串，则需要转换
               if (typeof data1[key].extent === "string") {
                 data1[key].extent = JSON.parse(data1[key].extent);
               }
+              // 如果extent的类型为字符串，则需要转换
               if (typeof data2[key].extent === "string") {
                 data2[key].extent = JSON.parse(data2[key].extent);
               }
+              // 如果两者的extent序列化后不相等
               if (JSON.stringify(data2[key].extent) !== JSON.stringify(data1[key].extent)) {
                 i += 1;
               }
@@ -407,8 +424,10 @@ export default {
         }
         // 对比楼层信息
         if (key === "floorData") {
+          // 如果楼层信息不等于空对象
           if (JSON.stringify(data1[key]) !== "{}") {
             if (data1[key].geometry) {
+              // 重新组装经纬度对象进行对比
               let coo1 = "";
               let coo2 = "";
               if (data1[key].geometry.coordinates) {
@@ -431,10 +450,12 @@ export default {
                   coo2 = JSON.stringify(coo2);
                 }
               }
+              // 判断两者是否相等
               if (coo1 !== coo2) {
                 i += 1;
               }
             }
+            // 判断属性是否相等
             Object.keys(data1[key].properties).forEach((pro) => {
               if (data1[key].properties[pro] !== data2[key].properties[pro]) {
                 i += 1;
@@ -442,13 +463,16 @@ export default {
             });
           }
         }
+        // 对比图层
         if (key === "layerData") {
           Object.keys(data1[key]).forEach((layer) => {
+            // 当图层类型为多边形时
             if (layer === "polygon") {
+              // 先判断元素的长度相不相等
               if (data1[key][layer].features.length === data2[key][layer].features.length) {
                 const obj1 = {};
                 const obj2 = {};
-                // 重新组装对象
+                // 重新组装对象，以id作为对象的属性，对应的属性值为features
                 if (data1[key][layer].features.length !== 0) {
                   data1[key][layer].features.forEach((feature, index) => {
                     obj1[data1[key][layer].features[index].properties.id] = data1[
@@ -456,6 +480,7 @@ export default {
                     obj2[data2[key][layer].features[index].properties.id] = data2[
                       key][layer].features[index];
                   });
+                  // 循环第一个对象的属性值
                   Object.keys(obj1).forEach((fitem) => {
                     const coordinates1 = obj1[fitem].geometry.coordinates;
                     const properties1 = obj1[fitem].properties;
@@ -482,10 +507,11 @@ export default {
                         });
                       });
                       geometry2 = JSON.stringify(geometry2);
+                      // 判断两者是否相等
                       if (geometry1 !== geometry2) {
                         i += 1;
                       }
-
+                      // 判断属性是否相等
                       Object.keys(properties1).forEach((property) => {
                         if (properties1[property] !== properties2[property]) {
                           i += 1;
@@ -500,11 +526,12 @@ export default {
                 i += 1;
               }
             }
+            // 当图层类型为线元素时
             if (layer === "path") {
               if (data1[key][layer].features.length === data2[key][layer].features.length) {
                 const obj1 = {};
                 const obj2 = {};
-                // 重新组装对象
+                // 重新组装对象，以id作为对象的属性，对应的属性值为features
                 if (data1[key][layer].features.length !== 0) {
                   data1[key][layer].features.forEach((feature, index) => {
                     obj1[data1[key][layer].features[index].properties.id] = data1[
@@ -512,6 +539,7 @@ export default {
                     obj2[data2[key][layer].features[index].properties.id] = data2[
                       key][layer].features[index];
                   });
+                  // 循环第一个对象的属性值
                   Object.keys(obj1).forEach((fitem) => {
                     const coordinates1 = obj1[fitem].geometry.coordinates;
                     const properties1 = obj1[fitem].properties;
@@ -536,10 +564,11 @@ export default {
                         });
                       });
                       geometry2 = JSON.stringify(geometry2);
+                      // 判断两者是否相等
                       if (geometry1 !== geometry2) {
                         i += 1;
                       }
-
+                      // 判断属性是否相等
                       Object.keys(properties1).forEach((property) => {
                         if (properties1[property] !== properties2[property]) {
                           i += 1;
@@ -554,12 +583,12 @@ export default {
                 i += 1;
               }
             }
-
+            // 当图层类型为点元素时
             if (layer === "point") {
               if (data1[key][layer].features.length === data2[key][layer].features.length) {
                 const obj1 = {};
                 const obj2 = {};
-                // 重新组装对象
+                // 重新组装对象，以id作为对象的属性，对应的属性值为features
                 if (data1[key][layer].features.length !== 0) {
                   data1[key][layer].features.forEach((feature, index) => {
                     obj1[data1[key][layer].features[index].properties.id] = data1[
@@ -567,6 +596,7 @@ export default {
                     obj2[data2[key][layer].features[index].properties.id] = data2[
                       key][layer].features[index];
                   });
+                  // 循环第一个对象的属性值
                   Object.keys(obj1).forEach((fitem) => {
                     const coordinates1 = obj1[fitem].geometry.coordinates;
                     const properties1 = obj1[fitem].properties;
@@ -584,9 +614,11 @@ export default {
                       geometry2[0] = (+geometry2[0]).toFixed(7);
                       geometry2[1] = (+geometry2[1]).toFixed(7);
                       geometry2 = JSON.stringify(geometry2);
+                      // 判断两者是否相等
                       if (geometry1 !== geometry2) {
                         i += 1;
                       }
+                      // 判断属性是否相等
                       Object.keys(properties1).forEach((property) => {
                         if (properties1[property] !== properties2[property]) {
                           i += 1;
@@ -604,12 +636,14 @@ export default {
           });
         }
       });
+      // 返回i有没有变动 如过i等于0说明两个参数是一致的，如果不等于0两个参数是不一致的
       return i === 0;
     },
 
     // 删除选中的图层
     deleteSelectedElement() {
       var that = this;
+      // 判断有没有勾选数据
       if (that.dataChartSelectedIds.length === 0) {
         that.$message({
           message: "请先勾选数据",
@@ -623,15 +657,21 @@ export default {
             type: "warning"
           })
           .then(() => {
+            // 循环选中的id
             that.dataChartSelectedIds.forEach((item) => {
+              // 如果是面元素
               if (that.layerType === "1") {
                 that.mapEditor.deleteFeatureById("polygon", item.id);
               }
+              // 如果是点元素
               if (that.layerType === "2") {
                 that.mapEditor.deleteFeatureById("point", item.id);
               }
             });
+            // 删除完之后重新进行赋值
+            // 给面元素赋值
             that.dataChartData = that.mapEditor.getData("polygon");
+            // 给点元素赋值
             const arrs = that.mapEditor.getData("point");
             that.dataChartPOIData = arrs.filter((currentValue, index, arr) => currentValue
               .size !== 31);
@@ -641,9 +681,11 @@ export default {
     // 搜索数据图表信息面要素
     dataChartDataFilter(pName) {
       var that = this;
+      // 拿到面元素的数据
       const data = that.mapEditor.getData("polygon");
       const arr = [];
       data.forEach((item) => {
+        // 如果name中包含搜索框中的值
         if (item.name.indexOf(pName) > -1) {
           arr.push(item);
         }
@@ -678,6 +720,7 @@ export default {
         .activeFloorData) && that.floorFinishStatus === "未完成") {
         that.loadingText = "楼层发布中...";
         that.mapLoading = true;
+        // 发布
         that
           .ajax({
             method: "post",
@@ -705,7 +748,7 @@ export default {
           });
         return;
       }
-
+      // 如果楼层没有变动且状态为 未完成
       if (that.compareData(layerData, that
         .activeFloorData) && that.floorFinishStatus === "完成") {
         that
@@ -716,6 +759,7 @@ export default {
           }).then(() => {
             that.loadingText = "楼层发布中...";
             that.mapLoading = true;
+            // 完成
             that
               .ajax({
                 method: "post",
@@ -728,6 +772,7 @@ export default {
                 const data3 = res3.data;
                 if (data3.code === 200) {
                   that.floorFinishStatus = "未完成";
+                  // 发布
                   that
                     .ajax({
                       method: "post",
@@ -764,7 +809,7 @@ export default {
           });
         return;
       }
-
+      // 如果楼层对比不同那么先保存再切换状态再发布
       if (!that.compareData(layerData, that.activeFloorData)) {
         that
           .$confirm("是否保存并切换状态为完成后发布？", "提示", {
@@ -774,7 +819,9 @@ export default {
           }).then(() => {
             that.loadingText = "楼层发布中...";
             that.mapLoading = true;
+            // 保存
             that.saveDataCallBack(() => {
+              // 完成
               that
                 .ajax({
                   method: "post",
@@ -787,6 +834,7 @@ export default {
                   const data1 = res1.data;
                   if (data1.code === 200) {
                     that.floorFinishStatus = "未完成";
+                    // 发布
                     that
                       .ajax({
                         method: "post",
