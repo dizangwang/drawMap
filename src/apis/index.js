@@ -1,3 +1,4 @@
+// 普通接口
 const root = "/backend";
 const apis = {
   // 获取所有任务类型
