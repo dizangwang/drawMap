@@ -79,6 +79,7 @@ export default {
           return;
         }
         const reader = new FileReader();
+        // 读取文件信息
         reader.readAsText(inputFile.files[0]);
         reader.onload = (evt) => {
           document.querySelector(`#${fileInputId}`).value = "";

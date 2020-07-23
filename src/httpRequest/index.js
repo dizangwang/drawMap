@@ -1,11 +1,9 @@
 import axios from "axios";
-// 响应拦截
-// axios.interceptors.response.use((response) => response, (error) => {
-
-// });
+// 跨域访问需要发送cookie时一定要加axios.defaults.withCredentials = true;
 axios.defaults.withCredentials = true;
 const ajax = (param) => {
   const obj = param;
+  // 判断参数中有没有method
   if (typeof obj.method === "undefined" || !obj.method) {
     obj.method = "post";
   }
@@ -26,7 +24,9 @@ const ajax = (param) => {
       data: obj.data,
       timeout: 30000,
       responseType: "json",
-      headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
       transformResponse: [function a(param1) {
         let data = param1;
         if (typeof data === "string") {
@@ -36,8 +36,9 @@ const ajax = (param) => {
       }]
     });
   }
+  // 当请求方法为post时
   if (obj.method === "post") {
-    // // 处理参数
+    // 处理参数
     let str = "";
     if (typeof obj.data !== "string") {
       Object.keys(obj.data).forEach((key) => {
@@ -51,7 +52,9 @@ const ajax = (param) => {
       url: obj.url,
       data: obj.data,
       responseType: "json",
-      headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
       transformResponse: [function a(param1) {
         let data = param1;
         if (typeof data === "string") {
@@ -61,6 +64,7 @@ const ajax = (param) => {
       }]
     });
   }
+  // 当请求方法时get时
   if (obj.method === "get") {
     return axios({
       method: obj.method,

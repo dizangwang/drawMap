@@ -87,16 +87,11 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
-
 // 引入地图轮廓信息
 import DrawProfile from "../../components/DrawProfile.vue";
 
 export default {
-  name: "Header",
-  computed: {
-    ...mapGetters(["userInfo"])
-  },
+  name: "CreateBuilding",
   components: {
     DrawProfile
   },
@@ -120,15 +115,17 @@ export default {
       // 上传文件id
       uploadFileId: "",
 
-      // 上传文件url
-      uploadUrl: "",
-
       // 表单字段
       formValidate: {
+        // 任务id
         taskId: "",
+        // 楼宇名称
         buildingName: "",
+        // 地上楼层
         overGroundFloor: "",
+        // 地下楼层
         underGroundFloor: "",
+        // 楼层轮廓
         lineData: ""
       },
 
@@ -162,17 +159,17 @@ export default {
   },
   mounted() {
     var that = this;
-    that.uploadUrl = that.uploadApis.uploadFiles;
-
     // 上传geojson文件
     that.utils.parseGeson(that, "file").then((res) => {
       if (res.code === 200) {
         const { data } = res;
         let str = "";
+        // 拿到值之后进行组装
         Object.keys(data).forEach((item, index) => {
           str += `floorOutline[${index}].floor=${item}&`;
           const coorArr = data[item].geometry.coordinates;
           const arr = [];
+          // 统一与绘制的轮廓返回值格式
           coorArr.forEach((it) => {
             arr.push({ lng: it[0], lat: it[1] });
           });
@@ -247,6 +244,7 @@ export default {
     // 点击创建轮廓
     mapOutLineClick() {
       var that = this;
+      // 判断楼层总数是否为空
       if (
         that.formValidate.overGroundFloor - that.formValidate.underGroundFloor
         < 1
@@ -257,6 +255,7 @@ export default {
         });
         return;
       }
+      // 获取地上楼层、地下楼层
       const { overGroundFloor } = that.formValidate;
       const { underGroundFloor } = that.formValidate;
       // 根据两个数字求出其中间的数字
@@ -264,15 +263,19 @@ export default {
         const a = first;
         let b = second;
         const att = [];
+        // 循环只要a不等于b
         while (a !== b) {
           if (b) {
+            // 如果b不等于0，就放入att数组中
             att.push(b);
           }
+          // b每次都加1
           b += 1;
         }
         if (a) {
           att.push(a);
         }
+        // 进行楼层转化
         att.forEach((item, index) => {
           if (item > 0) {
             att[index] = `F${item}`;
@@ -283,13 +286,15 @@ export default {
         });
         return att;
       }
-
+      // 是否全屏
       that.fullScreenModal = true;
       that.$nextTick(() => {
+        // 拼装地址
         const address = that.taskObj.provinceName
           + that.taskObj.cityName
           + that.taskObj.districtName;
         if (that.editOutLine) {
+          // 初始化绘制轮廓插件
           that.$refs.drawProfile.initData({
             address,
             editOutLine: that.editOutLine,
@@ -297,6 +302,7 @@ export default {
             floorArr: returnMiddle(overGroundFloor, underGroundFloor)
           });
         } else {
+          // 初始化绘制轮廓插件
           that.$refs.drawProfile.initData({
             address,
             fromSet: false
@@ -308,38 +314,18 @@ export default {
     // 被外部调用时初始化方法
     init(taskObj) {
       var that = this;
+      // 循环表单字段，清空
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
       });
+      // 清空表单
       that.$refs.formValidate.resetFields();
+      // 赋值任务对象
       that.taskObj = taskObj;
+      // 赋值任务id
       that.formValidate.taskId = taskObj.id;
+      // 清空编辑时轮廓信息
       that.editOutLine = {};
-    },
-
-    // 上传文件成功回调
-    uploadSuccess(res) {
-      var that = this;
-      if (res.code === 200) {
-        that.$message({
-          message: "上传成功",
-          type: "success"
-        });
-        that.uploadFileId = res.data.id;
-      } else {
-        that.$message({
-          message: res.msg,
-          type: "warning"
-        });
-      }
-    },
-
-    // 上传文件失败回调
-    uploadError(res) {
-      this.$message({
-        message: "上传文件失败",
-        type: "warning"
-      });
     },
 
     // 点击取消事件
@@ -350,8 +336,10 @@ export default {
     // 提交表单事件
     handleSubmit() {
       var that = this;
+      // 校验表单
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
+          // 拼装参数&
           const obj = {
             taskId: "",
             buildingName: "",
@@ -377,6 +365,7 @@ export default {
                   message: "提交成功",
                   type: "success"
                 });
+                // 传值
                 that.$emit("success");
               } else {
                 that.$message({

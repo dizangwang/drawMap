@@ -86,16 +86,11 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from "vuex";
-
 // 引入轮廓绘制插件
 import DrawProfile from "../../components/DrawProfile.vue";
 
 export default {
-  name: "Header",
-  computed: {
-    ...mapGetters(["userInfo"])
-  },
+  name: "EditBuilding",
   components: {
     DrawProfile
   },
@@ -118,11 +113,17 @@ export default {
 
       // 表单字段
       formValidate: {
+        // 楼宇id
         id: "",
+        // 任务id
         taskId: "",
+        // 楼宇名称
         buildingName: "",
+        // 地上楼层
         overGroundFloor: "",
+        // 地下楼层
         underGroundFloor: "",
+        // 轮廓信息
         lineData: ""
       },
 
@@ -168,10 +169,12 @@ export default {
       if (res.code === 200) {
         const { data } = res;
         let str = "";
+        // 拿到值之后进行组装
         Object.keys(data).forEach((item, index) => {
           str += `floorOutline[${index}].floor=${item}&`;
           const coorArr = data[item].geometry.coordinates;
           const arr = [];
+          // 统一与绘制的轮廓返回值格式
           coorArr.forEach((it) => {
             arr.push({ lng: it[0], lat: it[1] });
           });
@@ -258,21 +261,27 @@ export default {
         });
         return;
       }
+      // 获取地上楼层、地下楼层
       const { overGroundFloor } = that.formValidate;
       const { underGroundFloor } = that.formValidate;
+      // 根据两个数字求出其中间的数字
       function returnMiddle(first, second) {
         const a = first;
         let b = second;
         const att = [];
+        // 循环只要a不等于b
         while (a !== b) {
           if (b) {
+            // 如果b不等于0，就放入att数组中
             att.push(b);
           }
+          // b每次都加1
           b += 1;
         }
         if (a) {
           att.push(a);
         }
+        // 进行楼层转化
         att.forEach((item, index) => {
           if (item > 0) {
             att[index] = `F${item}`;
@@ -283,10 +292,11 @@ export default {
         });
         return att;
       }
-
+      // 是否全屏
       that.fullScreenModal = true;
       that.$nextTick(() => {
         if (that.editOutLine) {
+          // 初始化绘制轮廓插件
           that.$refs.drawProfile.initData({
             address:
               that.taskData.provinceName
@@ -297,6 +307,7 @@ export default {
             floorArr: returnMiddle(overGroundFloor, underGroundFloor)
           });
         } else {
+          // 初始化绘制轮廓插件
           that.$refs.drawProfile.initData({
             address:
               that.taskData.provinceName
@@ -351,13 +362,19 @@ export default {
     // 被外部调用时初始化方法
     init(row) {
       var that = this;
+      // 循环表单字段，清空
       Object.keys(that.formValidate).forEach((key) => {
         that.formValidate[key] = "";
       });
+      // 赋值详情
       that.detailFromPre = row;
+      // 清空表单
       that.$refs.formValidate.resetFields();
+      // 根据楼宇id获取详情
       that.getBuildingById(row.id);
+      // 根据任务id获取任务对象
       that.getTaskById(row.taskId);
+      // 根据楼宇id获取轮廓信息
       that.getFloorByBuildingId(row.id);
     },
 
@@ -407,11 +424,6 @@ export default {
         });
     },
 
-    // 上传文件成功回调
-    uploadSuccess() {
-      // todo
-    },
-
     // 点击取消事件
     cancelClick() {
       this.$emit("cancel");
@@ -420,8 +432,10 @@ export default {
     // 提交表单事件
     handleSubmit() {
       var that = this;
+      // 校验表单
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
+          // 拼装参数&
           const obj = {
             taskId: "",
             buildingName: "",
