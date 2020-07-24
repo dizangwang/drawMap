@@ -288,7 +288,7 @@ export default {
               that.map.panTo(
                 new BMap.Point((bigLng + smallLng) / 2, (bigLat + smallLat) / 2)
               );
-              that.map.setZoom(17);
+              // that.map.setZoom(17);
               // 这一步的目的是如果有室内图，可以让室内图加载
               setTimeout(() => {
                 that.map.panTo(
@@ -297,7 +297,7 @@ export default {
                     (bigLat + smallLat) / 2
                   )
                 );
-                that.map.setZoom(17);
+                // that.map.setZoom(17);
               }, 500);
             }, 1000);
             // 当只有一层楼的情况
