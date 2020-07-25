@@ -881,8 +881,9 @@ export default {
     // 表格操作栏-按钮-下载--点击事件
     downloadClick(row) {
       var that = this;
-      that.formatModal = true;
+      // that.formatModal = true;
       that.downloadTaskObjArr = [row];
+      that.downOkClick();
     },
     // 顶部操作栏-按钮-下载-弹窗-确定--点击事件
     downBatchOkClick() {
@@ -904,7 +905,8 @@ export default {
         return;
       }
       that.downloadTaskObjArr = that.tableSelectionArr;
-      that.formatModal = true;
+      // that.formatModal = true;
+      that.downOkClick();
     },
     // 表格操作栏-按钮-发布--点击事件
     publishClick(row) {

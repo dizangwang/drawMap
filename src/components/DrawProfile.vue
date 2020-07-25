@@ -345,7 +345,7 @@ export default {
       const map = new BMap.Map(that.mapId, { enableMapClick: false });
       // 把map示例赋值给this.map
       that.map = map;
-
+      // that.map.setZoom(19);
       // 下面代码是为了拾取经纬度
 
       // that.map.addEventListener("click", (e) => {
@@ -364,7 +364,7 @@ export default {
       that.map.addControl(topLeftLontrol);
       that.map.addControl(topLeftNavigation);
       // 设置地图中心点和缩放层级
-      that.map.centerAndZoom(area, 15);
+      that.map.centerAndZoom(area, 17);
       // 开启鼠标滚轮缩放
       that.map.enableScrollWheelZoom();
       // 创建室内图实例

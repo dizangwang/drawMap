@@ -639,9 +639,10 @@ export default {
     // 表格操作栏-按钮-下载--点击事件
     downloadClick(row) {
       var that = this;
-      that.formatModal = true;
+      // that.formatModal = true;
       // 单个下载的楼宇
       that.buildingForDownloadArr = [row];
+      that.downOkClick();
     },
 
     // 顶部操作栏-按钮-下载-弹窗-确定--点击事件
@@ -666,7 +667,8 @@ export default {
       }
       // 需要下载的楼宇
       that.buildingForDownloadArr = that.tableSelectionArr;
-      that.formatModal = true;
+      // that.formatModal = true;
+      that.downOkClick();
     },
 
     // 表格操作栏-按钮-发布--点击事件
