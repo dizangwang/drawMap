@@ -249,5 +249,56 @@ export default {
   // 图片大小
   imgFix: 1000,
   // 用于展示的图标
-  showIconsArr: []
+  showIconsArr: [],
+  facilities: [{
+    icon: "anquanchukou",
+    drawActiveLine: 4,
+    img: "./icon/anquanchukou.png",
+    floorNumTitle: "通行设施设置-安全出口"
+  }, {
+    icon: "churukou",
+    drawActiveLine: 5,
+    img: "./icon/churukou.png",
+    floorNumTitle: "通行设施设置-出入口"
+  }, {
+    icon: "control",
+    drawActiveLine: 6,
+    img: "./icon/control.png",
+    floorNumTitle: "通行设施设置-安全门"
+  }, {
+    icon: "diandongfuti",
+    drawActiveLine: 7,
+    img: "./icon/diandongfuti.png",
+    floorNumTitle: "通行设施设置-电动扶梯"
+  }, {
+    icon: "dianti",
+    drawActiveLine: 8,
+    img: "./icon/dianti.png",
+    floorNumTitle: "通行设施设置-电梯"
+  }, {
+    icon: "entrance",
+    drawActiveLine: 9,
+    img: "./icon/entrance.png",
+    floorNumTitle: "通行设施设置-入口"
+  }, {
+    icon: "exit",
+    drawActiveLine: 10,
+    img: "./icon/exit.png",
+    floorNumTitle: "通行设施设置-出口"
+  }, {
+    icon: "huabanfuben",
+    drawActiveLine: 11,
+    img: "./icon/huabanfuben.png",
+    floorNumTitle: "通行设施设置-上下梯"
+  }, {
+    icon: "loutistairs6",
+    drawActiveLine: 12,
+    img: "./icon/loutistairs6.png",
+    floorNumTitle: "通行设施设置-下楼梯"
+  }, {
+    icon: "loutistairs7",
+    drawActiveLine: 13,
+    img: "./icon/loutistairs7.png",
+    floorNumTitle: "通行设施设置-上楼梯"
+  }]
 };

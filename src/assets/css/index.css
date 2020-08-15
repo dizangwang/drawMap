@@ -283,11 +283,47 @@ body {
   background-size: 100% 100%;
 }
 
+.anquanchukou {
+  background: url('../images/icons/anquanchukou.png') no-repeat center;
+  background-size: 100% 100%;
+}
 
-
-
-
-
+.churukou {
+  background: url('../images/icons/churukou.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.control {
+  background: url('../images/icons/control.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.diandongfuti {
+  background: url('../images/icons/diandongfuti.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.dianti {
+  background: url('../images/icons/dianti.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.entrance {
+  background: url('../images/icons/entrance.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.exit {
+  background: url('../images/icons/exit.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.huabanfuben {
+  background: url('../images/icons/huabanfuben.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.loutistairs6 {
+  background: url('../images/icons/loutistairs6.png') no-repeat center;
+  background-size: 100% 100%;
+}
+.loutistairs7 {
+  background: url('../images/icons/loutistairs7.png') no-repeat center;
+  background-size: 100% 100%;
+}
 
 .el-message {
   z-index: 5030 !important;

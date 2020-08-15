@@ -440,33 +440,14 @@
                           <td>设施类型</td>
                           <td>
                             <span
+                              v-for="item in facilities" :key="item.drawActiveLine"
                               class="iconMgrItem"
-                              @click="verticalFloorClick"
-                              :class="{blackGd:drawActiveLine==1}"
+                              @click="facilitieFloorClick(item)"
+                              :class="{blackGd:drawActiveLine==item.drawActiveLine}"
                             >
                               <i
-                                class="verticalFloor drawRectWH"
-                                :class="{verticalFloorActive:drawActiveLine==1}"
-                              ></i>
-                            </span>
-                            <span
-                              class="iconMgrItem"
-                              @click="holdFloorClick"
-                              :class="{blackGd:drawActiveLine==2}"
-                            >
-                              <i
-                                class="holdFloor drawRectWH"
-                                :class="{holdFloorActive:drawActiveLine==2}"
-                              ></i>
-                            </span>
-                            <span
-                              class="iconMgrItem"
-                              @click="commonFloorClick"
-                              :class="{blackGd:drawActiveLine==3}"
-                            >
-                              <i
-                                class="commonFloor drawRectWH"
-                                :class="{floorActive:drawActiveLine==3}"
+                                class="drawRectWH"
+                                :class="[item.icon, {verticalFloorActive:drawActiveLine==item.drawActiveLine}]"
                               ></i>
                             </span>
                           </td>

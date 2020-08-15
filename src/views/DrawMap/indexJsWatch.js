@@ -100,12 +100,12 @@ export default {
       that.mapLoading = true;
       that.loadingText = "底图加载中...";
       // 底图加载成功时
-      image.onload = function () {
+      image.onload = () => {
         that.mapLoading = false;
         that.loadingText = "";
       };
       // 底图加载失败
-      image.onerror = function () {
+      image.onerror = () => {
         that.mapLoading = false;
         that.loadingText = "";
         that.$message({

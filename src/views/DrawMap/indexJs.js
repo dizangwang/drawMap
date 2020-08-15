@@ -1205,7 +1205,7 @@ export default {
     iconItemHover(icon) {
       this.iconPreview = icon;
     },
-    // 增加图标
+    // 展开图标
     addIconClick() {
       var that = this;
       that.allIconModal = true;
@@ -1483,8 +1483,8 @@ export default {
       that.dataChartPOIData = arrs.filter((currentValue, index, arr) => currentValue.size !== 31);
     },
 
-    // 路径-绘制要素-直梯
-    verticalFloorClick() {
+    // 路径-绘制要素
+    facilitieFloorClick(item) {
       var that = this;
       const emptyObj = {
         id: "",
@@ -1505,7 +1505,7 @@ export default {
       };
       that.selectedElement = emptyObj;
       // 如果当前选中则取消绘制
-      if (that.drawActiveLine === 1) {
+      if (that.drawActiveLine === item.drawActiveLine) {
         that.drawActiveLine = "";
         that.isDrawLine = false;
         that.mapEditor.cancelDraw();
@@ -1513,88 +1513,12 @@ export default {
       }
       // 绘制楼梯
       that.mapEditor.drawPoint({
-        img: "./icon/verticalFloor.png",
+        img: item.img,
         size: 31
       });
       that.isDrawfacibility = true;
-      that.floorNumTitle = "通行设施设置-直梯";
-      that.drawActiveLine = 1;
-      that.isDrawLine = false;
-    },
-    // 路径-绘制要素-扶梯
-    holdFloorClick() {
-      var that = this;
-      const emptyObj = {
-        id: "",
-        layername: "",
-        value: {
-          borderColor: "",
-          fillColor: "",
-          font: "",
-          fontBorderColor: "",
-          fontFillColor: "",
-          height: "",
-          id: "",
-          name: "",
-          styleID: "",
-          typeID: "",
-          width: ""
-        }
-      };
-      that.selectedElement = emptyObj;
-      // 如果当前选中则取消绘制
-      if (that.drawActiveLine === 2) {
-        that.drawActiveLine = "";
-        that.isDrawLine = false;
-        that.mapEditor.cancelDraw();
-        return;
-      }
-      that.isDrawfacibility = true;
-      // 绘制楼梯
-      that.mapEditor.drawPoint({
-        img: "./icon/holdFloor.png",
-        size: 31
-      });
-      that.floorNumTitle = "通行设施设置-扶梯";
-      that.drawActiveLine = 2;
-      that.isDrawLine = false;
-    },
-    // 路径-绘制要素-楼梯
-    commonFloorClick() {
-      var that = this;
-      const emptyObj = {
-        id: "",
-        layername: "",
-        value: {
-          borderColor: "",
-          fillColor: "",
-          font: "",
-          fontBorderColor: "",
-          fontFillColor: "",
-          height: "",
-          id: "",
-          name: "",
-          styleID: "",
-          typeID: "",
-          width: ""
-        }
-      };
-      that.selectedElement = emptyObj;
-      // 如果当前选中则取消绘制
-      if (that.drawActiveLine === 3) {
-        that.drawActiveLine = "";
-        that.isDrawLine = false;
-        that.mapEditor.cancelDraw();
-        return;
-      }
-      that.floorNumTitle = "通行设施设置-楼梯";
-      that.isDrawfacibility = true;
-      // 绘制楼梯
-      that.mapEditor.drawPoint({
-        img: "./icon/floor.png",
-        size: 31
-      });
-      that.drawActiveLine = 3;
+      that.floorNumTitle = item.floorNumTitle;
+      that.drawActiveLine = item.drawActiveLine;
       that.isDrawLine = false;
     },
     // 创建地图
@@ -2235,13 +2159,8 @@ export default {
           } = res;
           if (data.code === 200) {
             that.allIconsArr = data.data;
-            // 如果图标个数大于等于11，则截取前11个 来保证展示好看
-            if (data.data.length >= 11) {
-              that.showIconsArr = data.data.slice(0, 11);
-            } else {
-              // 如果不到11个则展示所有
-              that.showIconsArr = data.data;
-            }
+            // 常用图标
+            that.showIconsArr = data.data.filter(({ common }) => common);
           } else {
             that.$message({
               message: data.msg,
